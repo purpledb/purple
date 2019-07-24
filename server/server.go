@@ -11,8 +11,8 @@ import (
 )
 
 type Server struct {
-	address   string
-	kvBackend kv.KV
+	address string
+	mem     *memory.Memory
 }
 
 var _ proto.KVServer = (*Server)(nil)
@@ -24,22 +24,27 @@ func New(cfg *Config) (*Server, error) {
 
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
-	kvBackend := memory.New()
+	mem := memory.New()
 
 	return &Server{
 		address:   addr,
-		kvBackend: kvBackend,
+		mem: mem,
 	}, nil
 }
 
 func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
+	fmt.Println(location.Key)
+
 	loc := &kv.Location{
 		Key: location.Key,
 	}
 
-	val, err := s.kvBackend.Get(loc)
+	fmt.Println("ALL:", s.mem.All())
+
+	val, err := s.mem.Get(loc)
 	if err != nil {
-		return nil, nil
+		fmt.Println("ERR:", err)
+		return nil, err
 	}
 
 	res := &proto.GetResponse{
@@ -52,17 +57,15 @@ func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetRes
 }
 
 func (s *Server) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
-	loc, val := req.Location, req.Value
-
-	location := &kv.Location{
-		Key: loc.Key,
+	loc := &kv.Location{
+		Key: req.Location.Key,
 	}
 
-	value := &kv.Value{
-		Content: val.Content,
+	val := &kv.Value{
+		Content: req.Value.Content,
 	}
 
-	if err := s.kvBackend.Put(location, value); err != nil {
+	if err := s.mem.Put(loc, val); err != nil {
 		return nil, err
 	}
 
@@ -74,7 +77,7 @@ func (s *Server) Delete(_ context.Context, location *proto.Location) (*proto.Emp
 		Key: location.Key,
 	}
 
-	if err := s.kvBackend.Delete(loc); err != nil {
+	if err := s.mem.Delete(loc); err != nil {
 		return nil, err
 	}
 

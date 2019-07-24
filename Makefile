@@ -3,7 +3,7 @@ PROTOC    = protoc
 PROTO_DIR = proto
 
 gen-protobuf:
-	$(PROTOC) --proto_path=$(PROTO_DIR) --go_out=plugins=grpc:$(PROTO_DIR) $(PROTO_DIR)/*.protoe
+	$(PROTOC) --proto_path=$(PROTO_DIR) --go_out=plugins=grpc:$(PROTO_DIR) $(PROTO_DIR)/*.proto
 
-test:
+test: gen-protobuf
 	$(GO) test -v ./...

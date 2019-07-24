@@ -30,6 +30,7 @@ func TestMemoryImpl(t *testing.T) {
 	fetched, err = mem.Get(loc)
 	is.NoError(err)
 	is.NotNil(fetched)
+	is.Equal(fetched, val)
 
 	is.NoError(mem.Delete(loc))
 	fetched, err = mem.Get(loc)

@@ -13,8 +13,7 @@ message Value {
 }
 
 message GetResponse {
-    bool found = 1;
-    Value value = 2;
+    Value value = 1;
 }
 
 message PutRequest {

@@ -1,6 +1,8 @@
 package memory
 
-import "strato/kv"
+import (
+	"strato/kv"
+)
 
 type Memory struct {
 	values map[*kv.Location]*kv.Value
@@ -33,7 +35,13 @@ func (m *Memory) Put(location *kv.Location, value *kv.Value) error {
 }
 
 func (m *Memory) Delete(location *kv.Location) error {
-	delete(m.values, location)
+	if _, ok := m.values[location]; ok {
+		delete(m.values, location)
+	}
 
 	return nil
+}
+
+func (m *Memory) All() map[*kv.Location]*kv.Value {
+	return m.values
 }
