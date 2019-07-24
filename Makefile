@@ -2,6 +2,9 @@ GO        = go
 PROTOC    = protoc
 PROTO_DIR = proto
 
+build:
+	$(GO) build -v ./...
+
 gen-protobuf:
 	$(PROTOC) --proto_path=$(PROTO_DIR) --go_out=plugins=grpc:$(PROTO_DIR) $(PROTO_DIR)/*.proto
 
