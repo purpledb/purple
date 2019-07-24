@@ -24,6 +24,6 @@ message PutRequest {
 
 service KV {
     rpc Get (Location) returns (GetResponse);
-    rpc Put (PutRequest) returns (Result);
-    rpc Delete (Location) returns (Result);
+    rpc Put (PutRequest) returns (Empty);
+    rpc Delete (Location) returns (Empty);
 }

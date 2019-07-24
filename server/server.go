@@ -5,11 +5,14 @@ import (
 	"fmt"
 	"google.golang.org/grpc"
 	"net"
+	"strato/kv"
+	"strato/memory"
 	"strato/proto"
 )
 
 type Server struct {
-	address string
+	address   string
+	kvBackend kv.KV
 }
 
 var _ proto.KVServer = (*Server)(nil)
@@ -21,21 +24,61 @@ func New(cfg *Config) (*Server, error) {
 
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
+	kvBackend := memory.New()
+
 	return &Server{
-		address: addr,
+		address:   addr,
+		kvBackend: kvBackend,
 	}, nil
 }
 
 func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
-	return nil, nil
+	loc := &kv.Location{
+		Key: location.Key,
+	}
+
+	val, err := s.kvBackend.Get(loc)
+	if err != nil {
+		return nil, nil
+	}
+
+	res := &proto.GetResponse{
+		Value: &proto.Value{
+			Content: val.Content,
+		},
+	}
+
+	return res, nil
 }
 
-func (s *Server) Put(_ context.Context, req *proto.PutRequest) (*proto.Result, error) {
-	return nil, nil
+func (s *Server) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
+	loc, val := req.Location, req.Value
+
+	location := &kv.Location{
+		Key: loc.Key,
+	}
+
+	value := &kv.Value{
+		Content: val.Content,
+	}
+
+	if err := s.kvBackend.Put(location, value); err != nil {
+		return nil, err
+	}
+
+	return &proto.Empty{}, nil
 }
 
-func (s *Server) Delete(_ context.Context, location *proto.Location) (*proto.Result, error) {
-	return nil, nil
+func (s *Server) Delete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
+	loc := &kv.Location{
+		Key: location.Key,
+	}
+
+	if err := s.kvBackend.Delete(loc); err != nil {
+		return nil, err
+	}
+
+	return &proto.Empty{}, nil
 }
 
 func (s *Server) Start() error {
