@@ -7,5 +7,5 @@ type Location struct {
 }
 
 func (l *Location) String() string {
-	return fmt.Sprintf("Location<key: %s>", l.Key)
+	return fmt.Sprintf("location<key: %s>", l.Key)
 }
