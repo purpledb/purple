@@ -3,14 +3,14 @@ package kv
 import "fmt"
 
 type NotFoundError struct {
-	Location Location
+	Location *Location
 }
 
 func (e NotFoundError) Error() string {
 	return fmt.Sprintf("no value found for %s", e.Location.String())
 }
 
-func NotFound(location Location) NotFoundError {
+func NotFound(location *Location) NotFoundError {
 	return NotFoundError{
 		Location: location,
 	}
