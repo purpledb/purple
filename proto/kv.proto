@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package proto;
+
+import "common.proto";
+
+message Location {
+    string key = 1;
+}
+
+message Value {
+    bytes content = 1;
+}
+
+message GetResponse {
+    bool found = 1;
+    Value value = 2;
+}
+
+message PutRequest {
+    Location location = 1;
+    Value value = 2;
+}
+
+service KV {
+    rpc Get (Location) returns (GetResponse);
+    rpc Put (PutRequest) returns (Result);
+    rpc Delete (Location) returns (Result);
+}
