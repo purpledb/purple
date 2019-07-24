@@ -8,6 +8,14 @@ type Memory struct {
 
 var _ kv.KV = (*Memory)(nil)
 
+func New() *Memory {
+	values := make(map[*kv.Location]*kv.Value)
+
+	return &Memory{
+		values: values,
+	}
+}
+
 func (m *Memory) Get(location *kv.Location) (*kv.Value, error) {
 	val, ok := m.values[location]
 
