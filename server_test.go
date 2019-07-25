@@ -1,9 +1,8 @@
-package server
+package strato
 
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
-	"strato/kv"
 	"strato/proto"
 	"testing"
 )
@@ -39,7 +38,7 @@ var (
 func TestServer(t *testing.T) {
 	is := assert.New(t)
 
-	srv, err := New(goodCfg)
+	srv, err := NewServer(goodCfg)
 	is.NoError(err)
 	is.NotNil(srv)
 
@@ -58,7 +57,7 @@ func TestServer(t *testing.T) {
 		is.NotNil(empty)
 
 		fetched, err = srv.Get(ctx, badLoc)
-		is.True(kv.IsNotFound(err))
+		is.True(IsNotFound(err))
 		is.Nil(fetched)
 	})
 

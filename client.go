@@ -1,9 +1,8 @@
-package client
+package strato
 
 import (
 	"context"
 	"google.golang.org/grpc"
-	"strato/kv"
 	"strato/proto"
 )
 
@@ -12,9 +11,9 @@ type Client struct {
 	ctx      context.Context
 }
 
-var _ kv.KV = (*Client)(nil)
+var _ KV = (*Client)(nil)
 
-func New(cfg *Config) (*Client, error) {
+func NewClient(cfg *ClientConfig) (*Client, error) {
 	if err := cfg.validate(); err != nil {
 		return nil, err
 	}
@@ -34,20 +33,20 @@ func New(cfg *Config) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) Get(location *kv.Location) (*kv.Value, error) {
+func (c *Client) Get(location *Location) (*Value, error) {
 	res, err := c.kvClient.Get(c.ctx, location.Proto())
 	if err != nil {
 		return nil, err
 	}
 
-	val := &kv.Value{
+	val := &Value{
 		Content: res.Value.Content,
 	}
 
 	return val, nil
 }
 
-func (c *Client) Put(location *kv.Location, value *kv.Value) error {
+func (c *Client) Put(location *Location, value *Value) error {
 	req := &proto.PutRequest{
 		Location: location.Proto(),
 		Value: value.Proto(),
@@ -60,7 +59,7 @@ func (c *Client) Put(location *kv.Location, value *kv.Value) error {
 	return nil
 }
 
-func (c *Client) Delete(location *kv.Location) error {
+func (c *Client) Delete(location *Location) error {
 	if _, err := c.kvClient.Delete(c.ctx, location.Proto()); err != nil {
 		return err
 	}

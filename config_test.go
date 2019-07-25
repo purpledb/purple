@@ -1,4 +1,4 @@
-package server
+package strato
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -6,13 +6,13 @@ import (
 )
 
 var (
-	goodCfg = &Config{
+	goodCfg = &ServerConfig{
 		Port: 2222,
 	}
 
-	badCfgNoPort = &Config{}
+	badCfgNoPort = &ServerConfig{}
 
-	badCfgRange = &Config{
+	badCfgRange = &ServerConfig{
 		Port: 10,
 	}
 )
@@ -30,12 +30,12 @@ func TestConfigInstantiation(t *testing.T) {
 
 	is.NoError(goodCfg.validate())
 
-	srv, err := New(badCfgNoPort)
+	srv, err := NewServer(badCfgNoPort)
 	is.True(IsConfigError(err))
 	is.Error(err, ErrNoPort)
 	is.Nil(srv)
 
-	srv, err = New(goodCfg)
+	srv, err = NewServer(goodCfg)
 	is.NoError(err)
 	is.NotNil(srv)
 }

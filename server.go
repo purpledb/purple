@@ -1,24 +1,22 @@
-package server
+package strato
 
 import (
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
 	"net"
-	"strato/kv"
-	"strato/memory"
 	"strato/proto"
 )
 
 type Server struct {
 	address string
 	srv     *grpc.Server
-	mem     *memory.Memory
+	mem     *Memory
 }
 
 var _ proto.KVServer = (*Server)(nil)
 
-func New(cfg *Config) (*Server, error) {
+func NewServer(cfg *ServerConfig) (*Server, error) {
 	if err := cfg.validate(); err != nil {
 		return nil, err
 	}
@@ -27,7 +25,7 @@ func New(cfg *Config) (*Server, error) {
 
 	srv := grpc.NewServer()
 
-	mem := memory.New()
+	mem := New()
 
 	return &Server{
 		address: addr,
@@ -37,7 +35,7 @@ func New(cfg *Config) (*Server, error) {
 }
 
 func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
-	loc := &kv.Location{
+	loc := &Location{
 		Key: location.Key,
 	}
 
@@ -56,11 +54,11 @@ func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetRes
 }
 
 func (s *Server) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
-	loc := &kv.Location{
+	loc := &Location{
 		Key: req.Location.Key,
 	}
 
-	val := &kv.Value{
+	val := &Value{
 		Content: req.Value.Content,
 	}
 
@@ -72,7 +70,7 @@ func (s *Server) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, er
 }
 
 func (s *Server) Delete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
-	loc := &kv.Location{
+	loc := &Location{
 		Key: location.Key,
 	}
 

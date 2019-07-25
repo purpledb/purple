@@ -1,8 +1,7 @@
-package memory
+package strato
 
 import (
 	"github.com/stretchr/testify/assert"
-	"strato/kv"
 	"testing"
 )
 
@@ -13,18 +12,18 @@ func TestMemoryImpl(t *testing.T) {
 	is.NotNil(mem)
 	is.Empty(mem.values)
 
-	loc := &kv.Location{
+	loc := &Location{
 		Key: "some-key",
 	}
 
-	val := &kv.Value{
+	val := &Value{
 		Content: []byte("here is a value"),
 	}
 
 	is.NoError(mem.Put(loc, val))
 
-	fetched, err := mem.Get(&kv.Location{Key: "does-not-exist"})
-	is.True(kv.IsNotFound(err))
+	fetched, err := mem.Get(&Location{Key: "does-not-exist"})
+	is.True(IsNotFound(err))
 	is.Nil(fetched)
 
 	fetched, err = mem.Get(loc)
@@ -34,6 +33,6 @@ func TestMemoryImpl(t *testing.T) {
 
 	is.NoError(mem.Delete(loc))
 	fetched, err = mem.Get(loc)
-	is.True(kv.IsNotFound(err))
+	is.True(IsNotFound(err))
 	is.Nil(fetched)
 }
