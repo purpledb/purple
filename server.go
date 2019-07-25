@@ -105,7 +105,11 @@ func (s *Server) Query(_ context.Context, query *proto.SearchQuery) (*proto.Sear
 func (s *Server) Start() error {
 	proto.RegisterKVServer(s.srv, s)
 
-	s.log.Debugf("registered KV gRPC service")
+	s.log.Debug("registered gRPC KV service")
+
+	proto.RegisterSearchServer(s.srv, s)
+
+	s.log.Debug("registered gRPC search service")
 
 	lis, _ := net.Listen("tcp", s.address)
 

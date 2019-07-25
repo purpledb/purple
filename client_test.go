@@ -68,8 +68,6 @@ func TestClient(t *testing.T) {
 		}
 
 		fetched, err = cl.Get(badLoc)
-		is.Error(err)
-
 		stat := status.Convert(err)
 		is.Equal(stat.Code(), codes.NotFound)
 		is.Equal(stat.Message(), NotFound(badLoc).Error())
@@ -82,5 +80,29 @@ func TestClient(t *testing.T) {
 			is.Equal(err, ErrNoValue)
 			err = cl.Put(nil, &Value{Content: []byte("some bytes")})
 		})
+	})
+
+	t.Run("Search", func(t *testing.T) {
+		doc := &Document{
+			ID: "doc-100",
+			Content: "This is the 100th DOC",
+		}
+
+		goodQ, badQ := "doc", "does not exist"
+
+		res, err := cl.Query(goodQ)
+
+		is.NoError(err)
+		is.Empty(res)
+
+		is.NoError(cl.Index(doc))
+
+		res, err = cl.Query(badQ)
+		is.NoError(err)
+		is.Empty(res)
+
+		res, err = cl.Query(goodQ)
+		is.NoError(err)
+		is.Len(res, 1)
 	})
 }

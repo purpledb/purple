@@ -67,6 +67,32 @@ func TestServer(t *testing.T) {
 		is.Nil(fetched)
 	})
 
+	t.Run("Search", func(t *testing.T) {
+		doc := &proto.Document{
+			Id: "some-id",
+			Content: "some content to be searched",
+		}
+
+		req := &proto.IndexRequest{
+			Document: doc,
+		}
+
+		empty, err := srv.Index(ctx, req)
+		is.NoError(err)
+		is.NotNil(empty)
+
+		q := "some"
+
+		query := &proto.SearchQuery{
+			Query: q,
+		}
+
+		res, err := srv.Query(ctx, query)
+		is.NoError(err)
+		is.Len(res.Documents, 1)
+		is.Equal(res.Documents[0].Id, doc.Id)
+	})
+
 	t.Run("Shutdown", func(t *testing.T) {
 		srv.ShutDown()
 	})
