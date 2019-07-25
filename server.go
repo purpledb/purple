@@ -3,6 +3,7 @@ package strato
 import (
 	"context"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"net"
 	"strato/proto"
 
@@ -13,6 +14,7 @@ type Server struct {
 	address string
 	srv     *grpc.Server
 	mem     *Memory
+	log     *logrus.Entry
 }
 
 var _ proto.KVServer = (*Server)(nil)
@@ -28,10 +30,13 @@ func NewServer(cfg *ServerConfig) (*Server, error) {
 
 	mem := New()
 
+	log := logrus.New().WithField("process", "server")
+
 	return &Server{
 		address: addr,
 		srv:     srv,
 		mem:     mem,
+		log:     log,
 	}, nil
 }
 
@@ -68,7 +73,7 @@ func (s *Server) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, er
 	return &proto.Empty{}, nil
 }
 
-func (s *Server) Delete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
+func (s *Server) Delete(ctx context.Context, location *proto.Location) (*proto.Empty, error) {
 	loc := &Location{
 		Key: location.Key,
 	}
@@ -79,13 +84,19 @@ func (s *Server) Delete(_ context.Context, location *proto.Location) (*proto.Emp
 }
 
 func (s *Server) Start() error {
+	proto.RegisterKVServer(s.srv, s)
+
+	s.log.Debugf("registered KV gRPC service")
+
 	lis, _ := net.Listen("tcp", s.address)
 
-	proto.RegisterKVServer(s.srv, s)
+	s.log.Debugf("starting TCP listener on %s", s.address)
 
 	return s.srv.Serve(lis)
 }
 
 func (s *Server) ShutDown() {
+	s.log.Debug("shutting down")
+
 	s.srv.GracefulStop()
 }
