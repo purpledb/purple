@@ -1,6 +1,10 @@
 package strato
 
-import "fmt"
+import (
+	"fmt"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
 
 var (
 	ErrNoLocation     = KVError{"no location specified"}
@@ -44,6 +48,10 @@ func IsConfigError(err error) bool {
 
 func (e NotFoundError) Error() string {
 	return fmt.Sprintf(`no value found for %s`, e.location.String())
+}
+
+func (e NotFoundError) AsProtoStatus() error {
+	return status.Error(codes.NotFound, e.Error())
 }
 
 func NotFound(location *Location) NotFoundError {

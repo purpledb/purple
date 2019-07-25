@@ -41,7 +41,11 @@ func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetRes
 
 	val, err := s.mem.Get(loc)
 	if err != nil {
-		return nil, err
+		if IsNotFound(err) {
+			return nil, NotFound(loc).AsProtoStatus()
+		} else {
+			return nil, err
+		}
 	}
 
 	res := &proto.GetResponse{

@@ -18,7 +18,7 @@ func NewClient(cfg *ClientConfig) (*Client, error) {
 		return nil, err
 	}
 
-	conn, err := grpc.Dial(cfg.Address)
+	conn, err := grpc.Dial(cfg.Address, grpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}

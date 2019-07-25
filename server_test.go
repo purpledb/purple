@@ -3,6 +3,8 @@ package strato
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"strato/proto"
 	"testing"
 )
@@ -57,7 +59,10 @@ func TestServer(t *testing.T) {
 		is.NotNil(empty)
 
 		fetched, err = srv.Get(ctx, badLoc)
-		is.True(IsNotFound(err))
+		stat, ok := status.FromError(err)
+		is.True(ok)
+		is.Equal(stat.Code(), codes.NotFound)
+		is.Equal(stat.Message(), NotFound(&Location{Key: badKey}).Error())
 		is.Nil(fetched)
 	})
 
