@@ -69,8 +69,8 @@ func TestClient(t *testing.T) {
 
 		fetched, err = cl.Get(badLoc)
 		is.Error(err)
-		stat, ok := status.FromError(err)
-		is.True(ok)
+
+		stat := status.Convert(err)
 		is.Equal(stat.Code(), codes.NotFound)
 		is.Equal(stat.Message(), NotFound(badLoc).Error())
 		is.Nil(fetched)

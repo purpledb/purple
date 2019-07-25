@@ -60,8 +60,8 @@ func TestServer(t *testing.T) {
 		is.NotNil(empty)
 
 		fetched, err = srv.Get(ctx, badLoc)
-		stat, ok := status.FromError(err)
-		is.True(ok)
+
+		stat := status.Convert(err)
 		is.Equal(stat.Code(), codes.NotFound)
 		is.Equal(stat.Message(), NotFound(&Location{Key: badKey}).Error())
 		is.Nil(fetched)
