@@ -1,6 +1,9 @@
 package kv
 
-import "fmt"
+import (
+	"fmt"
+	"strato/proto"
+)
 
 type Value struct {
 	Content []byte `json:"content"`
@@ -8,4 +11,10 @@ type Value struct {
 
 func (v *Value) String() string {
 	return fmt.Sprintf(`Value<content: "%s">`, v.Content)
+}
+
+func (v *Value) Proto() *proto.Value {
+	return &proto.Value{
+		Content: v.Content,
+	}
 }
