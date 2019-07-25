@@ -1,6 +1,9 @@
 package strato
 
-import "strato/proto"
+import (
+	"strato/proto"
+	"strings"
+)
 
 type (
 	Search interface {
@@ -13,6 +16,13 @@ type (
 		Content string
 	}
 )
+
+func (d *Document) prepare() *Document {
+	return &Document{
+		ID: d.ID,
+		Content: strings.ToLower(d.Content),
+	}
+}
 
 func (d *Document) toProto() *proto.Document {
 	return &proto.Document{

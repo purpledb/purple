@@ -44,9 +44,9 @@ func (m *Memory) Delete(location *Location) {
 }
 
 func (m *Memory) Index(doc *Document) {
-	cnt := strings.ToLower(doc.Content)
+	doc = doc.prepare()
 
-	m.docs = append(m.docs, &Document{ID: doc.ID, Content: cnt})
+	m.docs = append(m.docs, doc)
 }
 
 func (m *Memory) Query(q string) []*Document {

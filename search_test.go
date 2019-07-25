@@ -15,6 +15,8 @@ func TestSearch(t *testing.T) {
 			Content: "Here is a document",
 		}
 
+		is.Equal(doc.prepare().Content, "here is a document")
+
 		docs := []*Document{doc}
 
 		docP := &proto.Document{
