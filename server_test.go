@@ -2,11 +2,12 @@ package strato
 
 import (
 	"context"
+	"strato/proto"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"strato/proto"
-	"testing"
 )
 
 const (
@@ -64,5 +65,9 @@ func TestServer(t *testing.T) {
 		is.Equal(stat.Code(), codes.NotFound)
 		is.Equal(stat.Message(), NotFound(&Location{Key: badKey}).Error())
 		is.Nil(fetched)
+	})
+
+	t.Run("Shutdown", func(t *testing.T) {
+		srv.ShutDown()
 	})
 }

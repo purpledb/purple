@@ -2,16 +2,16 @@ package strato
 
 import (
 	"context"
-	"google.golang.org/grpc"
 	"strato/proto"
+
+	"google.golang.org/grpc"
 )
 
 type Client struct {
 	kvClient proto.KVClient
+	conn     *grpc.ClientConn
 	ctx      context.Context
 }
-
-var _ KV = (*Client)(nil)
 
 func NewClient(cfg *ClientConfig) (*Client, error) {
 	if err := cfg.validate(); err != nil {
@@ -29,6 +29,7 @@ func NewClient(cfg *ClientConfig) (*Client, error) {
 
 	return &Client{
 		kvClient: kvClient,
+		conn:     conn,
 		ctx:      ctx,
 	}, nil
 }

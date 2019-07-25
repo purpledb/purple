@@ -3,9 +3,10 @@ package strato
 import (
 	"context"
 	"fmt"
-	"google.golang.org/grpc"
 	"net"
 	"strato/proto"
+
+	"google.golang.org/grpc"
 )
 
 type Server struct {
@@ -41,11 +42,7 @@ func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetRes
 
 	val, err := s.mem.Get(loc)
 	if err != nil {
-		if IsNotFound(err) {
-			return nil, NotFound(loc).AsProtoStatus()
-		} else {
-			return nil, err
-		}
+		return nil, NotFound(loc).AsProtoStatus()
 	}
 
 	res := &proto.GetResponse{
@@ -66,9 +63,7 @@ func (s *Server) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, er
 		Content: req.Value.Content,
 	}
 
-	if err := s.mem.Put(loc, val); err != nil {
-		return nil, err
-	}
+	s.mem.Put(loc, val)
 
 	return &proto.Empty{}, nil
 }
@@ -78,9 +73,7 @@ func (s *Server) Delete(_ context.Context, location *proto.Location) (*proto.Emp
 		Key: location.Key,
 	}
 
-	if err := s.mem.Delete(loc); err != nil {
-		return nil, err
-	}
+	s.mem.Delete(loc)
 
 	return &proto.Empty{}, nil
 }

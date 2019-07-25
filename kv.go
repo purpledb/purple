@@ -8,8 +8,8 @@ import (
 type (
 	KV interface {
 		Get(location *Location) (*Value, error)
-		Put(location *Location, value *Value) error
-		Delete(location *Location) error
+		Put(location *Location, value *Value)
+		Delete(location *Location)
 	}
 
 	Location struct {

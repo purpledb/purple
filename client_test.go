@@ -1,10 +1,11 @@
 package strato
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"testing"
 )
 
 func TestClient(t *testing.T) {
@@ -73,5 +74,13 @@ func TestClient(t *testing.T) {
 		is.Equal(stat.Code(), codes.NotFound)
 		is.Equal(stat.Message(), NotFound(badLoc).Error())
 		is.Nil(fetched)
+
+		t.Run("Nils", func(t *testing.T) {
+			err = cl.Put(nil, nil)
+			is.Equal(err, ErrNoLocation)
+			err = cl.Put(&Location{Key: "test"}, nil)
+			is.Equal(err, ErrNoValue)
+			err = cl.Put(nil, &Value{Content: []byte("some bytes")})
+		})
 	})
 }
