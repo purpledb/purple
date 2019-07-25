@@ -8,9 +8,10 @@ import (
 )
 
 type Client struct {
-	kvClient proto.KVClient
-	conn     *grpc.ClientConn
-	ctx      context.Context
+	kvClient     proto.KVClient
+	searchClient proto.SearchClient
+	conn         *grpc.ClientConn
+	ctx          context.Context
 }
 
 func NewClient(cfg *ClientConfig) (*Client, error) {
@@ -25,12 +26,15 @@ func NewClient(cfg *ClientConfig) (*Client, error) {
 
 	kvClient := proto.NewKVClient(conn)
 
+	searchClient := proto.NewSearchClient(conn)
+
 	ctx := context.Background()
 
 	return &Client{
-		kvClient: kvClient,
-		conn:     conn,
-		ctx:      ctx,
+		kvClient:     kvClient,
+		searchClient: searchClient,
+		conn:         conn,
+		ctx:          ctx,
 	}, nil
 }
 
@@ -78,4 +82,29 @@ func (c *Client) Delete(location *Location) error {
 	}
 
 	return nil
+}
+
+func (c *Client) Index(doc *Document) error {
+	req := &proto.IndexRequest{
+		Document: doc.toProto(),
+	}
+
+	if _, err := c.searchClient.Index(c.ctx, req); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Client) Query(q string) ([]*Document, error) {
+	query := &proto.SearchQuery{
+		Query: q,
+	}
+
+	res, err := c.searchClient.Query(c.ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return docsFromProto(res.Documents), nil
 }
