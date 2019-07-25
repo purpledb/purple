@@ -12,6 +12,7 @@ import (
 
 type Server struct {
 	address string
+	srv     *grpc.Server
 	mem     *memory.Memory
 }
 
@@ -24,26 +25,24 @@ func New(cfg *Config) (*Server, error) {
 
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
+	srv := grpc.NewServer()
+
 	mem := memory.New()
 
 	return &Server{
-		address:   addr,
-		mem: mem,
+		address: addr,
+		srv:     srv,
+		mem:     mem,
 	}, nil
 }
 
 func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
-	fmt.Println(location.Key)
-
 	loc := &kv.Location{
 		Key: location.Key,
 	}
 
-	fmt.Println("ALL:", s.mem.All())
-
 	val, err := s.mem.Get(loc)
 	if err != nil {
-		fmt.Println("ERR:", err)
 		return nil, err
 	}
 
@@ -90,9 +89,11 @@ func (s *Server) Start() error {
 		return err
 	}
 
-	srv := grpc.NewServer()
+	proto.RegisterKVServer(s.srv, s)
 
-	proto.RegisterKVServer(srv, s)
+	return s.srv.Serve(lis)
+}
 
-	return srv.Serve(lis)
+func (s *Server) ShutDown() {
+	s.srv.GracefulStop()
 }

@@ -5,13 +5,13 @@ import (
 )
 
 type Memory struct {
-	values map[*kv.Location]*kv.Value
+	values map[kv.Location]*kv.Value
 }
 
 var _ kv.KV = (*Memory)(nil)
 
 func New() *Memory {
-	values := make(map[*kv.Location]*kv.Value)
+	values := make(map[kv.Location]*kv.Value)
 
 	return &Memory{
 		values: values,
@@ -19,7 +19,7 @@ func New() *Memory {
 }
 
 func (m *Memory) Get(location *kv.Location) (*kv.Value, error) {
-	val, ok := m.values[location]
+	val, ok := m.values[*location]
 
 	if !ok {
 		return nil, kv.NotFound(location)
@@ -29,19 +29,19 @@ func (m *Memory) Get(location *kv.Location) (*kv.Value, error) {
 }
 
 func (m *Memory) Put(location *kv.Location, value *kv.Value) error {
-	m.values[location] = value
+	m.values[*location] = value
 
 	return nil
 }
 
 func (m *Memory) Delete(location *kv.Location) error {
-	if _, ok := m.values[location]; ok {
-		delete(m.values, location)
+	if _, ok := m.values[*location]; ok {
+		delete(m.values, *location)
 	}
 
 	return nil
 }
 
-func (m *Memory) All() map[*kv.Location]*kv.Value {
+func (m *Memory) All() map[kv.Location]*kv.Value {
 	return m.values
 }
