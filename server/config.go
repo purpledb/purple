@@ -6,7 +6,11 @@ type Config struct {
 
 func (c *Config) validate() error {
 	if c.Port == 0 {
-		return ErrNoPort()
+		return ErrNoPort
+	}
+
+	if c.Port < 1024 || c.Port > 49151 {
+		return ErrPortOutOfRange
 	}
 
 	return nil

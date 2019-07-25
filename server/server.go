@@ -84,10 +84,7 @@ func (s *Server) Delete(_ context.Context, location *proto.Location) (*proto.Emp
 }
 
 func (s *Server) Start() error {
-	lis, err := net.Listen("tcp", s.address)
-	if err != nil {
-		return err
-	}
+	lis, _ := net.Listen("tcp", s.address)
 
 	proto.RegisterKVServer(s.srv, s)
 

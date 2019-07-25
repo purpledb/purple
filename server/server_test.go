@@ -43,19 +43,10 @@ func TestServer(t *testing.T) {
 	is.NoError(err)
 	is.NotNil(srv)
 
-	t.Run("Start/Shutdown", func(t *testing.T) {
-		go func() {
-			is.NoError(srv.Start())
-		}()
-
-		srv.ShutDown()
-	})
-
 	t.Run("KV", func(t *testing.T) {
 		empty, err := srv.Put(ctx, goodReq)
 		is.NoError(err)
 		is.NotNil(empty)
-		is.NotEmpty(srv.mem.All())
 
 		fetched, err := srv.Get(ctx, goodLoc)
 		is.NoError(err)
@@ -69,5 +60,12 @@ func TestServer(t *testing.T) {
 		fetched, err = srv.Get(ctx, badLoc)
 		is.True(kv.IsNotFound(err))
 		is.Nil(fetched)
+	})
+
+	t.Run("Start/Shutdown", func(t *testing.T) {
+		go func() {
+			is.NoError(srv.Start())
+			srv.ShutDown()
+		}()
 	})
 }

@@ -2,16 +2,17 @@ package server
 
 import "fmt"
 
+var (
+	ErrNoPort         = ConfigError{"no server port supplied"}
+	ErrPortOutOfRange = ConfigError{"port must be between 1024 and 49151"}
+)
+
 type ConfigError struct {
 	string
 }
 
 func (e ConfigError) Error() string {
 	return fmt.Sprintf("server config error: %s", e.string)
-}
-
-func ErrNoPort() ConfigError {
-	return ConfigError{"no server port supplied"}
 }
 
 func IsConfigError(err error) bool {

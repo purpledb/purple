@@ -1,6 +1,7 @@
 GO        = go
 PROTOC    = protoc
 PROTO_DIR = proto
+COVER_OUT = coverage.out
 
 build:
 	$(GO) build -v ./...
@@ -10,3 +11,7 @@ gen-protobuf:
 
 test: gen-protobuf
 	$(GO) test -v ./...
+
+coverage:
+	$(GO) test -v -coverprofile $(COVER_OUT) ./...
+	$(GO) tool cover -html=$(COVER_OUT)

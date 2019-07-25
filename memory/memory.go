@@ -41,7 +41,3 @@ func (m *Memory) Delete(location *kv.Location) error {
 
 	return nil
 }
-
-func (m *Memory) All() map[kv.Location]*kv.Value {
-	return m.values
-}
