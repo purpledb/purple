@@ -6,36 +6,57 @@ import (
 )
 
 var (
-	goodCfg = &ServerConfig{
-		Port: 2222,
+	goodClientCfg = &ClientConfig{
+		Address: "localhost:2222",
 	}
 
-	badCfgNoPort = &ServerConfig{}
-
-	badCfgRange = &ServerConfig{
-		Port: 10,
+	goodServerCfg = &ServerConfig{
+		Port: 2222,
 	}
 )
 
 func TestConfigInstantiation(t *testing.T) {
 	is := assert.New(t)
 
-	err := badCfgNoPort.validate()
-	is.True(IsConfigError(err))
-	is.Equal(err, ErrNoPort)
+	t.Run("Client", func(t *testing.T) {
+		emptyCfg := &ClientConfig{}
 
-	err = badCfgRange.validate()
-	is.True(IsConfigError(err))
-	is.Equal(err, ErrPortOutOfRange)
+		err := emptyCfg.validate()
+		is.True(IsConfigError(err))
+		is.Equal(err, ErrNoAddress)
 
-	is.NoError(goodCfg.validate())
+		err = goodClientCfg.validate()
+		is.NoError(err)
+	})
 
-	srv, err := NewServer(badCfgNoPort)
-	is.True(IsConfigError(err))
-	is.Error(err, ErrNoPort)
-	is.Nil(srv)
+	t.Run("Server", func(t *testing.T) {
+		emptyCfg := &ServerConfig{}
 
-	srv, err = NewServer(goodCfg)
-	is.NoError(err)
-	is.NotNil(srv)
+		lowPortCfg := &ServerConfig{
+			Port: 10,
+		}
+
+		err := emptyCfg.validate()
+		is.True(IsConfigError(err))
+		is.Equal(err, ErrNoPort)
+
+		err = lowPortCfg.validate()
+		is.True(IsConfigError(err))
+		is.Equal(err, ErrPortOutOfRange)
+
+		is.NoError(goodServerCfg.validate())
+
+		srv, err := NewServer(emptyCfg)
+		is.True(IsConfigError(err))
+		is.Equal(err, ErrNoPort)
+		is.Nil(srv)
+
+		srv, err = NewServer(lowPortCfg)
+		is.True(IsConfigError(err))
+		is.Equal(err, ErrPortOutOfRange)
+
+		srv, err = NewServer(goodServerCfg)
+		is.NoError(err)
+		is.NotNil(srv)
+	})
 }

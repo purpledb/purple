@@ -47,9 +47,17 @@ func (c *Client) Get(location *Location) (*Value, error) {
 }
 
 func (c *Client) Put(location *Location, value *Value) error {
+	if location == nil {
+		return ErrNoLocation
+	}
+
+	if value == nil {
+		return ErrNoValue
+	}
+
 	req := &proto.PutRequest{
 		Location: location.Proto(),
-		Value: value.Proto(),
+		Value:    value.Proto(),
 	}
 
 	if _, err := c.kvClient.Put(c.ctx, req); err != nil {

@@ -38,7 +38,7 @@ var (
 func TestServer(t *testing.T) {
 	is := assert.New(t)
 
-	srv, err := NewServer(goodCfg)
+	srv, err := NewServer(goodServerCfg)
 	is.NoError(err)
 	is.NotNil(srv)
 
