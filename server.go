@@ -17,7 +17,10 @@ type Server struct {
 	log     *logrus.Entry
 }
 
-var _ proto.KVServer = (*Server)(nil)
+var (
+	_ proto.KVServer     = (*Server)(nil)
+	_ proto.SearchServer = (*Server)(nil)
+)
 
 func NewServer(cfg *ServerConfig) (*Server, error) {
 	if err := cfg.validate(); err != nil {
@@ -73,7 +76,7 @@ func (s *Server) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, er
 	return &proto.Empty{}, nil
 }
 
-func (s *Server) Delete(ctx context.Context, location *proto.Location) (*proto.Empty, error) {
+func (s *Server) Delete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
 	loc := &Location{
 		Key: location.Key,
 	}
@@ -81,6 +84,22 @@ func (s *Server) Delete(ctx context.Context, location *proto.Location) (*proto.E
 	s.mem.Delete(loc)
 
 	return &proto.Empty{}, nil
+}
+
+func (s *Server) Index(_ context.Context, req *proto.IndexRequest) (*proto.Empty, error) {
+	doc := docFromProto(req.Document)
+
+	s.mem.Index(doc)
+
+	return &proto.Empty{}, nil
+}
+
+func (s *Server) Query(_ context.Context, query *proto.SearchQuery) (*proto.SearchResults, error) {
+	q := query.Query
+
+	docs := s.mem.Query(q)
+
+	return docsToResults(docs), nil
 }
 
 func (s *Server) Start() error {
