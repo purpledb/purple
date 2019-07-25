@@ -1,6 +1,6 @@
 package strato
 
-import "golang.org/x/tools/go/ssa/interp/testdata/src/strings"
+import "strings"
 
 type Memory struct {
 	values map[Location]*Value
