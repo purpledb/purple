@@ -18,7 +18,7 @@ func NewClient(cfg *ClientConfig) (*Client, error) {
 		return nil, err
 	}
 
-	conn, err := grpc.Dial(cfg.Address, grpc.WithInsecure())
+	conn, err := connect(cfg.Address)
 	if err != nil {
 		return nil, err
 	}
@@ -31,6 +31,10 @@ func NewClient(cfg *ClientConfig) (*Client, error) {
 		kvClient: kvClient,
 		ctx:      ctx,
 	}, nil
+}
+
+func connect(addr string) (*grpc.ClientConn, error) {
+	return grpc.Dial(addr, grpc.WithInsecure())
 }
 
 func (c *Client) Get(location *Location) (*Value, error) {

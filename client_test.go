@@ -24,6 +24,26 @@ func TestClient(t *testing.T) {
 	t.Run("Instantiation", func(t *testing.T) {
 		is.NoError(err)
 		is.NotNil(cl)
+
+		noAddressCfg := &ClientConfig{
+			Address: "",
+		}
+
+		noClient, err := NewClient(noAddressCfg)
+		is.Error(err, ErrNoAddress)
+		is.Nil(noClient)
+
+		badAddressCfg := &ClientConfig{
+			Address: "1:2:3",
+		}
+		badCl, err := NewClient(badAddressCfg)
+		is.NoError(err)
+		is.NotNil(badCl)
+
+		err = badCl.Delete(&Location{Key: "does-not-exist"})
+		stat, ok := status.FromError(err)
+		is.True(ok)
+		is.Equal(stat.Code(), codes.Unavailable)
 	})
 
 	t.Run("KV", func(t *testing.T) {

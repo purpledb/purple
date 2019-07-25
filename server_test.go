@@ -65,11 +65,4 @@ func TestServer(t *testing.T) {
 		is.Equal(stat.Message(), NotFound(&Location{Key: badKey}).Error())
 		is.Nil(fetched)
 	})
-
-	t.Run("Start/Shutdown", func(t *testing.T) {
-		go func() {
-			is.NoError(srv.Start())
-			srv.ShutDown()
-		}()
-	})
 }
