@@ -14,6 +14,8 @@ const (
 )
 
 var (
+	ctx = context.Background()
+
 	goodLoc = &proto.Location{
 		Key: goodKey,
 	}
@@ -36,17 +38,12 @@ var (
 
 func TestServer(t *testing.T) {
 	is := assert.New(t)
-	ctx := context.Background()
 
-	cfg := &Config{
-		Port: 8080,
-	}
-
-	srv, err := New(cfg)
+	srv, err := New(goodCfg)
 	is.NoError(err)
 	is.NotNil(srv)
 
-	t.Run("Start", func(t *testing.T) {
+	t.Run("Start/Shutdown", func(t *testing.T) {
 		go func() {
 			is.NoError(srv.Start())
 		}()

@@ -5,15 +5,19 @@ import (
 	"testing"
 )
 
+var (
+	goodCfg = &Config{
+		Port: 2222,
+	}
+
+	badCfg = &Config{}
+)
+
 func TestConfigInstantiation(t *testing.T) {
 	is := assert.New(t)
 
-	cfg := &Config{}
-	err := cfg.validate()
+	err := badCfg.validate()
 	is.True(IsConfigError(err))
 
-	cfg = &Config{
-		Port: 2222,
-	}
-	is.NoError(cfg.validate())
+	is.NoError(goodCfg.validate())
 }
