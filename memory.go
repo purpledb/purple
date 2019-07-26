@@ -52,19 +52,31 @@ func (m *Memory) CacheGet(key string) (string, error) {
 }
 
 func (m *Memory) CacheSet(key, value string, ttl int32) error {
-	if ttl == 0 {
-		ttl = defaultTtl
+	if key == "" {
+		return ErrNoCacheKey
+	}
+
+	if value == "" {
+		return ErrNoCacheValue
 	}
 
 	item := &CacheItem{
 		Value:      value,
 		Timestamp:  time.Now().Unix(),
-		TTLSeconds: ttl,
+		TTLSeconds: getTtl(ttl),
 	}
 
 	m.cache[key] = item
 
 	return nil
+}
+
+func getTtl(ttl int32) int32 {
+	if ttl == 0 {
+		return defaultTtl
+	} else {
+		return ttl
+	}
 }
 
 func (m *Memory) KVGet(location *Location) (*Value, error) {

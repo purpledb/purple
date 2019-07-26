@@ -9,6 +9,8 @@ import (
 var (
 	ErrExpired        = CacheError{"item has expired"}
 	ErrNoCacheItem    = CacheError{"no item found"}
+	ErrNoCacheKey     = CacheError{"no cache key specified"}
+	ErrNoCacheValue   = CacheError{"no cache value specified"}
 	ErrNoLocation     = KVError{"no location specified"}
 	ErrNoValue        = KVError{"no value specified"}
 	ErrNoAddress      = ConfigError{"no server address provided"}
@@ -36,6 +38,14 @@ type (
 
 func (e CacheError) Error() string {
 	return fmt.Sprintf("cache error: %s", e.string)
+}
+
+func IsNoCacheKey(err error) bool {
+	return err == ErrNoCacheKey
+}
+
+func IsNoCacheValue(err error) bool {
+	return err == ErrNoCacheValue
 }
 
 func IsExpired(err error) bool {

@@ -36,6 +36,11 @@ func TestMemoryImpl(t *testing.T) {
 		val, err = mem.CacheGet("does-not-exist")
 		is.True(IsNoItemFound(err))
 		is.Empty(val)
+
+		err = mem.CacheSet("", "something", 5)
+		is.True(IsNoCacheKey(err))
+		err = mem.CacheSet("some-key", "", 5)
+		is.True(IsNoCacheValue(err))
 	})
 
 	t.Run("KV", func(t *testing.T) {

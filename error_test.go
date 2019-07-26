@@ -7,7 +7,15 @@ import (
 )
 
 func TestErrors(t *testing.T) {
+	t.Parallel()
+
 	is := assert.New(t)
+
+	t.Run("Cache", func(t *testing.T) {
+		err := ErrNoCacheItem
+		is.Equal(err.Error(), "cache error: no item found")
+		is.True(IsNoItemFound(err))
+	})
 
 	t.Run("Config", func(t *testing.T) {
 		err := ConfigError{"some config error"}
