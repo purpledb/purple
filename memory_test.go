@@ -1,7 +1,9 @@
 package strato
 
 import (
+	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -14,6 +16,21 @@ func TestMemoryImpl(t *testing.T) {
 	t.Run("Instantiation", func(t *testing.T) {
 		is.NotNil(mem)
 		is.Empty(mem.values)
+	})
+
+	t.Run("Cache", func(t *testing.T) {
+		key, value := "some-key", "some-value"
+
+		is.NoError(mem.CacheSet(key, value, 5))
+		val, err := mem.CacheGet(key)
+		is.NoError(err)
+		is.Equal(val, value)
+
+		is.NoError(mem.CacheSet(key, value, 1))
+		time.Sleep(2 * time.Second)
+		val, err = mem.CacheGet(key)
+		is.Equal(err, fmt.Errorf("cache value with key %s expired", key))
+		is.Empty(val)
 	})
 
 	t.Run("KV", func(t *testing.T) {
@@ -44,7 +61,7 @@ func TestMemoryImpl(t *testing.T) {
 
 	t.Run("Search", func(t *testing.T) {
 		doc := &Document{
-			ID: "doc-1",
+			ID:      "doc-1",
 			Content: "Here lies searchable content",
 		}
 
