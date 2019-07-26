@@ -54,7 +54,7 @@ func TestServer(t *testing.T) {
 			Key: key,
 			Item: &proto.CacheItem{
 				Value: value,
-				Ttl: int32(ttl),
+				Ttl:   int32(ttl),
 			},
 		}
 
@@ -87,7 +87,7 @@ func TestServer(t *testing.T) {
 			Key: key,
 			Item: &proto.CacheItem{
 				Value: "",
-				Ttl: 5,
+				Ttl:   5,
 			},
 		}
 

@@ -127,6 +127,10 @@ func (s *Server) Query(_ context.Context, query *proto.SearchQuery) (*proto.Sear
 }
 
 func (s *Server) Start() error {
+	proto.RegisterCacheServer(s.srv, s)
+
+	s.log.Debug("registered gRPC cache service")
+
 	proto.RegisterKVServer(s.srv, s)
 
 	s.log.Debug("registered gRPC KV service")
