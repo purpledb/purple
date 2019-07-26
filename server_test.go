@@ -82,6 +82,21 @@ func TestServer(t *testing.T) {
 		val, err = srv.CacheGet(ctx, badGetReq)
 		is.True(IsNoItemFound(err))
 		is.Nil(val)
+
+		badSetReq := &proto.CacheSetRequest{
+			Key: key,
+			Item: &proto.CacheItem{
+				Value: "",
+				Ttl: 5,
+			},
+		}
+
+		empty, err = srv.CacheSet(ctx, badSetReq)
+		stat := status.Convert(err)
+		is.Equal(stat.Code(), codes.Unknown)
+		is.Equal(stat.Message(), ErrNoCacheValue.Error())
+
+		is.Nil(empty)
 	})
 
 	t.Run("KV", func(t *testing.T) {
