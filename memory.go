@@ -51,7 +51,7 @@ func (m *Memory) CacheGet(key string) (string, error) {
 	return val.Value, nil
 }
 
-func (m *Memory) CacheSet(key, value string, ttl int) error {
+func (m *Memory) CacheSet(key, value string, ttl int32) error {
 	if ttl == 0 {
 		ttl = defaultTtl
 	}

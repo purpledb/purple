@@ -18,6 +18,7 @@ type Server struct {
 }
 
 var (
+	_ proto.CacheServer  = (*Server)(nil)
 	_ proto.KVServer     = (*Server)(nil)
 	_ proto.SearchServer = (*Server)(nil)
 )
@@ -41,6 +42,29 @@ func NewServer(cfg *ServerConfig) (*Server, error) {
 		mem:     mem,
 		log:     log,
 	}, nil
+}
+
+func (s *Server) CacheGet(_ context.Context, req *proto.CacheGetRequest) (*proto.CacheGetResponse, error) {
+	val, err := s.mem.CacheGet(req.Key)
+	if err != nil {
+		return nil, err
+	}
+
+	res := &proto.CacheGetResponse{
+		Value: val,
+	}
+
+	return res, nil
+}
+
+func (s *Server) CacheSet(_ context.Context, req *proto.CacheSetRequest) (*proto.Empty, error) {
+	key, val, ttl := req.Key, req.Item.Value, req.Item.Ttl
+
+	if err := s.mem.CacheSet(key, val, ttl); err != nil {
+		return nil, err
+	}
+
+	return &proto.Empty{}, nil
 }
 
 func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {

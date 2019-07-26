@@ -9,16 +9,20 @@ message CacheItem {
 	int32 ttl = 2;
 }
 
-message CacheGet {
+message CacheGetResponse {
+	string value = 1;
+}
+
+message CacheGetRequest {
 	string key = 1;
 }
 
-message CacheSet {
+message CacheSetRequest {
 	string key = 1;
 	CacheItem item = 2;
 }
 
 service Cache {
-	rpc Get (CacheGet) returns (CacheItem);
-	rpc Put (CacheSet) returns (Empty);
+	rpc CacheGet (CacheGetRequest) returns (CacheGetResponse);
+	rpc CacheSet (CacheSetRequest) returns (Empty);
 }

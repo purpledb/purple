@@ -69,46 +69,85 @@ func (m *CacheItem) GetTtl() int32 {
 	return 0
 }
 
-type CacheGet struct {
+type CacheGetResponse struct {
+	Value                string   `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CacheGetResponse) Reset()         { *m = CacheGetResponse{} }
+func (m *CacheGetResponse) String() string { return proto.CompactTextString(m) }
+func (*CacheGetResponse) ProtoMessage()    {}
+func (*CacheGetResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5fca3b110c9bbf3a, []int{1}
+}
+
+func (m *CacheGetResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CacheGetResponse.Unmarshal(m, b)
+}
+func (m *CacheGetResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CacheGetResponse.Marshal(b, m, deterministic)
+}
+func (m *CacheGetResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CacheGetResponse.Merge(m, src)
+}
+func (m *CacheGetResponse) XXX_Size() int {
+	return xxx_messageInfo_CacheGetResponse.Size(m)
+}
+func (m *CacheGetResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CacheGetResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CacheGetResponse proto.InternalMessageInfo
+
+func (m *CacheGetResponse) GetValue() string {
+	if m != nil {
+		return m.Value
+	}
+	return ""
+}
+
+type CacheGetRequest struct {
 	Key                  string   `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *CacheGet) Reset()         { *m = CacheGet{} }
-func (m *CacheGet) String() string { return proto.CompactTextString(m) }
-func (*CacheGet) ProtoMessage()    {}
-func (*CacheGet) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5fca3b110c9bbf3a, []int{1}
+func (m *CacheGetRequest) Reset()         { *m = CacheGetRequest{} }
+func (m *CacheGetRequest) String() string { return proto.CompactTextString(m) }
+func (*CacheGetRequest) ProtoMessage()    {}
+func (*CacheGetRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5fca3b110c9bbf3a, []int{2}
 }
 
-func (m *CacheGet) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CacheGet.Unmarshal(m, b)
+func (m *CacheGetRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CacheGetRequest.Unmarshal(m, b)
 }
-func (m *CacheGet) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CacheGet.Marshal(b, m, deterministic)
+func (m *CacheGetRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CacheGetRequest.Marshal(b, m, deterministic)
 }
-func (m *CacheGet) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CacheGet.Merge(m, src)
+func (m *CacheGetRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CacheGetRequest.Merge(m, src)
 }
-func (m *CacheGet) XXX_Size() int {
-	return xxx_messageInfo_CacheGet.Size(m)
+func (m *CacheGetRequest) XXX_Size() int {
+	return xxx_messageInfo_CacheGetRequest.Size(m)
 }
-func (m *CacheGet) XXX_DiscardUnknown() {
-	xxx_messageInfo_CacheGet.DiscardUnknown(m)
+func (m *CacheGetRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CacheGetRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CacheGet proto.InternalMessageInfo
+var xxx_messageInfo_CacheGetRequest proto.InternalMessageInfo
 
-func (m *CacheGet) GetKey() string {
+func (m *CacheGetRequest) GetKey() string {
 	if m != nil {
 		return m.Key
 	}
 	return ""
 }
 
-type CacheSet struct {
+type CacheSetRequest struct {
 	Key                  string     `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	Item                 *CacheItem `protobuf:"bytes,2,opt,name=item,proto3" json:"item,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
@@ -116,39 +155,39 @@ type CacheSet struct {
 	XXX_sizecache        int32      `json:"-"`
 }
 
-func (m *CacheSet) Reset()         { *m = CacheSet{} }
-func (m *CacheSet) String() string { return proto.CompactTextString(m) }
-func (*CacheSet) ProtoMessage()    {}
-func (*CacheSet) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5fca3b110c9bbf3a, []int{2}
+func (m *CacheSetRequest) Reset()         { *m = CacheSetRequest{} }
+func (m *CacheSetRequest) String() string { return proto.CompactTextString(m) }
+func (*CacheSetRequest) ProtoMessage()    {}
+func (*CacheSetRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5fca3b110c9bbf3a, []int{3}
 }
 
-func (m *CacheSet) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CacheSet.Unmarshal(m, b)
+func (m *CacheSetRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CacheSetRequest.Unmarshal(m, b)
 }
-func (m *CacheSet) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CacheSet.Marshal(b, m, deterministic)
+func (m *CacheSetRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CacheSetRequest.Marshal(b, m, deterministic)
 }
-func (m *CacheSet) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CacheSet.Merge(m, src)
+func (m *CacheSetRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CacheSetRequest.Merge(m, src)
 }
-func (m *CacheSet) XXX_Size() int {
-	return xxx_messageInfo_CacheSet.Size(m)
+func (m *CacheSetRequest) XXX_Size() int {
+	return xxx_messageInfo_CacheSetRequest.Size(m)
 }
-func (m *CacheSet) XXX_DiscardUnknown() {
-	xxx_messageInfo_CacheSet.DiscardUnknown(m)
+func (m *CacheSetRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CacheSetRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CacheSet proto.InternalMessageInfo
+var xxx_messageInfo_CacheSetRequest proto.InternalMessageInfo
 
-func (m *CacheSet) GetKey() string {
+func (m *CacheSetRequest) GetKey() string {
 	if m != nil {
 		return m.Key
 	}
 	return ""
 }
 
-func (m *CacheSet) GetItem() *CacheItem {
+func (m *CacheSetRequest) GetItem() *CacheItem {
 	if m != nil {
 		return m.Item
 	}
@@ -157,26 +196,29 @@ func (m *CacheSet) GetItem() *CacheItem {
 
 func init() {
 	proto.RegisterType((*CacheItem)(nil), "proto.CacheItem")
-	proto.RegisterType((*CacheGet)(nil), "proto.CacheGet")
-	proto.RegisterType((*CacheSet)(nil), "proto.CacheSet")
+	proto.RegisterType((*CacheGetResponse)(nil), "proto.CacheGetResponse")
+	proto.RegisterType((*CacheGetRequest)(nil), "proto.CacheGetRequest")
+	proto.RegisterType((*CacheSetRequest)(nil), "proto.CacheSetRequest")
 }
 
 func init() { proto.RegisterFile("cache.proto", fileDescriptor_5fca3b110c9bbf3a) }
 
 var fileDescriptor_5fca3b110c9bbf3a = []byte{
-	// 187 bytes of a gzipped FileDescriptorProto
+	// 210 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4e, 0x4e, 0x4c, 0xce,
 	0x48, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x05, 0x53, 0x52, 0x3c, 0xc9, 0xf9, 0xb9,
 	0xb9, 0xf9, 0x79, 0x10, 0x41, 0x25, 0x63, 0x2e, 0x4e, 0x67, 0x90, 0x1a, 0xcf, 0x92, 0xd4, 0x5c,
 	0x21, 0x11, 0x2e, 0xd6, 0xb2, 0xc4, 0x9c, 0xd2, 0x54, 0x09, 0x46, 0x05, 0x46, 0x0d, 0xce, 0x20,
 	0x08, 0x47, 0x48, 0x80, 0x8b, 0xb9, 0xa4, 0x24, 0x47, 0x82, 0x49, 0x81, 0x51, 0x83, 0x35, 0x08,
-	0xc4, 0x54, 0x92, 0xe1, 0xe2, 0x00, 0x6b, 0x72, 0x4f, 0x2d, 0x01, 0xc9, 0x66, 0xa7, 0x56, 0x42,
-	0x75, 0x80, 0x98, 0x4a, 0x4e, 0x50, 0xd9, 0x60, 0x6c, 0xb2, 0x42, 0x2a, 0x5c, 0x2c, 0x99, 0x25,
-	0xa9, 0xb9, 0x60, 0xe3, 0xb8, 0x8d, 0x04, 0x20, 0xce, 0xd0, 0x83, 0xbb, 0x21, 0x08, 0x2c, 0x6b,
-	0x14, 0xce, 0xc5, 0x0a, 0x16, 0x12, 0xd2, 0xe0, 0x62, 0x06, 0xd9, 0xc2, 0x8f, 0xac, 0xce, 0x3d,
-	0xb5, 0x44, 0x0a, 0x43, 0xa3, 0x90, 0x0a, 0x17, 0x73, 0x40, 0x29, 0x9a, 0xca, 0xe0, 0xd4, 0x12,
-	0x29, 0x1e, 0xa8, 0x80, 0x6b, 0x6e, 0x41, 0x49, 0x65, 0x12, 0x1b, 0x98, 0x63, 0x0c, 0x08, 0x00,
-	0x00, 0xff, 0xff, 0xde, 0xb7, 0xb0, 0xd9, 0x1a, 0x01, 0x00, 0x00,
+	0xc4, 0x54, 0xd2, 0xe0, 0x12, 0x00, 0x6b, 0x72, 0x4f, 0x2d, 0x09, 0x4a, 0x2d, 0x2e, 0xc8, 0xcf,
+	0x2b, 0x4e, 0xc5, 0xae, 0x57, 0x49, 0x99, 0x8b, 0x1f, 0xa1, 0xb2, 0xb0, 0x34, 0xb5, 0xb8, 0x04,
+	0x64, 0x5c, 0x76, 0x6a, 0x25, 0x54, 0x19, 0x88, 0xa9, 0xe4, 0x09, 0x55, 0x14, 0x8c, 0x47, 0x91,
+	0x90, 0x0a, 0x17, 0x4b, 0x66, 0x49, 0x6a, 0x2e, 0xd8, 0x19, 0xdc, 0x46, 0x02, 0x10, 0xe7, 0xeb,
+	0xc1, 0xdd, 0x1e, 0x04, 0x96, 0x35, 0x2a, 0xe3, 0x62, 0x05, 0x0b, 0x09, 0x59, 0x73, 0x71, 0xc0,
+	0x2c, 0x16, 0x12, 0x43, 0x56, 0x8c, 0x70, 0x89, 0x94, 0x38, 0x86, 0x38, 0xd4, 0x2f, 0x06, 0x50,
+	0xcd, 0xc1, 0xe8, 0x9a, 0x11, 0x2e, 0x94, 0xe2, 0x81, 0x8a, 0xbb, 0xe6, 0x16, 0x94, 0x54, 0x26,
+	0xb1, 0x81, 0x39, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0x16, 0x5b, 0xd8, 0x46, 0x71, 0x01,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -191,8 +233,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type CacheClient interface {
-	Get(ctx context.Context, in *CacheGet, opts ...grpc.CallOption) (*CacheItem, error)
-	Put(ctx context.Context, in *CacheSet, opts ...grpc.CallOption) (*Empty, error)
+	CacheGet(ctx context.Context, in *CacheGetRequest, opts ...grpc.CallOption) (*CacheGetResponse, error)
+	CacheSet(ctx context.Context, in *CacheSetRequest, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type cacheClient struct {
@@ -203,18 +245,18 @@ func NewCacheClient(cc *grpc.ClientConn) CacheClient {
 	return &cacheClient{cc}
 }
 
-func (c *cacheClient) Get(ctx context.Context, in *CacheGet, opts ...grpc.CallOption) (*CacheItem, error) {
-	out := new(CacheItem)
-	err := c.cc.Invoke(ctx, "/proto.Cache/Get", in, out, opts...)
+func (c *cacheClient) CacheGet(ctx context.Context, in *CacheGetRequest, opts ...grpc.CallOption) (*CacheGetResponse, error) {
+	out := new(CacheGetResponse)
+	err := c.cc.Invoke(ctx, "/proto.Cache/CacheGet", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *cacheClient) Put(ctx context.Context, in *CacheSet, opts ...grpc.CallOption) (*Empty, error) {
+func (c *cacheClient) CacheSet(ctx context.Context, in *CacheSetRequest, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
-	err := c.cc.Invoke(ctx, "/proto.Cache/Put", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.Cache/CacheSet", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -223,46 +265,46 @@ func (c *cacheClient) Put(ctx context.Context, in *CacheSet, opts ...grpc.CallOp
 
 // CacheServer is the server API for Cache service.
 type CacheServer interface {
-	Get(context.Context, *CacheGet) (*CacheItem, error)
-	Put(context.Context, *CacheSet) (*Empty, error)
+	CacheGet(context.Context, *CacheGetRequest) (*CacheGetResponse, error)
+	CacheSet(context.Context, *CacheSetRequest) (*Empty, error)
 }
 
 func RegisterCacheServer(s *grpc.Server, srv CacheServer) {
 	s.RegisterService(&_Cache_serviceDesc, srv)
 }
 
-func _Cache_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CacheGet)
+func _Cache_CacheGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CacheGetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CacheServer).Get(ctx, in)
+		return srv.(CacheServer).CacheGet(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.Cache/Get",
+		FullMethod: "/proto.Cache/CacheGet",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CacheServer).Get(ctx, req.(*CacheGet))
+		return srv.(CacheServer).CacheGet(ctx, req.(*CacheGetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Cache_Put_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CacheSet)
+func _Cache_CacheSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CacheSetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CacheServer).Put(ctx, in)
+		return srv.(CacheServer).CacheSet(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.Cache/Put",
+		FullMethod: "/proto.Cache/CacheSet",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CacheServer).Put(ctx, req.(*CacheSet))
+		return srv.(CacheServer).CacheSet(ctx, req.(*CacheSetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -272,12 +314,12 @@ var _Cache_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*CacheServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Get",
-			Handler:    _Cache_Get_Handler,
+			MethodName: "CacheGet",
+			Handler:    _Cache_CacheGet_Handler,
 		},
 		{
-			MethodName: "Put",
-			Handler:    _Cache_Put_Handler,
+			MethodName: "CacheSet",
+			Handler:    _Cache_CacheSet_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
