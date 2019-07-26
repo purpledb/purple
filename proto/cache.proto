@@ -8,7 +8,7 @@ message CacheGet {
 	string key = 1;
 }
 
-message CachePut {
+message CacheSet {
 	string key = 1;
 	string value = 2;
 }
@@ -19,5 +19,5 @@ message CacheValue {
 
 service Cache {
 	rpc Get (CacheGet) returns (CacheValue);
-	rpc Put (CachePut) returns (Empty);
+	rpc Put (CacheSet) returns (Empty);
 }
