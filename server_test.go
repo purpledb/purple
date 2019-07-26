@@ -4,6 +4,7 @@ import (
 	"context"
 	"strato/proto"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
@@ -44,6 +45,42 @@ func TestServer(t *testing.T) {
 	srv, err := NewServer(goodServerCfg)
 	is.NoError(err)
 	is.NotNil(srv)
+
+	t.Run("Cache", func(t *testing.T) {
+		key, value, ttl := "some-key", "some-val", 1
+		setReq := &proto.CacheSetRequest{
+			Key: key,
+			Item: &proto.CacheItem{
+				Value: value,
+				Ttl: int32(ttl),
+			},
+		}
+
+		getReq := &proto.CacheGetRequest{
+			Key: key,
+		}
+
+		empty, err := srv.CacheSet(ctx, setReq)
+		is.NoError(err)
+		is.NotNil(empty)
+
+		val, err := srv.CacheGet(ctx, getReq)
+		is.NoError(err)
+		is.Equal(val.Value, value)
+
+		time.Sleep(2 * time.Second)
+		val, err = srv.CacheGet(ctx, getReq)
+		is.True(IsExpired(err))
+		is.Nil(val)
+
+		badGetReq := &proto.CacheGetRequest{
+			Key: "does-not-exist",
+		}
+
+		val, err = srv.CacheGet(ctx, badGetReq)
+		is.True(IsNoItemFound(err))
+		is.Nil(val)
+	})
 
 	t.Run("KV", func(t *testing.T) {
 		empty, err := srv.Put(ctx, goodReq)
