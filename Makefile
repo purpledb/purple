@@ -19,3 +19,6 @@ coverage:
 
 docker-build:
 	docker build -t $(IMG_TAG) .
+
+docker-run:
+	docker run --rm --interactive --tty $(IMG_TAG)
