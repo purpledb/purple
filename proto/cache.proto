@@ -13,7 +13,11 @@ message CachePut {
 	string value = 2;
 }
 
+message CacheValue {
+	string value = 1;
+}
+
 service Cache {
-	rpc Get (CacheGet) returns (Empty);
+	rpc Get (CacheGet) returns (CacheValue);
 	rpc Put (CachePut) returns (Empty);
 }
