@@ -2,6 +2,7 @@ GO        = go
 PROTOC    = protoc
 PROTO_DIR = proto
 COVER_OUT = coverage.out
+IMG_TAG   = strato
 
 build:
 	$(GO) build -v ./...
@@ -15,3 +16,6 @@ test: gen-protobuf
 coverage:
 	$(GO) test -v -coverprofile $(COVER_OUT) ./...
 	$(GO) tool cover -html=$(COVER_OUT)
+
+docker-build:
+	docker build -t $(IMG_TAG) .
