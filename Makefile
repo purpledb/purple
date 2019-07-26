@@ -21,4 +21,4 @@ docker-build:
 	docker build -t $(IMG_TAG) .
 
 docker-run:
-	docker run --rm --interactive --tty $(IMG_TAG)
+	docker run --rm --interactive --tty -p 8080:8080 $(IMG_TAG)
