@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package proto;
+
+import "common.proto";
+
+message CacheGet {
+	string key = 1;
+}
+
+message CachePut {
+	string key = 1;
+	string value = 2;
+}
+
+service Cache {
+	rpc Get (CacheGet) returns (Empty);
+	rpc Put (CachePut) returns (Empty);
+}
