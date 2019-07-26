@@ -22,6 +22,53 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+type CacheItem struct {
+	Value                string   `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	Ttl                  int32    `protobuf:"varint,2,opt,name=ttl,proto3" json:"ttl,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CacheItem) Reset()         { *m = CacheItem{} }
+func (m *CacheItem) String() string { return proto.CompactTextString(m) }
+func (*CacheItem) ProtoMessage()    {}
+func (*CacheItem) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5fca3b110c9bbf3a, []int{0}
+}
+
+func (m *CacheItem) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CacheItem.Unmarshal(m, b)
+}
+func (m *CacheItem) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CacheItem.Marshal(b, m, deterministic)
+}
+func (m *CacheItem) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CacheItem.Merge(m, src)
+}
+func (m *CacheItem) XXX_Size() int {
+	return xxx_messageInfo_CacheItem.Size(m)
+}
+func (m *CacheItem) XXX_DiscardUnknown() {
+	xxx_messageInfo_CacheItem.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CacheItem proto.InternalMessageInfo
+
+func (m *CacheItem) GetValue() string {
+	if m != nil {
+		return m.Value
+	}
+	return ""
+}
+
+func (m *CacheItem) GetTtl() int32 {
+	if m != nil {
+		return m.Ttl
+	}
+	return 0
+}
+
 type CacheGet struct {
 	Key                  string   `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -33,7 +80,7 @@ func (m *CacheGet) Reset()         { *m = CacheGet{} }
 func (m *CacheGet) String() string { return proto.CompactTextString(m) }
 func (*CacheGet) ProtoMessage()    {}
 func (*CacheGet) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5fca3b110c9bbf3a, []int{0}
+	return fileDescriptor_5fca3b110c9bbf3a, []int{1}
 }
 
 func (m *CacheGet) XXX_Unmarshal(b []byte) error {
@@ -62,18 +109,18 @@ func (m *CacheGet) GetKey() string {
 }
 
 type CacheSet struct {
-	Key                  string   `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	Value                string   `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Key                  string     `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Item                 *CacheItem `protobuf:"bytes,2,opt,name=item,proto3" json:"item,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
 }
 
 func (m *CacheSet) Reset()         { *m = CacheSet{} }
 func (m *CacheSet) String() string { return proto.CompactTextString(m) }
 func (*CacheSet) ProtoMessage()    {}
 func (*CacheSet) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5fca3b110c9bbf3a, []int{1}
+	return fileDescriptor_5fca3b110c9bbf3a, []int{2}
 }
 
 func (m *CacheSet) XXX_Unmarshal(b []byte) error {
@@ -101,72 +148,35 @@ func (m *CacheSet) GetKey() string {
 	return ""
 }
 
-func (m *CacheSet) GetValue() string {
+func (m *CacheSet) GetItem() *CacheItem {
 	if m != nil {
-		return m.Value
+		return m.Item
 	}
-	return ""
-}
-
-type CacheValue struct {
-	Value                string   `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *CacheValue) Reset()         { *m = CacheValue{} }
-func (m *CacheValue) String() string { return proto.CompactTextString(m) }
-func (*CacheValue) ProtoMessage()    {}
-func (*CacheValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5fca3b110c9bbf3a, []int{2}
-}
-
-func (m *CacheValue) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CacheValue.Unmarshal(m, b)
-}
-func (m *CacheValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CacheValue.Marshal(b, m, deterministic)
-}
-func (m *CacheValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CacheValue.Merge(m, src)
-}
-func (m *CacheValue) XXX_Size() int {
-	return xxx_messageInfo_CacheValue.Size(m)
-}
-func (m *CacheValue) XXX_DiscardUnknown() {
-	xxx_messageInfo_CacheValue.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CacheValue proto.InternalMessageInfo
-
-func (m *CacheValue) GetValue() string {
-	if m != nil {
-		return m.Value
-	}
-	return ""
+	return nil
 }
 
 func init() {
+	proto.RegisterType((*CacheItem)(nil), "proto.CacheItem")
 	proto.RegisterType((*CacheGet)(nil), "proto.CacheGet")
 	proto.RegisterType((*CacheSet)(nil), "proto.CacheSet")
-	proto.RegisterType((*CacheValue)(nil), "proto.CacheValue")
 }
 
 func init() { proto.RegisterFile("cache.proto", fileDescriptor_5fca3b110c9bbf3a) }
 
 var fileDescriptor_5fca3b110c9bbf3a = []byte{
-	// 160 bytes of a gzipped FileDescriptorProto
+	// 187 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4e, 0x4e, 0x4c, 0xce,
 	0x48, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x05, 0x53, 0x52, 0x3c, 0xc9, 0xf9, 0xb9,
-	0xb9, 0xf9, 0x79, 0x10, 0x41, 0x25, 0x19, 0x2e, 0x0e, 0x67, 0x90, 0x1a, 0xf7, 0xd4, 0x12, 0x21,
-	0x01, 0x2e, 0xe6, 0xec, 0xd4, 0x4a, 0x09, 0x46, 0x05, 0x46, 0x0d, 0xce, 0x20, 0x10, 0x53, 0xc9,
-	0x08, 0x2a, 0x1b, 0x8c, 0x4d, 0x56, 0x48, 0x84, 0x8b, 0xb5, 0x2c, 0x31, 0xa7, 0x34, 0x55, 0x82,
-	0x09, 0x2c, 0x06, 0xe1, 0x28, 0x29, 0x71, 0x71, 0x81, 0xf5, 0x84, 0x81, 0x78, 0x08, 0x35, 0x8c,
-	0x48, 0x6a, 0x8c, 0x22, 0xb8, 0x58, 0xc1, 0x6a, 0x84, 0x34, 0xb9, 0x98, 0x41, 0x36, 0xf3, 0x43,
-	0x5c, 0xa3, 0x07, 0x73, 0x8a, 0x94, 0x20, 0xb2, 0x00, 0xc4, 0x24, 0x15, 0x2e, 0xe6, 0x80, 0x52,
-	0x34, 0xa5, 0xc1, 0xa9, 0x25, 0x52, 0x3c, 0x50, 0x01, 0xd7, 0xdc, 0x82, 0x92, 0xca, 0x24, 0x36,
-	0x30, 0xc7, 0x18, 0x10, 0x00, 0x00, 0xff, 0xff, 0xe9, 0x37, 0xfd, 0x17, 0xfa, 0x00, 0x00, 0x00,
+	0xb9, 0xf9, 0x79, 0x10, 0x41, 0x25, 0x63, 0x2e, 0x4e, 0x67, 0x90, 0x1a, 0xcf, 0x92, 0xd4, 0x5c,
+	0x21, 0x11, 0x2e, 0xd6, 0xb2, 0xc4, 0x9c, 0xd2, 0x54, 0x09, 0x46, 0x05, 0x46, 0x0d, 0xce, 0x20,
+	0x08, 0x47, 0x48, 0x80, 0x8b, 0xb9, 0xa4, 0x24, 0x47, 0x82, 0x49, 0x81, 0x51, 0x83, 0x35, 0x08,
+	0xc4, 0x54, 0x92, 0xe1, 0xe2, 0x00, 0x6b, 0x72, 0x4f, 0x2d, 0x01, 0xc9, 0x66, 0xa7, 0x56, 0x42,
+	0x75, 0x80, 0x98, 0x4a, 0x4e, 0x50, 0xd9, 0x60, 0x6c, 0xb2, 0x42, 0x2a, 0x5c, 0x2c, 0x99, 0x25,
+	0xa9, 0xb9, 0x60, 0xe3, 0xb8, 0x8d, 0x04, 0x20, 0xce, 0xd0, 0x83, 0xbb, 0x21, 0x08, 0x2c, 0x6b,
+	0x14, 0xce, 0xc5, 0x0a, 0x16, 0x12, 0xd2, 0xe0, 0x62, 0x06, 0xd9, 0xc2, 0x8f, 0xac, 0xce, 0x3d,
+	0xb5, 0x44, 0x0a, 0x43, 0xa3, 0x90, 0x0a, 0x17, 0x73, 0x40, 0x29, 0x9a, 0xca, 0xe0, 0xd4, 0x12,
+	0x29, 0x1e, 0xa8, 0x80, 0x6b, 0x6e, 0x41, 0x49, 0x65, 0x12, 0x1b, 0x98, 0x63, 0x0c, 0x08, 0x00,
+	0x00, 0xff, 0xff, 0xde, 0xb7, 0xb0, 0xd9, 0x1a, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -181,7 +191,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type CacheClient interface {
-	Get(ctx context.Context, in *CacheGet, opts ...grpc.CallOption) (*CacheValue, error)
+	Get(ctx context.Context, in *CacheGet, opts ...grpc.CallOption) (*CacheItem, error)
 	Put(ctx context.Context, in *CacheSet, opts ...grpc.CallOption) (*Empty, error)
 }
 
@@ -193,8 +203,8 @@ func NewCacheClient(cc *grpc.ClientConn) CacheClient {
 	return &cacheClient{cc}
 }
 
-func (c *cacheClient) Get(ctx context.Context, in *CacheGet, opts ...grpc.CallOption) (*CacheValue, error) {
-	out := new(CacheValue)
+func (c *cacheClient) Get(ctx context.Context, in *CacheGet, opts ...grpc.CallOption) (*CacheItem, error) {
+	out := new(CacheItem)
 	err := c.cc.Invoke(ctx, "/proto.Cache/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -213,7 +223,7 @@ func (c *cacheClient) Put(ctx context.Context, in *CacheSet, opts ...grpc.CallOp
 
 // CacheServer is the server API for Cache service.
 type CacheServer interface {
-	Get(context.Context, *CacheGet) (*CacheValue, error)
+	Get(context.Context, *CacheGet) (*CacheItem, error)
 	Put(context.Context, *CacheSet) (*Empty, error)
 }
 

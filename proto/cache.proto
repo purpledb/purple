@@ -4,20 +4,21 @@ package proto;
 
 import "common.proto";
 
+message CacheItem {
+	string value = 1;
+	int32 ttl = 2;
+}
+
 message CacheGet {
 	string key = 1;
 }
 
 message CacheSet {
 	string key = 1;
-	string value = 2;
-}
-
-message CacheValue {
-	string value = 1;
+	CacheItem item = 2;
 }
 
 service Cache {
-	rpc Get (CacheGet) returns (CacheValue);
+	rpc Get (CacheGet) returns (CacheItem);
 	rpc Put (CacheSet) returns (Empty);
 }
