@@ -1,7 +1,5 @@
 package strato
 
-import "strato/proto"
-
 const defaultTtl = 5
 
 type (
@@ -16,10 +14,3 @@ type (
 		TTLSeconds int32
 	}
 )
-
-func itemFromProto(itemP *proto.CacheItem) *CacheItem {
-	return &CacheItem{
-		Value: itemP.Value,
-		TTLSeconds: itemP.Ttl,
-	}
-}
