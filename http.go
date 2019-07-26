@@ -37,6 +37,13 @@ func (s *HttpServer) routes() *gin.Engine {
 		cache.PUT("", s.cachePut)
 	}
 
+	kv := r.Group("/kv")
+	{
+		kv.GET("/:key", s.kvGet)
+		kv.PUT("/:key/:value", s.kvPut)
+		kv.DELETE("/:key", s.kvDelete)
+	}
+
 	return r
 }
 
@@ -49,8 +56,13 @@ func (s *HttpServer) cacheGet(c *gin.Context) {
 
 	val, err := s.mem.CacheGet(key)
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
+		if IsNoCacheValue(err) {
+			c.Status(http.StatusNotFound)
+			return
+		} else {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
 	}
 
 	res := struct {
@@ -95,4 +107,60 @@ func (s *HttpServer) cachePut(c *gin.Context) {
 	}
 
 	c.Status(http.StatusCreated)
+}
+
+func (s *HttpServer) kvGet(c *gin.Context) {
+	key := c.Param("key")
+
+	loc := &Location{
+		Key: key,
+	}
+
+	val, err := s.mem.KVGet(loc)
+	if err != nil {
+		if IsNotFound(err) {
+			c.Status(http.StatusNotFound)
+			return
+		} else {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+	}
+
+	res := struct {
+		Value string `json:"value"`
+	}{
+		string(val.Content),
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (s *HttpServer) kvPut(c *gin.Context) {
+	key := c.Param("key")
+	value := c.Param("value")
+
+	loc := &Location{
+		Key: key,
+	}
+
+	val := &Value{
+		Content: []byte(value),
+	}
+
+	s.mem.KVPut(loc, val)
+
+	c.Header("Location", fmt.Sprintf("/kv/%s", key))
+	c.Status(http.StatusCreated)
+}
+
+func (s *HttpServer) kvDelete(c *gin.Context) {
+	key := c.Param("key")
+	loc := &Location{
+		Key: key,
+	}
+
+	s.mem.KVDelete(loc)
+
+	c.Status(http.StatusAccepted)
 }
