@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-type Server struct {
+type GrpcServer struct {
 	address string
 	srv     *grpc.Server
 	mem     *Memory
@@ -18,12 +18,12 @@ type Server struct {
 }
 
 var (
-	_ proto.CacheServer  = (*Server)(nil)
-	_ proto.KVServer     = (*Server)(nil)
-	_ proto.SearchServer = (*Server)(nil)
+	_ proto.CacheServer  = (*GrpcServer)(nil)
+	_ proto.KVServer     = (*GrpcServer)(nil)
+	_ proto.SearchServer = (*GrpcServer)(nil)
 )
 
-func NewServer(cfg *ServerConfig) (*Server, error) {
+func NewServer(cfg *ServerConfig) (*GrpcServer, error) {
 	if err := cfg.validate(); err != nil {
 		return nil, err
 	}
@@ -32,11 +32,11 @@ func NewServer(cfg *ServerConfig) (*Server, error) {
 
 	srv := grpc.NewServer()
 
-	mem := New()
+	mem := NewMemory()
 
 	log := logrus.New().WithField("process", "server")
 
-	return &Server{
+	return &GrpcServer{
 		address: addr,
 		srv:     srv,
 		mem:     mem,
@@ -44,7 +44,7 @@ func NewServer(cfg *ServerConfig) (*Server, error) {
 	}, nil
 }
 
-func (s *Server) CacheGet(_ context.Context, req *proto.CacheGetRequest) (*proto.CacheGetResponse, error) {
+func (s *GrpcServer) CacheGet(_ context.Context, req *proto.CacheGetRequest) (*proto.CacheGetResponse, error) {
 	val, err := s.mem.CacheGet(req.Key)
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (s *Server) CacheGet(_ context.Context, req *proto.CacheGetRequest) (*proto
 	return res, nil
 }
 
-func (s *Server) CacheSet(_ context.Context, req *proto.CacheSetRequest) (*proto.Empty, error) {
+func (s *GrpcServer) CacheSet(_ context.Context, req *proto.CacheSetRequest) (*proto.Empty, error) {
 	key, val, ttl := req.Key, req.Item.Value, req.Item.Ttl
 
 	if err := s.mem.CacheSet(key, val, ttl); err != nil {
@@ -67,7 +67,7 @@ func (s *Server) CacheSet(_ context.Context, req *proto.CacheSetRequest) (*proto
 	return &proto.Empty{}, nil
 }
 
-func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
+func (s *GrpcServer) Get(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
 	loc := &Location{
 		Key: location.Key,
 	}
@@ -86,7 +86,7 @@ func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetRes
 	return res, nil
 }
 
-func (s *Server) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
+func (s *GrpcServer) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
 	loc := &Location{
 		Key: req.Location.Key,
 	}
@@ -100,7 +100,7 @@ func (s *Server) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, er
 	return &proto.Empty{}, nil
 }
 
-func (s *Server) Delete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
+func (s *GrpcServer) Delete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
 	loc := &Location{
 		Key: location.Key,
 	}
@@ -110,7 +110,7 @@ func (s *Server) Delete(_ context.Context, location *proto.Location) (*proto.Emp
 	return &proto.Empty{}, nil
 }
 
-func (s *Server) Index(_ context.Context, req *proto.IndexRequest) (*proto.Empty, error) {
+func (s *GrpcServer) Index(_ context.Context, req *proto.IndexRequest) (*proto.Empty, error) {
 	doc := docFromProto(req.Document)
 
 	s.mem.Index(doc)
@@ -118,7 +118,7 @@ func (s *Server) Index(_ context.Context, req *proto.IndexRequest) (*proto.Empty
 	return &proto.Empty{}, nil
 }
 
-func (s *Server) Query(_ context.Context, query *proto.SearchQuery) (*proto.SearchResults, error) {
+func (s *GrpcServer) Query(_ context.Context, query *proto.SearchQuery) (*proto.SearchResults, error) {
 	q := query.Query
 
 	docs := s.mem.Query(q)
@@ -126,7 +126,7 @@ func (s *Server) Query(_ context.Context, query *proto.SearchQuery) (*proto.Sear
 	return docsToResults(docs), nil
 }
 
-func (s *Server) Start() error {
+func (s *GrpcServer) Start() error {
 	proto.RegisterCacheServer(s.srv, s)
 
 	s.log.Debug("registered gRPC cache service")
@@ -146,7 +146,7 @@ func (s *Server) Start() error {
 	return s.srv.Serve(lis)
 }
 
-func (s *Server) ShutDown() {
+func (s *GrpcServer) ShutDown() {
 	s.log.Debug("shutting down")
 
 	s.srv.GracefulStop()

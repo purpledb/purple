@@ -17,7 +17,7 @@ var (
 	_ Search = (*Memory)(nil)
 )
 
-func New() *Memory {
+func NewMemory() *Memory {
 	cache := make(map[string]*CacheItem)
 
 	values := make(map[Location]*Value)

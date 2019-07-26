@@ -30,7 +30,7 @@ func TestConfigInstantiation(t *testing.T) {
 		is.NoError(err)
 	})
 
-	t.Run("Server", func(t *testing.T) {
+	t.Run("GrpcServer", func(t *testing.T) {
 		emptyCfg := &ServerConfig{}
 
 		lowPortCfg := &ServerConfig{

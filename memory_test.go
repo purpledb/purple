@@ -12,7 +12,7 @@ func TestMemoryImpl(t *testing.T) {
 
 	is := assert.New(t)
 
-	mem := New()
+	mem := NewMemory()
 
 	t.Run("Instantiation", func(t *testing.T) {
 		is.NotNil(mem)
