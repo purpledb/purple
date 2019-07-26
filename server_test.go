@@ -69,7 +69,7 @@ func TestServer(t *testing.T) {
 
 	t.Run("Search", func(t *testing.T) {
 		doc := &proto.Document{
-			Id: "some-id",
+			Id:      "some-id",
 			Content: "some content to be searched",
 		}
 

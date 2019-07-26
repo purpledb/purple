@@ -11,7 +11,7 @@ func TestSearch(t *testing.T) {
 
 	t.Run("Document", func(t *testing.T) {
 		doc := &Document{
-			ID: "one",
+			ID:      "one",
 			Content: "Here is a document",
 		}
 
@@ -20,7 +20,7 @@ func TestSearch(t *testing.T) {
 		docs := []*Document{doc}
 
 		docP := &proto.Document{
-			Id: "one",
+			Id:      "one",
 			Content: "Here is a document",
 		}
 

@@ -16,6 +16,10 @@ var (
 )
 
 type (
+	CacheError struct {
+		string
+	}
+
 	KVError struct {
 		string
 	}

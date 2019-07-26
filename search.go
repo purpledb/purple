@@ -19,7 +19,7 @@ type (
 
 func (d *Document) prepare() *Document {
 	return &Document{
-		ID: d.ID,
+		ID:      d.ID,
 		Content: strings.ToLower(d.Content),
 	}
 }

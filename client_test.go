@@ -84,7 +84,7 @@ func TestClient(t *testing.T) {
 
 	t.Run("Search", func(t *testing.T) {
 		doc := &Document{
-			ID: "doc-100",
+			ID:      "doc-100",
 			Content: "This is the 100th DOC",
 		}
 
