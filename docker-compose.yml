@@ -1,0 +1,11 @@
+version: '3.7'
+services:
+  strato:
+    build:
+      context: .
+      cache_from:
+      - znly/protoc:0.4.0
+      - golang:1.12.7
+      - alpine:3.9.4
+    ports:
+    - 8080:8080
