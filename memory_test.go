@@ -8,6 +8,8 @@ import (
 )
 
 func TestMemoryImpl(t *testing.T) {
+	t.Parallel()
+
 	is := assert.New(t)
 
 	mem := New()
