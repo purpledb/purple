@@ -2,12 +2,13 @@ package strato
 
 import (
 	"fmt"
-
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 var (
+	ErrExpired        = CacheError{"item has expired"}
+	ErrNoCacheItem    = CacheError{"no item found"}
 	ErrNoLocation     = KVError{"no location specified"}
 	ErrNoValue        = KVError{"no value specified"}
 	ErrNoAddress      = ConfigError{"no server address provided"}
@@ -32,6 +33,18 @@ type (
 		location *Location
 	}
 )
+
+func (e CacheError) Error() string {
+	return fmt.Sprintf("cache error: %s", e.string)
+}
+
+func IsExpired(err error) bool {
+	return err == ErrExpired
+}
+
+func IsNoItemFound(err error) bool {
+	return err == ErrNoCacheItem
+}
 
 func (e KVError) Error() string {
 	return fmt.Sprintf("KV error: %s", e.string)

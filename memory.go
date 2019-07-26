@@ -1,8 +1,6 @@
 package strato
 
 import (
-	"fmt"
-	"log"
 	"strings"
 	"time"
 )
@@ -37,23 +35,17 @@ func (m *Memory) CacheGet(key string) (string, error) {
 	val, ok := m.cache[key]
 
 	if !ok {
-		return "", fmt.Errorf("no cache value found for key %s", key)
+		return "", ErrNoCacheItem
 	}
 
 	now := time.Now().Unix()
-
-	log.Println("Now:", now)
-	log.Println("Timestamp:", val.Timestamp)
-	log.Println("TTL:", val.TTLSeconds)
-
-	log.Println("Difference:", now - val.Timestamp)
 
 	expired := (now - val.Timestamp) > int64(val.TTLSeconds)
 
 	if expired {
 		delete(m.cache, key)
 
-		return "", fmt.Errorf("cache value with key %s expired", key)
+		return "", ErrExpired
 	}
 
 	return val.Value, nil

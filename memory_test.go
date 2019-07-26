@@ -1,7 +1,6 @@
 package strato
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -29,7 +28,11 @@ func TestMemoryImpl(t *testing.T) {
 		is.NoError(mem.CacheSet(key, value, 1))
 		time.Sleep(2 * time.Second)
 		val, err = mem.CacheGet(key)
-		is.Equal(err, fmt.Errorf("cache value with key %s expired", key))
+		is.True(IsExpired(err))
+		is.Empty(val)
+
+		val, err = mem.CacheGet("does-not-exist")
+		is.True(IsNoItemFound(err))
 		is.Empty(val)
 	})
 
