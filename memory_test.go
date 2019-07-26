@@ -25,19 +25,19 @@ func TestMemoryImpl(t *testing.T) {
 			Content: []byte("here is a value"),
 		}
 
-		mem.Put(loc, val)
+		mem.KVPut(loc, val)
 
-		fetched, err := mem.Get(&Location{Key: "does-not-exist"})
+		fetched, err := mem.KVGet(&Location{Key: "does-not-exist"})
 		is.True(IsNotFound(err))
 		is.Nil(fetched)
 
-		fetched, err = mem.Get(loc)
+		fetched, err = mem.KVGet(loc)
 		is.NoError(err)
 		is.NotNil(fetched)
 		is.Equal(fetched, val)
 
-		mem.Delete(loc)
-		fetched, err = mem.Get(loc)
+		mem.KVDelete(loc)
+		fetched, err = mem.KVGet(loc)
 		is.True(IsNotFound(err))
 		is.Nil(fetched)
 	})

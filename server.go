@@ -48,7 +48,7 @@ func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetRes
 		Key: location.Key,
 	}
 
-	val, err := s.mem.Get(loc)
+	val, err := s.mem.KVGet(loc)
 	if err != nil {
 		return nil, NotFound(loc).AsProtoStatus()
 	}
@@ -71,7 +71,7 @@ func (s *Server) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, er
 		Content: req.Value.Content,
 	}
 
-	s.mem.Put(loc, val)
+	s.mem.KVPut(loc, val)
 
 	return &proto.Empty{}, nil
 }
@@ -81,7 +81,7 @@ func (s *Server) Delete(_ context.Context, location *proto.Location) (*proto.Emp
 		Key: location.Key,
 	}
 
-	s.mem.Delete(loc)
+	s.mem.KVDelete(loc)
 
 	return &proto.Empty{}, nil
 }

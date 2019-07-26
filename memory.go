@@ -8,6 +8,7 @@ type Memory struct {
 }
 
 var (
+	//_ Cache  = (*Memory)(nil)
 	_ KV     = (*Memory)(nil)
 	_ Search = (*Memory)(nil)
 )
@@ -23,7 +24,7 @@ func New() *Memory {
 	}
 }
 
-func (m *Memory) Get(location *Location) (*Value, error) {
+func (m *Memory) KVGet(location *Location) (*Value, error) {
 	val, ok := m.values[*location]
 
 	if !ok {
@@ -33,11 +34,11 @@ func (m *Memory) Get(location *Location) (*Value, error) {
 	return val, nil
 }
 
-func (m *Memory) Put(location *Location, value *Value) {
+func (m *Memory) KVPut(location *Location, value *Value) {
 	m.values[*location] = value
 }
 
-func (m *Memory) Delete(location *Location) {
+func (m *Memory) KVDelete(location *Location) {
 	if _, ok := m.values[*location]; ok {
 		delete(m.values, *location)
 	}

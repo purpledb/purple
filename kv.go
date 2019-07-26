@@ -7,9 +7,9 @@ import (
 
 type (
 	KV interface {
-		Get(location *Location) (*Value, error)
-		Put(location *Location, value *Value)
-		Delete(location *Location)
+		KVGet(location *Location) (*Value, error)
+		KVPut(location *Location, value *Value)
+		KVDelete(location *Location)
 	}
 
 	Location struct {
