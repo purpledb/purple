@@ -10,6 +10,7 @@ type Memory struct {
 	counters map[string]int32
 	values   map[Location]*Value
 	docs     []*Document
+	sets     map[string][]string
 }
 
 var (
@@ -17,6 +18,7 @@ var (
 	_ Counter = (*Memory)(nil)
 	_ KV      = (*Memory)(nil)
 	_ Search  = (*Memory)(nil)
+	_ Set     = (*Memory)(nil)
 )
 
 func New() *Memory {
@@ -28,11 +30,14 @@ func New() *Memory {
 
 	docs := make([]*Document, 0)
 
+	sets := make(map[string][]string)
+
 	return &Memory{
 		cache:    cache,
 		counters: counters,
 		values:   values,
 		docs:     docs,
+		sets:     sets,
 	}
 }
 
@@ -139,4 +144,34 @@ func (m *Memory) Query(q string) []*Document {
 	}
 
 	return docs
+}
+
+func (m *Memory) GetSet(set string) []string {
+	s, ok := m.sets[set]
+
+	if !ok {
+		return []string{}
+	}
+
+	return s
+}
+
+func (m *Memory) AddToSet(set, item string) {
+	if _, ok := m.sets[set]; !ok {
+		m.sets[set] = []string{item}
+	}
+
+	m.sets[set] = append(m.sets[set], item)
+}
+
+func (m *Memory) RemoveFromSet(set, item string) {
+	if _, ok := m.sets[set]; !ok {
+		return
+	}
+
+	for idx, it := range m.sets[set] {
+		if it == item {
+			m.sets[set] = append(m.sets[set][:idx], m.sets[set][idx+1:]...)
+		}
+	}
 }

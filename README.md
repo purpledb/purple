@@ -3,7 +3,7 @@
 An all-in-one data service with support for:
 
 * Key/value operations
-* Counters
+* Counters and sets
 * Caching with TTL
 * Search indexing and querying
 
