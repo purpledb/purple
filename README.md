@@ -19,7 +19,7 @@ So definitely do *not* use this as a production data interface. Instead, use it 
 
 ## Design
 
-Strato is written in [Go](https://golang.org). Client/server communications are via [gRRC](https://grpc.io).
+Strato is written in [Go](https://golang.org). Client/server communications are via [gRPC](https://grpc.io).
 
 There is currently only a Go client for Strato's gRPC interface but in principle gRPC clients could be added for other languages.
 
@@ -79,6 +79,18 @@ To install the Strato gRPC server:
 
 ```bash
 go install github.com/lucperkins/strato/cmd/strato-grpc
+```
+
+Then you can run it as an executable (no arguments are currently supported):
+
+```bash
+strato-grpc
+```
+
+You should see log output like this:
+
+```log
+2019/07/27 14:37:09 Starting up the server on port 8080
 ```
 
 ### gRPC Go client
