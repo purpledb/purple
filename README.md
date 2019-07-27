@@ -34,7 +34,7 @@ Operation | Domain | Explanation
 `IncrementCounter(key string, amount in32)` | Counter | Increments a counter by the designated amount.
 `GetCounter(key string)` | Counter | Fetches the current value of a counter.
 `KVGet(location *Location)` | KV | Gets the value associated with a [`Location`](./kv.go). Location is currently just a key but could be made more complex later (e.g. a bucket + key scheme).
-`KVPut(location *Location, value *Value)` | KV | Sets the value associated with a location. The value is currently just a byte array payload but could be made more complex laterr (e.g. a payload plus a content type, metadata, etc.).
+`KVPut(location *Location, value *Value)` | KV | Sets the value associated with a location. The value is currently just a byte array payload but could be made more complex later (e.g. a payload plus a content type, metadata, etc.).
 `KVDelete(location *Location)` | KV | Deletes the value associated with a key.
 `Index(doc *Document)` | Search | Indexes a search [`Document`](./search.go).
 `Query(q string)` | Search | Returns a set of documents that matches the supplied search term. At the moment, it simply uses the raw query string but more sophisticated schemes will be added later.
@@ -77,8 +77,33 @@ go run examples/grpc-client/client.go
 
 To install the Strato gRPC server:
 
-```
+```bash
 go install github.com/lucperkins/strato/cmd/strato-grpc
+```
+
+### gRPC Go client
+
+To use the Go client in your service or FaaS function:
+
+```bash
+go get github.com/lucperkins/strato
+```
+
+To instantiate a client:
+
+```go
+import "github.com/lucperkins/strato"
+
+// Supply the address of the Strato gRPC server
+client, err := strato.NewClient("localhost:8080")
+if err != nil { 
+    // Handle error
+}
+
+// Now you can run the various data operations, for example:
+if err := client.CacheSet("player1-session", "a1b2c3d4e5f6", 120); err != nil {
+    // Handle error
+}
 ```
 
 ## Future directions
