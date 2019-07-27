@@ -146,6 +146,10 @@ func (s *Server) Start() error {
 
 	s.log.Debug("registered gRPC cache service")
 
+	proto.RegisterCounterServer(s.srv, s)
+
+	s.log.Debug("registered gRPC counter service")
+
 	proto.RegisterKVServer(s.srv, s)
 
 	s.log.Debug("registered gRPC KV service")

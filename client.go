@@ -8,11 +8,12 @@ import (
 )
 
 type Client struct {
-	cacheClient  proto.CacheClient
-	kvClient     proto.KVClient
-	searchClient proto.SearchClient
-	conn         *grpc.ClientConn
-	ctx          context.Context
+	cacheClient   proto.CacheClient
+	counterClient proto.CounterClient
+	kvClient      proto.KVClient
+	searchClient  proto.SearchClient
+	conn          *grpc.ClientConn
+	ctx           context.Context
 }
 
 func NewClient(cfg *ClientConfig) (*Client, error) {
@@ -27,6 +28,8 @@ func NewClient(cfg *ClientConfig) (*Client, error) {
 
 	cacheClient := proto.NewCacheClient(conn)
 
+	counterClient := proto.NewCounterClient(conn)
+
 	kvClient := proto.NewKVClient(conn)
 
 	searchClient := proto.NewSearchClient(conn)
@@ -34,11 +37,12 @@ func NewClient(cfg *ClientConfig) (*Client, error) {
 	ctx := context.Background()
 
 	return &Client{
-		cacheClient:  cacheClient,
-		kvClient:     kvClient,
-		searchClient: searchClient,
-		conn:         conn,
-		ctx:          ctx,
+		cacheClient:   cacheClient,
+		counterClient: counterClient,
+		kvClient:      kvClient,
+		searchClient:  searchClient,
+		conn:          conn,
+		ctx:           ctx,
 	}, nil
 }
 
@@ -73,6 +77,32 @@ func (c *Client) CacheSet(key, value string, ttl int32) error {
 	}
 
 	return nil
+}
+
+func (c *Client) IncrementCounter(key string, amount int32) error {
+	req := &proto.IncrementCounterRequest{
+		Key:    key,
+		Amount: amount,
+	}
+
+	if _, err := c.counterClient.IncrementCounter(c.ctx, req); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Client) GetCounter(key string) (int32, error) {
+	req := &proto.GetCounterRequest{
+		Key: key,
+	}
+
+	res, err := c.counterClient.GetCounter(c.ctx, req)
+	if err != nil {
+		return 0, err
+	}
+
+	return res.Value, nil
 }
 
 func (c *Client) KVGet(location *Location) (*Value, error) {
