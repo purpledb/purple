@@ -7,9 +7,15 @@ An all-in-one data service with support for:
 * Caching with TTL
 * Search indexing and querying
 
+Strato is mean to abstract away complex database interfaces (Redis, DynamoDB, Mongo, etc.) in favor of a unified set of dead-simple operations (see the full [list of operations](#operations) below).
+
+Strato runs as a gRPC service (with an HTTP interface coming soon).
+
 ## Goals
 
-Microservices or FaaS functions that rely on state can interact only with Strato rather than a variety of different databases, greatly simplifying the development process.
+Microservices or FaaS functions that rely on stateful data operations no longer have to interact with multiple databases and can interact only with Strato for all stateful data needs. This greatly simplifies the service/function development process by sharply reducing the hassle of dealing with databases (i.e. no need to install/learn/use 5 different database clients).
+
+Does your service need something that isn't provided by Strato? File an issue or submit a PR and I'll add it!
 
 ## Current status
 
@@ -123,4 +129,10 @@ if err := client.CacheSet("player1-session", "a1b2c3d4e5f6", 120); err != nil {
 
 ## Future directions
 
-In the future, I imagine Strato acting as an abstraction layer over lots of different data systems, exposing a powerful interface that covers the overwhelming majority of data use cases without exposing the system internals of any of those systems.
+In the future, I imagine Strato acting as an abstraction layer over lots of different data systems, exposing a powerful interface that covers the overwhelming majority of data use cases without exposing the system internals of any of those systems. This would entail:
+
+* Making the current data interfaces more sophisticated and capable of covering a wider range of use cases
+* Adding new interfaces, such as a timeseries interface, a simple graph interface, etc.
+* Providing a relational interface that supports a subset of SQL (SQLite would likely suffice for this)
+* Providing optional pluggable backends behind Strato (e.g. using Redis for caching, Elasticsearch for search)
+* Providing a message queue/pub-sub interface, eliminating the need for a Kafka/Pulsar/RabbitMQ/etc. client
