@@ -43,6 +43,19 @@ func TestMemoryImpl(t *testing.T) {
 		is.True(IsNoCacheValue(err))
 	})
 
+	t.Run("Counter", func(t *testing.T) {
+		key := "my-counter"
+
+		is.Nil(mem.counters)
+		is.Zero(mem.GetCounter(key))
+
+		mem.IncrementCounter(key, 10)
+		is.Equal(mem.GetCounter(key), 10)
+		mem.IncrementCounter(key, -50)
+		is.Equal(mem.GetCounter(key), -40)
+		is.Zero(mem.GetCounter("does-not-yet-exist"), 0)
+	})
+
 	t.Run("KV", func(t *testing.T) {
 		loc := &Location{
 			Key: "some-key",
