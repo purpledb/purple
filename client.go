@@ -64,7 +64,7 @@ func (c *Client) CacheSet(key, value string, ttl int32) error {
 		Key: key,
 		Item: &proto.CacheItem{
 			Value: value,
-			Ttl: ttl,
+			Ttl:   ttl,
 		},
 	}
 

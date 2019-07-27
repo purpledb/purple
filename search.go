@@ -12,8 +12,8 @@ type (
 	}
 
 	Document struct {
-		ID      string
-		Content string
+		ID      string `json:"id"`
+		Content string `json:"content"`
 	}
 )
 

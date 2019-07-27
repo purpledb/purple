@@ -111,7 +111,7 @@ func (m *Memory) Query(q string) []*Document {
 	docs := make([]*Document, 0)
 
 	if len(m.docs) == 0 {
-		return nil
+		return []*Document{}
 	}
 
 	for _, doc := range m.docs {

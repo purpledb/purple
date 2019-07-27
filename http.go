@@ -21,7 +21,7 @@ func NewHttpServer() *HttpServer {
 
 func (s *HttpServer) Start() error {
 	srv := &http.Server{
-		Addr: ":8081",
+		Addr:    ":8081",
 		Handler: s.routes(),
 	}
 
@@ -42,6 +42,12 @@ func (s *HttpServer) routes() *gin.Engine {
 		kv.GET("/:key", s.kvGet)
 		kv.PUT("/:key/:value", s.kvPut)
 		kv.DELETE("/:key", s.kvDelete)
+	}
+
+	search := r.Group("/search")
+	{
+		search.GET("", s.searchGet)
+		search.PUT("", s.searchPut)
 	}
 
 	return r
@@ -161,6 +167,35 @@ func (s *HttpServer) kvDelete(c *gin.Context) {
 	}
 
 	s.mem.KVDelete(loc)
+
+	c.Status(http.StatusAccepted)
+}
+
+func (s *HttpServer) searchGet(c *gin.Context) {
+	q := c.Query("q")
+
+	docs := s.mem.Query(q)
+
+	res := struct {
+		Query     string      `json:"query"`
+		Documents []*Document `json:"documents"`
+	}{
+		Query:     q,
+		Documents: docs,
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (s *HttpServer) searchPut(c *gin.Context) {
+	var doc Document
+
+	if err := c.ShouldBind(&doc); err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	s.mem.Index(&doc)
 
 	c.Status(http.StatusAccepted)
 }
