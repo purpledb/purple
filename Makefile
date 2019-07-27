@@ -2,7 +2,7 @@ GO        = go
 PROTOC    = protoc
 PROTO_DIR = proto
 COVER_OUT = coverage.out
-IMG_TAG   = strato
+IMG_TAG   = lucperkins/strato:latest
 
 build:
 	$(GO) build -v ./...
@@ -33,3 +33,6 @@ docker-build:
 
 docker-run:
 	docker run --rm --interactive --tty -p 8080:8080 $(IMG_TAG)
+
+docker-push: docker-build
+	docker push $(IMG_TAG)
