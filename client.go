@@ -13,6 +13,7 @@ type Client struct {
 	counterClient proto.CounterClient
 	kvClient      proto.KVClient
 	searchClient  proto.SearchClient
+	setClient     proto.SetClient
 	conn          *grpc.ClientConn
 	ctx           context.Context
 }
@@ -35,6 +36,8 @@ func NewClient(cfg *ClientConfig) (*Client, error) {
 
 	searchClient := proto.NewSearchClient(conn)
 
+	setClient := proto.NewSetClient(conn)
+
 	ctx := context.Background()
 
 	return &Client{
@@ -42,6 +45,7 @@ func NewClient(cfg *ClientConfig) (*Client, error) {
 		counterClient: counterClient,
 		kvClient:      kvClient,
 		searchClient:  searchClient,
+		setClient:     setClient,
 		conn:          conn,
 		ctx:           ctx,
 	}, nil
@@ -171,4 +175,43 @@ func (c *Client) Query(q string) ([]*Document, error) {
 	}
 
 	return docsFromProto(res.Documents), nil
+}
+
+func (c *Client) GetSet(set string) ([]string, error) {
+	req := &proto.GetSetRequest{
+		Set: set,
+	}
+
+	res, err := c.setClient.GetSet(c.ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Items, nil
+}
+
+func (c *Client) AddToSet(set, item string) error {
+	req := &proto.ModifySetRequest{
+		Set: set,
+		Item: item,
+	}
+
+	if _, err := c.setClient.AddToSet(c.ctx, req); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Client) RemoveFromSet(set, item string) error {
+	req := &proto.ModifySetRequest{
+		Set: set,
+		Item: item,
+	}
+
+	if _, err := c.setClient.RemoveFromSet(c.ctx, req); err != nil {
+		return err
+	}
+
+	return nil
 }
