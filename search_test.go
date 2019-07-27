@@ -1,8 +1,9 @@
 package strato
 
 import (
-	"strato/proto"
 	"testing"
+
+	"github.com/lucperkins/strato/proto"
 
 	"github.com/stretchr/testify/assert"
 )

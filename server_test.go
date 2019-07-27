@@ -2,9 +2,10 @@ package strato
 
 import (
 	"context"
-	"strato/proto"
 	"testing"
 	"time"
+
+	"github.com/lucperkins/strato/proto"
 
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
@@ -97,6 +98,28 @@ func TestServer(t *testing.T) {
 		is.Equal(stat.Message(), ErrNoCacheValue.Error())
 
 		is.Nil(empty)
+	})
+
+	t.Run("Counter", func(t *testing.T) {
+		key, incr := "example-key", int32(25)
+
+		getReq := &proto.GetCounterRequest{
+			Key: key,
+		}
+
+		res, err := srv.GetCounter(ctx, getReq)
+		is.NoError(err)
+		is.NotNil(res)
+		is.Zero(res.Value)
+
+		empty, err := srv.IncrementCounter(ctx, &proto.IncrementCounterRequest{Key: key, Amount: incr})
+		is.NoError(err)
+		is.NotNil(empty)
+
+		res, err = srv.GetCounter(ctx, getReq)
+		is.NoError(err)
+		is.NotNil(res)
+		is.Equal(res.Value, incr)
 	})
 
 	t.Run("KV", func(t *testing.T) {

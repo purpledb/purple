@@ -47,6 +47,19 @@ func TestClient(t *testing.T) {
 		is.Equal(stat.Code(), codes.Unavailable)
 	})
 
+	t.Run("Counter", func(t *testing.T) {
+		key, incr := "example-key", int32(10)
+
+		val, err := cl.GetCounter(key)
+		is.NoError(err)
+		is.Zero(val)
+
+		is.NoError(cl.IncrementCounter(key, incr))
+		val, err = cl.GetCounter(key)
+		is.NoError(err)
+		is.Equal(val, incr)
+	})
+
 	t.Run("KV", func(t *testing.T) {
 		goodLoc := &Location{
 			Key: "exists",

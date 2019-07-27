@@ -2,7 +2,8 @@ package main
 
 import (
 	"log"
-	"strato"
+
+	"github.com/lucperkins/strato"
 )
 
 func main() {

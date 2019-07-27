@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package proto;
+
+import "common.proto";
+
+message IncrementCounterRequest {
+    string key = 1;
+    int32 amount = 2;
+}
+
+message GetCounterRequest {
+    string key = 1;
+}
+
+message GetCounterResponse {
+    int32 value = 1;
+}
+
+service Counter {
+    rpc IncrementCounter (IncrementCounterRequest) returns (Empty);
+    rpc GetCounter (GetCounterRequest) returns (GetCounterResponse);
+}

@@ -4,7 +4,8 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"strato/proto"
+
+	"github.com/lucperkins/strato/proto"
 
 	"github.com/sirupsen/logrus"
 
@@ -19,9 +20,10 @@ type GrpcServer struct {
 }
 
 var (
-	_ proto.CacheServer  = (*GrpcServer)(nil)
-	_ proto.KVServer     = (*GrpcServer)(nil)
-	_ proto.SearchServer = (*GrpcServer)(nil)
+	_ proto.CacheServer   = (*GrpcServer)(nil)
+	_ proto.CounterServer = (*GrpcServer)(nil)
+	_ proto.KVServer      = (*GrpcServer)(nil)
+	_ proto.SearchServer  = (*GrpcServer)(nil)
 )
 
 func NewServer(cfg *ServerConfig) (*GrpcServer, error) {
@@ -66,6 +68,20 @@ func (s *GrpcServer) CacheSet(_ context.Context, req *proto.CacheSetRequest) (*p
 	}
 
 	return &proto.Empty{}, nil
+}
+
+func (s *GrpcServer) IncrementCounter(_ context.Context, req *proto.IncrementCounterRequest) (*proto.Empty, error) {
+	s.mem.IncrementCounter(req.Key, req.Amount)
+
+	return &proto.Empty{}, nil
+}
+
+func (s *GrpcServer) GetCounter(_ context.Context, req *proto.GetCounterRequest) (*proto.GetCounterResponse, error) {
+	val := s.mem.GetCounter(req.Key)
+
+	return &proto.GetCounterResponse{
+		Value: val,
+	}, nil
 }
 
 func (s *GrpcServer) Get(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
@@ -131,6 +147,10 @@ func (s *GrpcServer) Start() error {
 	proto.RegisterCacheServer(s.srv, s)
 
 	s.log.Debug("registered gRPC cache service")
+
+	proto.RegisterCounterServer(s.srv, s)
+
+	s.log.Debug("registered gRPC counter service")
 
 	proto.RegisterKVServer(s.srv, s)
 

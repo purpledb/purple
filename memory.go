@@ -6,28 +6,33 @@ import (
 )
 
 type Memory struct {
-	cache  map[string]*CacheItem
-	values map[Location]*Value
-	docs   []*Document
+	cache    map[string]*CacheItem
+	counters map[string]int32
+	values   map[Location]*Value
+	docs     []*Document
 }
 
 var (
-	_ Cache  = (*Memory)(nil)
-	_ KV     = (*Memory)(nil)
-	_ Search = (*Memory)(nil)
+	_ Cache   = (*Memory)(nil)
+	_ Counter = (*Memory)(nil)
+	_ KV      = (*Memory)(nil)
+	_ Search  = (*Memory)(nil)
 )
 
 func NewMemory() *Memory {
 	cache := make(map[string]*CacheItem)
+
+	counters := make(map[string]int32)
 
 	values := make(map[Location]*Value)
 
 	docs := make([]*Document, 0)
 
 	return &Memory{
-		cache:  cache,
-		values: values,
-		docs:   docs,
+		cache:    cache,
+		counters: counters,
+		values:   values,
+		docs:     docs,
 	}
 }
 
@@ -77,6 +82,19 @@ func getTtl(ttl int32) int32 {
 	} else {
 		return ttl
 	}
+}
+
+func (m *Memory) IncrementCounter(key string, increment int32) {
+	counter, ok := m.counters[key]
+	if !ok {
+		m.counters[key] = increment
+	} else {
+		m.counters[key] = counter + increment
+	}
+}
+
+func (m *Memory) GetCounter(key string) int32 {
+	return m.counters[key]
 }
 
 func (m *Memory) KVGet(location *Location) (*Value, error) {
