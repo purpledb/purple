@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package proto;
+
+import "common.proto";
+
+message Increment {
+    string key = 1;
+    int32 amount = 2;
+}
+
+service Counter {
+    rpc IncrementCounter (Increment) returns (Empty);
+}
