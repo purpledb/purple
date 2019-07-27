@@ -4,11 +4,20 @@ package proto;
 
 import "common.proto";
 
-message Increment {
+message IncrementCounterRequest {
     string key = 1;
     int32 amount = 2;
 }
 
+message GetCounterRequest {
+    string key = 1;
+}
+
+message GetCounterResponse {
+    int32 value = 1;
+}
+
 service Counter {
-    rpc IncrementCounter (Increment) returns (Empty);
+    rpc IncrementCounter (IncrementCounterRequest) returns (Empty);
+    rpc GetCounter (GetCounterRequest) returns (GetCounterResponse);
 }

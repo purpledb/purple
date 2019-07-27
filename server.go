@@ -18,9 +18,10 @@ type Server struct {
 }
 
 var (
-	_ proto.CacheServer  = (*Server)(nil)
-	_ proto.KVServer     = (*Server)(nil)
-	_ proto.SearchServer = (*Server)(nil)
+	_ proto.CacheServer   = (*Server)(nil)
+	_ proto.CounterServer = (*Server)(nil)
+	_ proto.KVServer      = (*Server)(nil)
+	_ proto.SearchServer  = (*Server)(nil)
 )
 
 func NewServer(cfg *ServerConfig) (*Server, error) {
@@ -65,6 +66,20 @@ func (s *Server) CacheSet(_ context.Context, req *proto.CacheSetRequest) (*proto
 	}
 
 	return &proto.Empty{}, nil
+}
+
+func (s *Server) IncrementCounter(_ context.Context, req *proto.IncrementCounterRequest) (*proto.Empty, error) {
+	s.mem.IncrementCounter(req.Key, req.Amount)
+
+	return &proto.Empty{}, nil
+}
+
+func (s *Server) GetCounter(_ context.Context, req *proto.GetCounterRequest) (*proto.GetCounterResponse, error) {
+	val := s.mem.GetCounter(req.Key)
+
+	return &proto.GetCounterResponse{
+		Value: val,
+	}, nil
 }
 
 func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
