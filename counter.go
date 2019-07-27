@@ -1,5 +1,6 @@
 package strato
 
 type Counter interface {
-	Increment(key string, amount int)
+	IncrementCounter(key string, amount int32)
+	GetCounter(key string) int32
 }
