@@ -7,6 +7,17 @@ IMG_TAG   = strato
 build:
 	$(GO) build -v ./...
 
+fmt:
+	gofmt -w .
+
+tidy:
+	go mod tidy
+
+imports:
+	goimports -w .
+
+spruce: tidy fmt imports
+
 gen-protobuf:
 	$(PROTOC) --proto_path=$(PROTO_DIR) --go_out=plugins=grpc:$(PROTO_DIR) $(PROTO_DIR)/*.proto
 
