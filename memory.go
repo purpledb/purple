@@ -159,6 +159,7 @@ func (m *Memory) GetSet(set string) []string {
 func (m *Memory) AddToSet(set, item string) {
 	if _, ok := m.sets[set]; !ok {
 		m.sets[set] = []string{item}
+		return
 	}
 
 	m.sets[set] = append(m.sets[set], item)
