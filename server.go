@@ -24,6 +24,7 @@ var (
 	_ proto.CounterServer = (*Server)(nil)
 	_ proto.KVServer      = (*Server)(nil)
 	_ proto.SearchServer  = (*Server)(nil)
+	_ proto.SetServer     = (*Server)(nil)
 )
 
 func NewServer(cfg *ServerConfig) (*Server, error) {
@@ -143,6 +144,26 @@ func (s *Server) Query(_ context.Context, query *proto.SearchQuery) (*proto.Sear
 	return docsToResults(docs), nil
 }
 
+func (s *Server) GetSet(_ context.Context, req *proto.GetSetRequest) (*proto.SetResponse, error) {
+	items := s.mem.GetSet(req.Set)
+
+	return &proto.SetResponse{
+		Items: items,
+	}, nil
+}
+
+func (s *Server) AddToSet(_ context.Context, req *proto.ModifySetRequest) (*proto.Empty, error) {
+	s.mem.AddToSet(req.Set, req.Item)
+
+	return &proto.Empty{}, nil
+}
+
+func (s *Server) RemoveFromSet(_ context.Context, req *proto.ModifySetRequest) (*proto.Empty, error) {
+	s.mem.RemoveFromSet(req.Set, req.Item)
+
+	return &proto.Empty{}, nil
+}
+
 func (s *Server) Start() error {
 	proto.RegisterCacheServer(s.srv, s)
 
@@ -159,6 +180,10 @@ func (s *Server) Start() error {
 	proto.RegisterSearchServer(s.srv, s)
 
 	s.log.Debug("registered gRPC search service")
+
+	proto.RegisterSetServer(s.srv, s)
+
+	s.log.Debug("registered gRPC set service")
 
 	lis, _ := net.Listen("tcp", s.address)
 

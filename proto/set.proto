@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package proto;
+
+import "common.proto";
+
+message GetSetRequest {
+    string set = 1;
+}
+
+message ModifySetRequest {
+    string set = 1;
+    string item = 2;
+}
+
+message SetResponse {
+    repeated string items = 1;
+}
+
+service Set {
+    rpc GetSet (GetSetRequest) returns (SetResponse);
+    rpc AddToSet (ModifySetRequest) returns (Empty);
+    rpc RemoveFromSet (ModifySetRequest) returns (Empty);
+}
