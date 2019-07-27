@@ -2,9 +2,10 @@ package strato
 
 import (
 	"context"
-	"strato/proto"
 	"testing"
 	"time"
+
+	"github.com/lucperkins/strato/proto"
 
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"

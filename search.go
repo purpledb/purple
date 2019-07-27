@@ -1,8 +1,9 @@
 package strato
 
 import (
-	"strato/proto"
 	"strings"
+
+	"github.com/lucperkins/strato/proto"
 )
 
 type (

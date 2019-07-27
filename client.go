@@ -2,7 +2,8 @@ package strato
 
 import (
 	"context"
-	"strato/proto"
+
+	"github.com/lucperkins/strato/proto"
 
 	"google.golang.org/grpc"
 )

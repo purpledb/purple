@@ -2,7 +2,8 @@ package strato
 
 import (
 	"fmt"
-	"strato/proto"
+
+	"github.com/lucperkins/strato/proto"
 )
 
 type (

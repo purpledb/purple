@@ -1,4 +1,4 @@
-module strato
+module github.com/lucperkins/strato
 
 go 1.13
 

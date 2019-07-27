@@ -3,9 +3,11 @@ package strato
 import (
 	"context"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"net"
-	"strato/proto"
+
+	"github.com/lucperkins/strato/proto"
+
+	"github.com/sirupsen/logrus"
 
 	"google.golang.org/grpc"
 )

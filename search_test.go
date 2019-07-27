@@ -1,9 +1,11 @@
 package strato
 
 import (
-	"github.com/stretchr/testify/assert"
-	"strato/proto"
 	"testing"
+
+	"github.com/lucperkins/strato/proto"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSearch(t *testing.T) {
