@@ -14,7 +14,7 @@ WORKDIR /build
 
 COPY --from=protoc-builder /output /build/proto
 
-RUN CGO_ENABLED=0 GOOS=linux go build -mod vendor -o strato ./cmd
+RUN CGO_ENABLED=0 GOOS=linux go build -mod vendor -o strato ./cmd/strato-grpc
 
 FROM alpine:3.9.4
 
