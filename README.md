@@ -33,6 +33,9 @@ Operation | Domain | Explanation
 `CacheSet(key, value string, ttl in32)` | Cache | Sets the value associated with a key and assigns a TTL (the default is 5 seconds).
 `IncrementCounter(key string, amount in32)` | Counter | Increments a counter by the designated amount.
 `GetCounter(key string)` | Counter | Fetches the current value of a counter.
+`GetSet(set string)` | Set | Fetch the items currently in the specified set.
+`AddToSet(set, item string)` | Set | Add an item to the specified set.
+`RemoveFromSet(set, item string)` | Set | Remove an item from the specified set.
 `KVGet(location *Location)` | KV | Gets the value associated with a [`Location`](./kv.go). Location is currently just a key but could be made more complex later (e.g. a bucket + key scheme).
 `KVPut(location *Location, value *Value)` | KV | Sets the value associated with a location. The value is currently just a byte array payload but could be made more complex later (e.g. a payload plus a content type, metadata, etc.).
 `KVDelete(location *Location)` | KV | Deletes the value associated with a key.
