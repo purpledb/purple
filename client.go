@@ -111,7 +111,7 @@ func (c *Client) GetCounter(key string) (int32, error) {
 }
 
 func (c *Client) KVGet(location *Location) (*Value, error) {
-	res, err := c.kvClient.Get(c.ctx, location.Proto())
+	res, err := c.kvClient.KVGet(c.ctx, location.Proto())
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +137,7 @@ func (c *Client) KVPut(location *Location, value *Value) error {
 		Value:    value.Proto(),
 	}
 
-	if _, err := c.kvClient.Put(c.ctx, req); err != nil {
+	if _, err := c.kvClient.KVPut(c.ctx, req); err != nil {
 		return err
 	}
 
@@ -145,7 +145,7 @@ func (c *Client) KVPut(location *Location, value *Value) error {
 }
 
 func (c *Client) KVDelete(location *Location) error {
-	if _, err := c.kvClient.Delete(c.ctx, location.Proto()); err != nil {
+	if _, err := c.kvClient.KVDelete(c.ctx, location.Proto()); err != nil {
 		return err
 	}
 
@@ -192,7 +192,7 @@ func (c *Client) GetSet(set string) ([]string, error) {
 
 func (c *Client) AddToSet(set, item string) error {
 	req := &proto.ModifySetRequest{
-		Set: set,
+		Set:  set,
 		Item: item,
 	}
 
@@ -205,7 +205,7 @@ func (c *Client) AddToSet(set, item string) error {
 
 func (c *Client) RemoveFromSet(set, item string) error {
 	req := &proto.ModifySetRequest{
-		Set: set,
+		Set:  set,
 		Item: item,
 	}
 
