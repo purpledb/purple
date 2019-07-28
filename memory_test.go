@@ -12,11 +12,10 @@ func TestMemoryImpl(t *testing.T) {
 
 	is := assert.New(t)
 
-	mem := New()
+	mem := NewMemoryBackend()
 
 	t.Run("Instantiation", func(t *testing.T) {
 		is.NotNil(mem)
-		is.Empty(mem.values)
 	})
 
 	t.Run("Cache", func(t *testing.T) {
@@ -57,6 +56,7 @@ func TestMemoryImpl(t *testing.T) {
 
 	t.Run("KV", func(t *testing.T) {
 		loc := &Location{
+			Bucket: "some-bucket",
 			Key: "some-key",
 		}
 
@@ -64,9 +64,9 @@ func TestMemoryImpl(t *testing.T) {
 			Content: []byte("here is a value"),
 		}
 
-		mem.KVPut(loc, val)
+		is.NoError(mem.KVPut(loc, val))
 
-		fetched, err := mem.KVGet(&Location{Key: "does-not-exist"})
+		fetched, err := mem.KVGet(&Location{Bucket: "does-not-exist", Key: "does-not-exist"})
 		is.True(IsNotFound(err))
 		is.Nil(fetched)
 
@@ -75,10 +75,12 @@ func TestMemoryImpl(t *testing.T) {
 		is.NotNil(fetched)
 		is.Equal(fetched, val)
 
-		mem.KVDelete(loc)
+		is.NoError(mem.KVDelete(loc))
 		fetched, err = mem.KVGet(loc)
 		is.True(IsNotFound(err))
 		is.Nil(fetched)
+
+		is.NoError(mem.kv.Close())
 	})
 
 	t.Run("Search", func(t *testing.T) {

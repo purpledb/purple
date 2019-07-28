@@ -36,7 +36,7 @@ func NewServer(cfg *ServerConfig) (*Server, error) {
 
 	srv := grpc.NewServer()
 
-	mem := New()
+	mem := NewMemoryBackend()
 
 	log := logrus.New().WithField("process", "server")
 

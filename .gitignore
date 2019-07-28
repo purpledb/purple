@@ -1,2 +1,5 @@
 # Go test output
 coverage.out
+
+# bbolt DB output
+strato-kv.db
