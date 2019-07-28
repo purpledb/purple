@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -174,6 +175,13 @@ func (s *HttpServer) kvDelete(c *gin.Context) {
 
 func (s *HttpServer) searchGet(c *gin.Context) {
 	q := c.Query("q")
+
+	if q == "" {
+		c.String(http.StatusBadRequest, "no query string provided")
+		return
+	}
+
+	q = strings.ToLower(q)
 
 	docs := s.mem.Query(q)
 
