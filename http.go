@@ -39,6 +39,12 @@ func (s *HttpServer) routes() *gin.Engine {
 		cache.PUT("", s.cachePut)
 	}
 
+	counters := r.Group("/counters")
+	{
+		counters.GET("/:counter", s.countersGet)
+		counters.PUT("/:counter", s.countersPut)
+	}
+
 	kv := r.Group("/kv")
 	{
 		kv.GET("/:key", s.kvGet)
@@ -115,6 +121,42 @@ func (s *HttpServer) cachePut(c *gin.Context) {
 	}
 
 	c.Status(http.StatusCreated)
+}
+
+func (s *HttpServer) countersGet(c *gin.Context) {
+	counter := c.Param("counter")
+
+	value := s.mem.GetCounter(counter)
+
+	res := struct {
+		Counter string `json:"counter"`
+		Value   int32  `json:"value"`
+	}{
+		Counter: counter,
+		Value:   value,
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (s *HttpServer) countersPut(c *gin.Context) {
+	counter, incr := c.Param("counter"), c.Query("increment")
+
+	if incr == "" {
+		c.String(http.StatusBadRequest, "no increment specified")
+		return
+	}
+
+	i, err := strconv.Atoi(incr)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+	}
+
+	increment := int32(i)
+
+	s.mem.IncrementCounter(counter, increment)
+
+	c.Status(http.StatusAccepted)
 }
 
 func (s *HttpServer) kvGet(c *gin.Context) {
