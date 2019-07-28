@@ -85,7 +85,7 @@ func (s *Server) GetCounter(_ context.Context, req *proto.GetCounterRequest) (*p
 	}, nil
 }
 
-func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
+func (s *Server) KVGet(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
 	loc := &Location{
 		Bucket: location.Bucket,
 		Key: location.Key,
@@ -105,7 +105,7 @@ func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetRes
 	return res, nil
 }
 
-func (s *Server) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
+func (s *Server) KVPut(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
 	loc := &Location{
 		Bucket: req.Location.Bucket,
 		Key: req.Location.Key,
@@ -122,7 +122,7 @@ func (s *Server) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, er
 	return &proto.Empty{}, nil
 }
 
-func (s *Server) Delete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
+func (s *Server) KVDelete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
 	loc := &Location{
 		Bucket: location.Bucket,
 		Key: location.Key,

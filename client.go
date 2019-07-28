@@ -149,7 +149,7 @@ func (c *Client) KVPut(location *Location, value *Value) error {
 		Value:    value.Proto(),
 	}
 
-	if _, err := c.kvClient.Put(c.ctx, req); err != nil {
+	if _, err := c.kvClient.KVPut(c.ctx, req); err != nil {
 		return err
 	}
 
