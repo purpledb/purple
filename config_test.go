@@ -11,7 +11,7 @@ var (
 		Address: "localhost:2222",
 	}
 
-	goodServerCfg = &ServerConfig{
+	goodServerCfg = &GrpcConfig{
 		Port: 2222,
 	}
 )
@@ -31,9 +31,9 @@ func TestConfigInstantiation(t *testing.T) {
 	})
 
 	t.Run("GrpcServer", func(t *testing.T) {
-		emptyCfg := &ServerConfig{}
+		emptyCfg := &GrpcConfig{}
 
-		lowPortCfg := &ServerConfig{
+		lowPortCfg := &GrpcConfig{
 			Port: 10,
 		}
 
@@ -47,16 +47,16 @@ func TestConfigInstantiation(t *testing.T) {
 
 		is.NoError(goodServerCfg.validate())
 
-		srv, err := NewServer(emptyCfg)
+		srv, err := NewGrpcServer(emptyCfg)
 		is.True(IsConfigError(err))
 		is.Equal(err, ErrNoPort)
 		is.Nil(srv)
 
-		srv, err = NewServer(lowPortCfg)
+		srv, err = NewGrpcServer(lowPortCfg)
 		is.True(IsConfigError(err))
 		is.Equal(err, ErrPortOutOfRange)
 
-		srv, err = NewServer(goodServerCfg)
+		srv, err = NewGrpcServer(goodServerCfg)
 		is.NoError(err)
 		is.NotNil(srv)
 	})

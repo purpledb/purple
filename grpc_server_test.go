@@ -24,12 +24,12 @@ var (
 
 	goodLoc = &proto.Location{
 		Bucket: goodBucket,
-		Key: goodKey,
+		Key:    goodKey,
 	}
 
 	badLoc = &proto.Location{
 		Bucket: badBucket,
-		Key: badKey,
+		Key:    badKey,
 	}
 
 	goodContent = []byte("here is some test value content")
@@ -47,7 +47,7 @@ var (
 func TestGrpcServer(t *testing.T) {
 	is := assert.New(t)
 
-	srv, err := NewServer(goodServerCfg)
+	srv, err := NewGrpcServer(goodServerCfg)
 	is.NoError(err)
 	is.NotNil(srv)
 

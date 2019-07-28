@@ -1,26 +1,20 @@
 package main
 
 import (
-	"log"
-
+	"fmt"
 	"github.com/lucperkins/strato"
+	"os"
 )
 
 func main() {
-	port := 8080
+	srv, err := strato.NewGrpcServer(os.Args)
+	exitOnError(err)
+	exitOnError(srv.Start())
+}
 
-	srvCfg := &strato.ServerConfig{
-		Port: port,
-	}
-
-	srv, err := strato.NewServer(srvCfg)
+func exitOnError(err error) {
 	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Println("Starting up the server on port", port)
-
-	if err := srv.Start(); err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }

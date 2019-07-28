@@ -9,11 +9,11 @@ import (
 func main() {
 	port := 8080
 
-	srvCfg := &strato.ServerConfig{
+	srvCfg := &strato.GrpcConfig{
 		Port: port,
 	}
 
-	srv, err := strato.NewServer(srvCfg)
+	srv, err := strato.NewGrpcServer(srvCfg)
 	if err != nil {
 		log.Fatal(err)
 	}

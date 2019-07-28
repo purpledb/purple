@@ -10,14 +10,20 @@ import (
 )
 
 type HttpServer struct {
-	mem *Memory
+	address string
+	mem     *Memory
 }
 
-func NewHttpServer() *HttpServer {
+func NewHttpServer(args []string) *HttpServer {
+	cfg := getHttpServerConfig(args)
+
+	addr := fmt.Sprintf(":%d", cfg.Port)
+
 	mem := NewMemoryBackend()
 
 	return &HttpServer{
-		mem: mem,
+		address: addr,
+		mem:     mem,
 	}
 }
 

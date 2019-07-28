@@ -27,10 +27,8 @@ var (
 	_ proto.SetServer     = (*GrpcServer)(nil)
 )
 
-func NewServer(cfg *ServerConfig) (*GrpcServer, error) {
-	if err := cfg.validate(); err != nil {
-		return nil, err
-	}
+func NewGrpcServer(args []string) (*GrpcServer, error) {
+	cfg := getGrpcServerConfig(args)
 
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
@@ -194,7 +192,7 @@ func (s *GrpcServer) Start() error {
 
 	lis, _ := net.Listen("tcp", s.address)
 
-	s.log.Debugf("starting TCP listener on %s", s.address)
+	s.log.Infof("starting the Strato gRPC server on %s", s.address)
 
 	return s.srv.Serve(lis)
 }

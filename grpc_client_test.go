@@ -11,7 +11,7 @@ import (
 func TestGrpcClient(t *testing.T) {
 	is := assert.New(t)
 
-	srv, err := NewServer(goodServerCfg)
+	srv, err := NewGrpcServer(goodServerCfg)
 	is.NoError(err)
 
 	go func() {
