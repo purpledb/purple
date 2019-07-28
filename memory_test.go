@@ -53,34 +53,32 @@ func TestMemoryImpl(t *testing.T) {
 		is.Zero(mem.CounterGet("does-not-yet-exist"), 0)
 	})
 
-	/*
-		t.Run("KV", func(t *testing.T) {
-			loc := &Location{
-				Bucket: "some-bucket",
-				Key:    "some-key",
-			}
+	t.Run("KV", func(t *testing.T) {
+		loc := &Location{
+			Bucket: "some-bucket",
+			Key:    "some-key",
+		}
 
-			val := &Value{
-				Content: []byte("here is a value"),
-			}
+		val := &Value{
+			Content: []byte("here is a value"),
+		}
 
-			is.NoError(mem.KVPut(loc, val))
+		is.NoError(mem.KVPut(loc, val))
 
-			fetched, err := mem.KVGet(&Location{Bucket: "does-not-exist", Key: "does-not-exist"})
-			is.True(IsNotFound(err))
-			is.Nil(fetched)
+		fetched, err := mem.KVGet(&Location{Bucket: "does-not-exist", Key: "does-not-exist"})
+		is.True(IsNotFound(err))
+		is.Nil(fetched)
 
-			fetched, err = mem.KVGet(loc)
-			is.NoError(err)
-			is.NotNil(fetched)
-			is.Equal(fetched, val)
+		fetched, err = mem.KVGet(loc)
+		is.NoError(err)
+		is.NotNil(fetched)
+		is.Equal(fetched, val)
 
-			is.NoError(mem.KVDelete(loc))
-			fetched, err = mem.KVGet(loc)
-			is.True(IsNotFound(err))
-			is.Nil(fetched)
-		})
-	*/
+		is.NoError(mem.KVDelete(loc))
+		fetched, err = mem.KVGet(loc)
+		is.True(IsNotFound(err))
+		is.Nil(fetched)
+	})
 
 	t.Run("Search", func(t *testing.T) {
 		doc := &Document{
