@@ -44,7 +44,7 @@ var (
 	}
 )
 
-func TestServer(t *testing.T) {
+func TestGrpcServer(t *testing.T) {
 	is := assert.New(t)
 
 	srv, err := NewServer(goodServerCfg)

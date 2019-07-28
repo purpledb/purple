@@ -22,7 +22,14 @@ gen-protobuf:
 	$(PROTOC) --proto_path=$(PROTO_DIR) --go_out=plugins=grpc:$(PROTO_DIR) $(PROTO_DIR)/*.proto
 
 test: gen-protobuf
-	$(GO) test -v ./...
+	$(GO) test -v -run TestGrpcClient
+	$(GO) test -v -run TestConfigInstantiation
+	$(GO) test -v -run TestErrors
+	$(GO) test -v -run TestKVTypes
+	$(GO) test -v -run TestMemoryImpl
+	$(GO) test -v -run TestSearch
+	$(GO) test -v -run TestGrpcServer
+
 
 coverage:
 	$(GO) test -v -coverprofile $(COVER_OUT) ./...

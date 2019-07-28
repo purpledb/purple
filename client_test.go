@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func TestClient(t *testing.T) {
+func TestGrpcClient(t *testing.T) {
 	is := assert.New(t)
 
 	srv, err := NewServer(goodServerCfg)
