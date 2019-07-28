@@ -9,7 +9,7 @@ An all-in-one data service with support for:
 
 Strato is mean to abstract away complex database interfaces (Redis, DynamoDB, Mongo, etc.) in favor of a unified set of dead-simple operations (see the full [list of operations](#operations) below).
 
-Strato runs as a gRPC service (with an HTTP interface coming soon).
+Strato can run either as a gRPC or as an HTTP service.
 
 ## Goals
 
@@ -37,8 +37,8 @@ Operation | Domain | Explanation
 :---------|:-------|:-----------
 `CacheGet(key string)` | Cache | Fetches the value of a key from the cache. Returns an error if the TTL has been exceeded.
 `CacheSet(key, value string, ttl in32)` | Cache | Sets the value associated with a key and assigns a TTL (the default is 5 seconds).
-`IncrementCounter(key string, amount in32)` | Counter | Increments a counter by the designated amount.
-`GetCounter(key string)` | Counter | Fetches the current value of a counter.
+`CounterIncrement(key string, amount in32)` | Counter | Increments a counter by the designated amount.
+`CounterGet(key string)` | Counter | Fetches the current value of a counter.
 `GetSet(set string)` | Set | Fetch the items currently in the specified set.
 `AddToSet(set, item string)` | Set | Add an item to the specified set.
 `RemoveFromSet(set, item string)` | Set | Remove an item from the specified set.
@@ -52,11 +52,14 @@ Operation | Domain | Explanation
 
 ### Go executables
 
-To try out Strato locally, you can run the Strato server in one shell session and some client operations in another session:
+To try out Strato locally, you can run the Strato server (either the gRPC or HTTP server) in one shell session and some client operations in another session:
 
 ```bash
-# Start the server
+# Start the gRPC server
 go run examples/grpc-server/main.go
+
+# Or start the HTTP server
+go run examples/http-server/main.go
 
 # In a different session
 go run examples/grpc-client/main.go
