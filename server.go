@@ -88,7 +88,7 @@ func (s *Server) GetCounter(_ context.Context, req *proto.GetCounterRequest) (*p
 func (s *Server) KVGet(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
 	loc := &Location{
 		Bucket: location.Bucket,
-		Key: location.Key,
+		Key:    location.Key,
 	}
 
 	val, err := s.mem.KVGet(loc)
@@ -108,7 +108,7 @@ func (s *Server) KVGet(_ context.Context, location *proto.Location) (*proto.GetR
 func (s *Server) KVPut(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
 	loc := &Location{
 		Bucket: req.Location.Bucket,
-		Key: req.Location.Key,
+		Key:    req.Location.Key,
 	}
 
 	val := &Value{
@@ -125,7 +125,7 @@ func (s *Server) KVPut(_ context.Context, req *proto.PutRequest) (*proto.Empty, 
 func (s *Server) KVDelete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
 	loc := &Location{
 		Bucket: location.Bucket,
-		Key: location.Key,
+		Key:    location.Key,
 	}
 
 	if err := s.mem.KVDelete(loc); err != nil {

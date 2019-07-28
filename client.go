@@ -119,7 +119,7 @@ func (c *Client) KVGet(location *Location) (*Value, error) {
 		return nil, err
 	}
 
-	res, err := c.kvClient.Get(c.ctx, location.Proto())
+	res, err := c.kvClient.KVGet(c.ctx, location.Proto())
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func (c *Client) KVDelete(location *Location) error {
 		return err
 	}
 
-	if _, err := c.kvClient.Delete(c.ctx, location.Proto()); err != nil {
+	if _, err := c.kvClient.KVDelete(c.ctx, location.Proto()); err != nil {
 		return err
 	}
 

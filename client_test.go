@@ -63,7 +63,7 @@ func TestClient(t *testing.T) {
 	t.Run("KV", func(t *testing.T) {
 		goodLoc := &Location{
 			Bucket: "exists",
-			Key: "exists",
+			Key:    "exists",
 		}
 
 		val := &Value{
@@ -79,7 +79,7 @@ func TestClient(t *testing.T) {
 
 		badLoc := &Location{
 			Bucket: "does-not-exist",
-			Key: "does-not-exist",
+			Key:    "does-not-exist",
 		}
 
 		fetched, err = cl.KVGet(badLoc)

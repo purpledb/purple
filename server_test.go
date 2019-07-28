@@ -13,18 +13,22 @@ import (
 )
 
 const (
-	goodKey = "exists"
-	badKey  = "does-not-exist"
+	goodBucket = "exists"
+	goodKey    = "exists"
+	badBucket  = "does-not-exist"
+	badKey     = "does-not-exist"
 )
 
 var (
 	ctx = context.Background()
 
 	goodLoc = &proto.Location{
+		Bucket: goodBucket,
 		Key: goodKey,
 	}
 
 	badLoc = &proto.Location{
+		Bucket: badBucket,
 		Key: badKey,
 	}
 
@@ -121,24 +125,24 @@ func TestServer(t *testing.T) {
 	})
 
 	t.Run("KV", func(t *testing.T) {
-		empty, err := srv.Put(ctx, goodReq)
+		empty, err := srv.KVPut(ctx, goodReq)
 		is.NoError(err)
 		is.NotNil(empty)
 
-		fetched, err := srv.Get(ctx, goodLoc)
+		fetched, err := srv.KVGet(ctx, goodLoc)
 		is.NoError(err)
 		is.NotNil(fetched)
 		is.Equal(fetched.Value.Content, goodVal.Content)
 
-		empty, err = srv.Delete(ctx, goodLoc)
+		empty, err = srv.KVDelete(ctx, goodLoc)
 		is.NoError(err)
 		is.NotNil(empty)
 
-		fetched, err = srv.Get(ctx, badLoc)
+		fetched, err = srv.KVGet(ctx, badLoc)
 
 		stat := status.Convert(err)
 		is.Equal(stat.Code(), codes.NotFound)
-		is.Equal(stat.Message(), NotFound(&Location{Key: badKey}).Error())
+		is.Equal(stat.Message(), NotFound(&Location{Bucket: badBucket, Key: badKey}).Error())
 		is.Nil(fetched)
 	})
 
