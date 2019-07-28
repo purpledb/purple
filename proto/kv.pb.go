@@ -23,7 +23,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type Location struct {
-	Key                  string   `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Bucket               string   `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	Key                  string   `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -53,6 +54,13 @@ func (m *Location) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_Location proto.InternalMessageInfo
+
+func (m *Location) GetBucket() string {
+	if m != nil {
+		return m.Bucket
+	}
+	return ""
+}
 
 func (m *Location) GetKey() string {
 	if m != nil {
@@ -196,22 +204,23 @@ func init() {
 func init() { proto.RegisterFile("kv.proto", fileDescriptor_2216fe83c9c12408) }
 
 var fileDescriptor_2216fe83c9c12408 = []byte{
-	// 235 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x8e, 0x3f, 0x4f, 0x84, 0x40,
-	0x10, 0xc5, 0xc3, 0x11, 0x4e, 0x9c, 0x23, 0x51, 0xa7, 0xba, 0x10, 0x0b, 0xdd, 0x42, 0x8d, 0x26,
-	0x97, 0x78, 0x7e, 0x05, 0xcd, 0x15, 0x5a, 0x5c, 0xb6, 0xa0, 0xb3, 0x40, 0x32, 0x85, 0x01, 0x76,
-	0x50, 0x66, 0x49, 0x28, 0xfd, 0xe6, 0x86, 0x65, 0x11, 0xff, 0xc4, 0x6a, 0x77, 0xe6, 0xbd, 0xf7,
-	0x9b, 0x07, 0x71, 0xd9, 0x6d, 0x9a, 0x77, 0x16, 0xc6, 0xc8, 0x3d, 0x69, 0x52, 0x70, 0x5d, 0xb3,
-	0x19, 0x97, 0xea, 0x14, 0xe2, 0x27, 0x2e, 0x72, 0x79, 0x65, 0x83, 0xc7, 0x10, 0x96, 0xd4, 0xaf,
-	0x83, 0xb3, 0xe0, 0xea, 0x50, 0x0f, 0x5f, 0x75, 0x0e, 0x51, 0x96, 0x57, 0x96, 0x70, 0x0d, 0x07,
-	0x05, 0x1b, 0x21, 0x23, 0x4e, 0x4e, 0xf4, 0x34, 0xaa, 0x5b, 0x58, 0xed, 0x48, 0x34, 0xb5, 0x0d,
-	0x9b, 0x96, 0x50, 0x41, 0xd4, 0x0d, 0x09, 0x67, 0x5b, 0x6d, 0x93, 0xf1, 0xcc, 0xc6, 0x51, 0xf4,
-	0x28, 0xa9, 0x67, 0x80, 0xbd, 0x15, 0x4d, 0x6f, 0x96, 0x5a, 0xc1, 0x1b, 0x88, 0x2b, 0xdf, 0xc0,
-	0x87, 0x8e, 0x7c, 0x68, 0x2a, 0xa6, 0xbf, 0x0c, 0x33, 0x7e, 0xf1, 0x2f, 0x7e, 0xfb, 0x11, 0xc0,
-	0xe2, 0x31, 0xc3, 0x6b, 0x08, 0x77, 0x24, 0xf8, 0x1b, 0x96, 0xa2, 0x5f, 0x7c, 0x6f, 0x7d, 0x01,
-	0xe1, 0xde, 0x0a, 0x9e, 0x78, 0x69, 0x6e, 0x97, 0x4e, 0x17, 0x1e, 0xea, 0x46, 0x7a, 0xbc, 0x84,
-	0xe5, 0x3d, 0x55, 0x24, 0xf4, 0x17, 0xfb, 0xc3, 0xf8, 0xb2, 0x74, 0xc3, 0xdd, 0x67, 0x00, 0x00,
-	0x00, 0xff, 0xff, 0x64, 0xf6, 0xf7, 0x6c, 0x7e, 0x01, 0x00, 0x00,
+	// 250 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x8e, 0x4f, 0x4f, 0x83, 0x40,
+	0x10, 0xc5, 0x03, 0x86, 0x8a, 0x53, 0x12, 0x75, 0x0e, 0x86, 0x70, 0xd2, 0x3d, 0xd5, 0x68, 0x9a,
+	0x58, 0xfd, 0x08, 0x9a, 0x1e, 0xf0, 0xd0, 0xec, 0x81, 0x9b, 0x87, 0x96, 0xcc, 0xc1, 0x00, 0x3b,
+	0x28, 0xb3, 0x4d, 0xfa, 0x09, 0xfc, 0xda, 0x86, 0x65, 0x11, 0xff, 0xc4, 0xd3, 0xee, 0xbc, 0x79,
+	0xef, 0x37, 0x0f, 0xe2, 0x6a, 0xbf, 0x6c, 0xdf, 0x59, 0x18, 0x23, 0xf7, 0x64, 0x49, 0xc9, 0x4d,
+	0xc3, 0x66, 0x10, 0xd5, 0x03, 0xc4, 0xcf, 0x5c, 0x6e, 0xe5, 0x95, 0x0d, 0x5e, 0xc0, 0x6c, 0x67,
+	0xcb, 0x8a, 0x24, 0x0d, 0x2e, 0x83, 0xc5, 0x89, 0xf6, 0x13, 0x9e, 0xc1, 0x51, 0x45, 0x87, 0x34,
+	0x74, 0x62, 0xff, 0x55, 0x57, 0x10, 0x15, 0xdb, 0xda, 0x12, 0xa6, 0x70, 0x5c, 0xb2, 0x11, 0x32,
+	0x43, 0x26, 0xd1, 0xe3, 0xa8, 0xee, 0x60, 0xbe, 0x26, 0xd1, 0xd4, 0xb5, 0x6c, 0x3a, 0x42, 0x05,
+	0xd1, 0xbe, 0x4f, 0x38, 0xdb, 0x7c, 0x95, 0x0c, 0xe7, 0x97, 0x8e, 0xa2, 0x87, 0x95, 0x7a, 0x01,
+	0xd8, 0x58, 0xd1, 0xf4, 0x66, 0xa9, 0x13, 0xbc, 0x81, 0xb8, 0xf6, 0xcd, 0x7c, 0xe8, 0xd4, 0x87,
+	0xc6, 0xc2, 0xfa, 0xcb, 0x30, 0xe1, 0xc3, 0x7f, 0xf1, 0xab, 0x8f, 0x00, 0xc2, 0xbc, 0xc0, 0x5b,
+	0x88, 0xf2, 0x62, 0x4d, 0x82, 0xbf, 0x71, 0x19, 0x7a, 0xe1, 0x7b, 0xef, 0x45, 0xef, 0xde, 0x58,
+	0xc1, 0x73, 0xbf, 0x9c, 0x1a, 0x66, 0xe3, 0x95, 0xa7, 0xa6, 0x95, 0x03, 0x5e, 0x43, 0x9c, 0x17,
+	0x8f, 0x54, 0x93, 0xd0, 0x5f, 0xf4, 0x0f, 0xeb, 0x6e, 0xe6, 0x86, 0xfb, 0xcf, 0x00, 0x00, 0x00,
+	0xff, 0xff, 0x55, 0x2b, 0x1f, 0xc6, 0x9c, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -226,9 +235,9 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type KVClient interface {
-	Get(ctx context.Context, in *Location, opts ...grpc.CallOption) (*GetResponse, error)
-	Put(ctx context.Context, in *PutRequest, opts ...grpc.CallOption) (*Empty, error)
-	Delete(ctx context.Context, in *Location, opts ...grpc.CallOption) (*Empty, error)
+	KVGet(ctx context.Context, in *Location, opts ...grpc.CallOption) (*GetResponse, error)
+	KVPut(ctx context.Context, in *PutRequest, opts ...grpc.CallOption) (*Empty, error)
+	KVDelete(ctx context.Context, in *Location, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type kVClient struct {
@@ -239,27 +248,27 @@ func NewKVClient(cc *grpc.ClientConn) KVClient {
 	return &kVClient{cc}
 }
 
-func (c *kVClient) Get(ctx context.Context, in *Location, opts ...grpc.CallOption) (*GetResponse, error) {
+func (c *kVClient) KVGet(ctx context.Context, in *Location, opts ...grpc.CallOption) (*GetResponse, error) {
 	out := new(GetResponse)
-	err := c.cc.Invoke(ctx, "/proto.KV/Get", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.KV/KVGet", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *kVClient) Put(ctx context.Context, in *PutRequest, opts ...grpc.CallOption) (*Empty, error) {
+func (c *kVClient) KVPut(ctx context.Context, in *PutRequest, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
-	err := c.cc.Invoke(ctx, "/proto.KV/Put", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.KV/KVPut", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *kVClient) Delete(ctx context.Context, in *Location, opts ...grpc.CallOption) (*Empty, error) {
+func (c *kVClient) KVDelete(ctx context.Context, in *Location, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
-	err := c.cc.Invoke(ctx, "/proto.KV/Delete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.KV/KVDelete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -268,65 +277,65 @@ func (c *kVClient) Delete(ctx context.Context, in *Location, opts ...grpc.CallOp
 
 // KVServer is the server API for KV service.
 type KVServer interface {
-	Get(context.Context, *Location) (*GetResponse, error)
-	Put(context.Context, *PutRequest) (*Empty, error)
-	Delete(context.Context, *Location) (*Empty, error)
+	KVGet(context.Context, *Location) (*GetResponse, error)
+	KVPut(context.Context, *PutRequest) (*Empty, error)
+	KVDelete(context.Context, *Location) (*Empty, error)
 }
 
 func RegisterKVServer(s *grpc.Server, srv KVServer) {
 	s.RegisterService(&_KV_serviceDesc, srv)
 }
 
-func _KV_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KV_KVGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Location)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KVServer).Get(ctx, in)
+		return srv.(KVServer).KVGet(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.KV/Get",
+		FullMethod: "/proto.KV/KVGet",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KVServer).Get(ctx, req.(*Location))
+		return srv.(KVServer).KVGet(ctx, req.(*Location))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KV_Put_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KV_KVPut_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PutRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KVServer).Put(ctx, in)
+		return srv.(KVServer).KVPut(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.KV/Put",
+		FullMethod: "/proto.KV/KVPut",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KVServer).Put(ctx, req.(*PutRequest))
+		return srv.(KVServer).KVPut(ctx, req.(*PutRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KV_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KV_KVDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Location)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KVServer).Delete(ctx, in)
+		return srv.(KVServer).KVDelete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.KV/Delete",
+		FullMethod: "/proto.KV/KVDelete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KVServer).Delete(ctx, req.(*Location))
+		return srv.(KVServer).KVDelete(ctx, req.(*Location))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -336,16 +345,16 @@ var _KV_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*KVServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Get",
-			Handler:    _KV_Get_Handler,
+			MethodName: "KVGet",
+			Handler:    _KV_KVGet_Handler,
 		},
 		{
-			MethodName: "Put",
-			Handler:    _KV_Put_Handler,
+			MethodName: "KVPut",
+			Handler:    _KV_KVPut_Handler,
 		},
 		{
-			MethodName: "Delete",
-			Handler:    _KV_Delete_Handler,
+			MethodName: "KVDelete",
+			Handler:    _KV_KVDelete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -36,7 +36,7 @@ func NewServer(cfg *ServerConfig) (*GrpcServer, error) {
 
 	srv := grpc.NewServer()
 
-	mem := NewMemory()
+	mem := NewMemoryBackend()
 
 	log := logrus.New().WithField("process", "server")
 
@@ -72,22 +72,23 @@ func (s *GrpcServer) CacheSet(_ context.Context, req *proto.CacheSetRequest) (*p
 }
 
 func (s *GrpcServer) IncrementCounter(_ context.Context, req *proto.IncrementCounterRequest) (*proto.Empty, error) {
-	s.mem.IncrementCounter(req.Key, req.Amount)
+	s.mem.CounterIncrement(req.Key, req.Amount)
 
 	return &proto.Empty{}, nil
 }
 
 func (s *GrpcServer) GetCounter(_ context.Context, req *proto.GetCounterRequest) (*proto.GetCounterResponse, error) {
-	val := s.mem.GetCounter(req.Key)
+	val := s.mem.CounterGet(req.Key)
 
 	return &proto.GetCounterResponse{
 		Value: val,
 	}, nil
 }
 
-func (s *GrpcServer) Get(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
+func (s *GrpcServer) KVGet(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
 	loc := &Location{
-		Key: location.Key,
+		Bucket: location.Bucket,
+		Key:    location.Key,
 	}
 
 	val, err := s.mem.KVGet(loc)
@@ -104,26 +105,32 @@ func (s *GrpcServer) Get(_ context.Context, location *proto.Location) (*proto.Ge
 	return res, nil
 }
 
-func (s *GrpcServer) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
+func (s *GrpcServer) KVPut(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
 	loc := &Location{
-		Key: req.Location.Key,
+		Bucket: req.Location.Bucket,
+		Key:    req.Location.Key,
 	}
 
 	val := &Value{
 		Content: req.Value.Content,
 	}
 
-	s.mem.KVPut(loc, val)
+	if err := s.mem.KVPut(loc, val); err != nil {
+		return nil, err
+	}
 
 	return &proto.Empty{}, nil
 }
 
-func (s *GrpcServer) Delete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
+func (s *GrpcServer) KVDelete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
 	loc := &Location{
-		Key: location.Key,
+		Bucket: location.Bucket,
+		Key:    location.Key,
 	}
 
-	s.mem.KVDelete(loc)
+	if err := s.mem.KVDelete(loc); err != nil {
+		return nil, err
+	}
 
 	return &proto.Empty{}, nil
 }

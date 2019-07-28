@@ -12,15 +12,16 @@ func TestKVTypes(t *testing.T) {
 	is := assert.New(t)
 
 	t.Run("Location", func(t *testing.T) {
-		key := "some-key"
+		bucket, key := "some-bucket", "some-key"
 
-		loc := &Location{
-			Key: key,
-		}
+		loc := &Location{}
+		is.Equal(loc.validate(), ErrNoBucket)
 
-		is.Equal(loc.String(), "Location<key: some-key>")
-		is.Equal(loc.Proto(), &proto.Location{Key: key})
-		is.Equal(loc.Key, key)
+		loc.Bucket = bucket
+		is.Equal(loc.validate(), ErrNoKey)
+
+		loc.Key = key
+		is.NoError(loc.validate())
 	})
 
 	t.Run("Value", func(t *testing.T) {

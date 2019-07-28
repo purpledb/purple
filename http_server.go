@@ -14,7 +14,7 @@ type HttpServer struct {
 }
 
 func NewHttpServer() *HttpServer {
-	mem := NewMemory()
+	mem := NewMemoryBackend()
 
 	return &HttpServer{
 		mem: mem,
@@ -133,7 +133,7 @@ func (s *HttpServer) cachePut(c *gin.Context) {
 func (s *HttpServer) countersGet(c *gin.Context) {
 	counter := c.Param("counter")
 
-	value := s.mem.GetCounter(counter)
+	value := s.mem.CounterGet(counter)
 
 	res := struct {
 		Counter string `json:"counter"`
@@ -161,7 +161,7 @@ func (s *HttpServer) countersPut(c *gin.Context) {
 
 	increment := int32(i)
 
-	s.mem.IncrementCounter(counter, increment)
+	s.mem.CounterIncrement(counter, increment)
 
 	c.Status(http.StatusAccepted)
 }

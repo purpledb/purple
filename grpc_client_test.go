@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func TestClient(t *testing.T) {
+func TestGrpcClient(t *testing.T) {
 	is := assert.New(t)
 
 	srv, err := NewServer(goodServerCfg)
@@ -41,7 +41,7 @@ func TestClient(t *testing.T) {
 		is.NoError(err)
 		is.NotNil(badCl)
 
-		err = badCl.KVDelete(&Location{Key: "does-not-exist"})
+		err = badCl.KVDelete(&Location{Bucket: "does-not-exist", Key: "does-not-exist"})
 		stat, ok := status.FromError(err)
 		is.True(ok)
 		is.Equal(stat.Code(), codes.Unavailable)
@@ -62,7 +62,8 @@ func TestClient(t *testing.T) {
 
 	t.Run("KV", func(t *testing.T) {
 		goodLoc := &Location{
-			Key: "exists",
+			Bucket: "exists",
+			Key:    "exists",
 		}
 
 		val := &Value{
@@ -77,7 +78,8 @@ func TestClient(t *testing.T) {
 		is.NotNil(fetched)
 
 		badLoc := &Location{
-			Key: "does-not-exist",
+			Bucket: "does-not-exist",
+			Key:    "does-not-exist",
 		}
 
 		fetched, err = cl.KVGet(badLoc)
@@ -89,7 +91,7 @@ func TestClient(t *testing.T) {
 		t.Run("Nils", func(t *testing.T) {
 			err = cl.KVPut(nil, nil)
 			is.Equal(err, ErrNoLocation)
-			err = cl.KVPut(&Location{Key: "test"}, nil)
+			err = cl.KVPut(&Location{Bucket: "test", Key: "test"}, nil)
 			is.Equal(err, ErrNoValue)
 			err = cl.KVPut(nil, &Value{Content: []byte("some bytes")})
 		})

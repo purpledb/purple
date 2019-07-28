@@ -1,14 +1,18 @@
 package strato
 
 import (
+	bolt "github.com/etcd-io/bbolt"
+	"os"
 	"strings"
 	"time"
 )
 
+const dbFile = "strato-kv.db"
+
 type Memory struct {
 	cache    map[string]*CacheItem
 	counters map[string]int32
-	values   map[Location]*Value
+	kv       *bolt.DB
 	docs     []*Document
 	sets     map[string][]string
 }
@@ -21,21 +25,28 @@ var (
 	_ Set     = (*Memory)(nil)
 )
 
-func NewMemory() *Memory {
+func NewMemoryBackend() *Memory {
 	cache := make(map[string]*CacheItem)
 
 	counters := make(map[string]int32)
-
-	values := make(map[Location]*Value)
 
 	docs := make([]*Document, 0)
 
 	sets := make(map[string][]string)
 
+	if _, err := os.Create(dbFile); err != nil {
+		panic(err)
+	}
+
+	kv, err := bolt.Open(dbFile, 0666, nil)
+	if err != nil {
+		panic(err)
+	}
+
 	return &Memory{
 		cache:    cache,
 		counters: counters,
-		values:   values,
+		kv:       kv,
 		docs:     docs,
 		sets:     sets,
 	}
@@ -89,7 +100,7 @@ func getTtl(ttl int32) int32 {
 	}
 }
 
-func (m *Memory) IncrementCounter(key string, increment int32) {
+func (m *Memory) CounterIncrement(key string, increment int32) {
 	counter, ok := m.counters[key]
 	if !ok {
 		m.counters[key] = increment
@@ -98,28 +109,68 @@ func (m *Memory) IncrementCounter(key string, increment int32) {
 	}
 }
 
-func (m *Memory) GetCounter(key string) int32 {
+func (m *Memory) CounterGet(key string) int32 {
 	return m.counters[key]
 }
 
 func (m *Memory) KVGet(location *Location) (*Value, error) {
-	val, ok := m.values[*location]
-
-	if !ok {
-		return nil, NotFound(location)
+	if err := location.validate(); err != nil {
+		return nil, err
 	}
 
-	return val, nil
-}
+	var val []byte
 
-func (m *Memory) KVPut(location *Location, value *Value) {
-	m.values[*location] = value
-}
+	if err := m.kv.View(func(tx *bolt.Tx) error {
+		buck := tx.Bucket([]byte(location.Bucket))
 
-func (m *Memory) KVDelete(location *Location) {
-	if _, ok := m.values[*location]; ok {
-		delete(m.values, *location)
+		if buck == nil {
+			return NotFound(location)
+		}
+
+		val = buck.Get([]byte(location.Key))
+
+		if val == nil {
+			return NotFound(location)
+		}
+
+		return nil
+	}); err != nil {
+		return nil, err
 	}
+
+	return &Value{
+		Content: val,
+	}, nil
+}
+
+func (m *Memory) KVPut(location *Location, value *Value) error {
+	if err := location.validate(); err != nil {
+		return err
+	}
+
+	return m.kv.Update(func(tx *bolt.Tx) error {
+		buck, err := tx.CreateBucketIfNotExists([]byte(location.Bucket))
+		if err != nil {
+			return err
+		}
+
+		return buck.Put([]byte(location.Key), []byte(value.Content))
+	})
+}
+
+func (m *Memory) KVDelete(location *Location) error {
+	if err := location.validate(); err != nil {
+		return err
+	}
+
+	return m.kv.Update(func(tx *bolt.Tx) error {
+		buck := tx.Bucket([]byte(location.Bucket))
+		if buck == nil {
+			return nil
+		}
+
+		return buck.Delete([]byte(location.Key))
+	})
 }
 
 func (m *Memory) Index(doc *Document) {
@@ -175,4 +226,8 @@ func (m *Memory) RemoveFromSet(set, item string) {
 			m.sets[set] = append(m.sets[set][:idx], m.sets[set][idx+1:]...)
 		}
 	}
+}
+
+func (m *Memory) Close() error {
+	return m.kv.Close()
 }

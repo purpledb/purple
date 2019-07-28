@@ -111,7 +111,15 @@ func (c *GrpcClient) GetCounter(key string) (int32, error) {
 }
 
 func (c *GrpcClient) KVGet(location *Location) (*Value, error) {
-	res, err := c.kvClient.Get(c.ctx, location.Proto())
+	if location == nil {
+		return nil, ErrNoLocation
+	}
+
+	if err := location.validate(); err != nil {
+		return nil, err
+	}
+
+	res, err := c.kvClient.KVGet(c.ctx, location.Proto())
 	if err != nil {
 		return nil, err
 	}
@@ -128,6 +136,10 @@ func (c *GrpcClient) KVPut(location *Location, value *Value) error {
 		return ErrNoLocation
 	}
 
+	if err := location.validate(); err != nil {
+		return err
+	}
+
 	if value == nil {
 		return ErrNoValue
 	}
@@ -137,7 +149,7 @@ func (c *GrpcClient) KVPut(location *Location, value *Value) error {
 		Value:    value.Proto(),
 	}
 
-	if _, err := c.kvClient.Put(c.ctx, req); err != nil {
+	if _, err := c.kvClient.KVPut(c.ctx, req); err != nil {
 		return err
 	}
 
@@ -145,7 +157,15 @@ func (c *GrpcClient) KVPut(location *Location, value *Value) error {
 }
 
 func (c *GrpcClient) KVDelete(location *Location) error {
-	if _, err := c.kvClient.Delete(c.ctx, location.Proto()); err != nil {
+	if location == nil {
+		return ErrNoLocation
+	}
+
+	if err := location.validate(); err != nil {
+		return err
+	}
+
+	if _, err := c.kvClient.KVDelete(c.ctx, location.Proto()); err != nil {
 		return err
 	}
 

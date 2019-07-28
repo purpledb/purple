@@ -8,15 +8,13 @@ import (
 )
 
 func TestMemoryImpl(t *testing.T) {
-	t.Parallel()
-
 	is := assert.New(t)
 
-	mem := NewMemory()
+	mem := NewMemoryBackend()
 
 	t.Run("Instantiation", func(t *testing.T) {
 		is.NotNil(mem)
-		is.Empty(mem.values)
+		is.NotNil(mem.kv)
 	})
 
 	t.Run("Cache", func(t *testing.T) {
@@ -46,27 +44,28 @@ func TestMemoryImpl(t *testing.T) {
 	t.Run("Counter", func(t *testing.T) {
 		key := "my-counter"
 
-		is.Zero(mem.GetCounter(key))
+		is.Zero(mem.CounterGet(key))
 
-		mem.IncrementCounter(key, int32(10))
-		is.Equal(mem.GetCounter(key), int32(10))
-		mem.IncrementCounter(key, int32(-50))
-		is.Equal(mem.GetCounter(key), int32(-40))
-		is.Zero(mem.GetCounter("does-not-yet-exist"), 0)
+		mem.CounterIncrement(key, int32(10))
+		is.Equal(mem.CounterGet(key), int32(10))
+		mem.CounterIncrement(key, int32(-50))
+		is.Equal(mem.CounterGet(key), int32(-40))
+		is.Zero(mem.CounterGet("does-not-yet-exist"), 0)
 	})
 
 	t.Run("KV", func(t *testing.T) {
 		loc := &Location{
-			Key: "some-key",
+			Bucket: "some-bucket",
+			Key:    "some-key",
 		}
 
 		val := &Value{
 			Content: []byte("here is a value"),
 		}
 
-		mem.KVPut(loc, val)
+		is.NoError(mem.KVPut(loc, val))
 
-		fetched, err := mem.KVGet(&Location{Key: "does-not-exist"})
+		fetched, err := mem.KVGet(&Location{Bucket: "does-not-exist", Key: "does-not-exist"})
 		is.True(IsNotFound(err))
 		is.Nil(fetched)
 
@@ -75,7 +74,7 @@ func TestMemoryImpl(t *testing.T) {
 		is.NotNil(fetched)
 		is.Equal(fetched, val)
 
-		mem.KVDelete(loc)
+		is.NoError(mem.KVDelete(loc))
 		fetched, err = mem.KVGet(loc)
 		is.True(IsNotFound(err))
 		is.Nil(fetched)

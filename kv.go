@@ -9,12 +9,13 @@ import (
 type (
 	KV interface {
 		KVGet(location *Location) (*Value, error)
-		KVPut(location *Location, value *Value)
-		KVDelete(location *Location)
+		KVPut(location *Location, value *Value) error
+		KVDelete(location *Location) error
 	}
 
 	Location struct {
-		Key string
+		Bucket string
+		Key    string
 	}
 
 	Value struct {
@@ -22,13 +23,26 @@ type (
 	}
 )
 
+func (l *Location) validate() error {
+	if l.Bucket == "" {
+		return ErrNoBucket
+	}
+
+	if l.Key == "" {
+		return ErrNoKey
+	}
+
+	return nil
+}
+
 func (l *Location) String() string {
-	return fmt.Sprintf("Location<key: %s>", l.Key)
+	return fmt.Sprintf("Location<bucket: %s, key: %s>", l.Bucket, l.Key)
 }
 
 func (l *Location) Proto() *proto.Location {
 	return &proto.Location{
-		Key: l.Key,
+		Bucket: l.Bucket,
+		Key:    l.Key,
 	}
 }
 
