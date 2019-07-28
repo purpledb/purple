@@ -58,6 +58,13 @@ func (s *HttpServer) routes() *gin.Engine {
 		search.PUT("", s.searchPut)
 	}
 
+	sets := r.Group("/sets")
+	{
+		sets.GET("/:set", s.setsGet)
+		sets.PUT("/:set/:item", s.setsPut)
+		sets.DELETE("/:set/:item", s.setsDelete)
+	}
+
 	return r
 }
 
@@ -247,6 +254,38 @@ func (s *HttpServer) searchPut(c *gin.Context) {
 	}
 
 	s.mem.Index(&doc)
+
+	c.Status(http.StatusAccepted)
+}
+
+func (s *HttpServer) setsGet(c *gin.Context) {
+	set := c.Param("set")
+
+	items := s.mem.GetSet(set)
+
+	res := struct {
+		Set   string   `json:"set"`
+		Items []string `json:"items"`
+	}{
+		Set:   set,
+		Items: items,
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (s *HttpServer) setsPut(c *gin.Context) {
+	set, item := c.Param("set"), c.Param("item")
+
+	s.mem.AddToSet(set, item)
+
+	c.Status(http.StatusAccepted)
+}
+
+func (s *HttpServer) setsDelete(c *gin.Context) {
+	set, item := c.Param("set"), c.Param("item")
+
+	s.mem.RemoveFromSet(set, item)
 
 	c.Status(http.StatusAccepted)
 }
