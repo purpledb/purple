@@ -46,18 +46,5 @@ func TestConfigInstantiation(t *testing.T) {
 		is.Equal(err, ErrPortOutOfRange)
 
 		is.NoError(goodServerCfg.validate())
-
-		srv, err := NewGrpcServer(emptyCfg)
-		is.True(IsConfigError(err))
-		is.Equal(err, ErrNoPort)
-		is.Nil(srv)
-
-		srv, err = NewGrpcServer(lowPortCfg)
-		is.True(IsConfigError(err))
-		is.Equal(err, ErrPortOutOfRange)
-
-		srv, err = NewGrpcServer(goodServerCfg)
-		is.NoError(err)
-		is.NotNil(srv)
 	})
 }
