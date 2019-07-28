@@ -14,7 +14,8 @@ type (
 	}
 
 	Location struct {
-		Key string
+		Bucket string
+		Key    string
 	}
 
 	Value struct {
@@ -22,8 +23,20 @@ type (
 	}
 )
 
+func (l *Location) validate() error {
+	if l.Bucket == "" {
+		return ErrNoBucket
+	}
+
+	if l.Key == "" {
+		return ErrNoKey
+	}
+
+	return nil
+}
+
 func (l *Location) String() string {
-	return fmt.Sprintf("Location<key: %s>", l.Key)
+	return fmt.Sprintf("Location<bucket: %s, key: %s>", l.Bucket, l.Key)
 }
 
 func (l *Location) Proto() *proto.Location {
