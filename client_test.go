@@ -118,4 +118,23 @@ func TestClient(t *testing.T) {
 		is.NoError(err)
 		is.Len(res, 1)
 	})
+
+	t.Run("Set", func(t *testing.T) {
+		set, item := "example-set", "example-item"
+
+		items, err := cl.GetSet(set)
+		is.NoError(err)
+		is.Empty(items)
+		is.NoError(cl.AddToSet(set, item))
+
+		items, err = cl.GetSet(set)
+		is.NoError(err)
+		is.Len(items, 1)
+		is.Equal(items[0], item)
+
+		is.NoError(cl.RemoveFromSet(set, item))
+		items, err = cl.GetSet(set)
+		is.NoError(err)
+		is.Empty(items)
+	})
 }
