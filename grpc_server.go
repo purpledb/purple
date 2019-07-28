@@ -27,16 +27,20 @@ var (
 	_ proto.SetServer     = (*GrpcServer)(nil)
 )
 
-func NewGrpcServer(args []string) (*GrpcServer, error) {
-	cfg := getGrpcServerConfig(args)
-
+func NewGrpcServer(cfg *GrpcConfig) (*GrpcServer, error) {
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
 	srv := grpc.NewServer()
 
 	mem := NewMemoryBackend()
 
-	log := logrus.New().WithField("process", "server")
+	logger := logrus.New()
+
+	if cfg.Debug {
+		logger.SetLevel(logrus.DebugLevel)
+	}
+
+	log := logger.WithField("server", "grpc")
 
 	return &GrpcServer{
 		address: addr,

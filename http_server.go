@@ -2,6 +2,7 @@ package strato
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,18 +13,29 @@ import (
 type HttpServer struct {
 	address string
 	mem     *Memory
+	log     *logrus.Entry
 }
 
-func NewHttpServer(args []string) *HttpServer {
-	cfg := getHttpServerConfig(args)
-
+func NewHttpServer(cfg *HttpConfig) *HttpServer {
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
 	mem := NewMemoryBackend()
 
+	logger := logrus.New()
+
+	if cfg.Debug {
+		logger.SetLevel(logrus.DebugLevel)
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
+	log := logger.WithField("server", "http")
+
 	return &HttpServer{
 		address: addr,
 		mem:     mem,
+		log:     log,
 	}
 }
 
@@ -32,6 +44,8 @@ func (s *HttpServer) Start() error {
 		Addr:    s.address,
 		Handler: s.routes(),
 	}
+
+	s.log.Infof("starting the Strato HTTP server on %s", s.address)
 
 	return srv.ListenAndServe()
 }
@@ -75,6 +89,8 @@ func (s *HttpServer) routes() *gin.Engine {
 }
 
 func (s *HttpServer) cacheGet(c *gin.Context) {
+	log := s.log.WithField("op", "cache/get")
+
 	key := c.Query("key")
 	if key == "" {
 		c.String(http.StatusBadRequest, "no key provided")
@@ -83,10 +99,14 @@ func (s *HttpServer) cacheGet(c *gin.Context) {
 
 	val, err := s.mem.CacheGet(key)
 	if err != nil {
-		if IsNoCacheValue(err) {
+		if IsNoItemFound(err) {
 			c.Status(http.StatusNotFound)
 			return
+		} else if IsExpired(err) {
+			c.Status(http.StatusGone)
+			return
 		} else {
+			log.Error(err)
 			c.String(http.StatusInternalServerError, err.Error())
 			return
 		}
@@ -102,6 +122,8 @@ func (s *HttpServer) cacheGet(c *gin.Context) {
 }
 
 func (s *HttpServer) cachePut(c *gin.Context) {
+	log := s.log.WithField("op", "cache/put")
+
 	key := c.Query("key")
 	if key == "" {
 		c.String(http.StatusBadRequest, "no key provided")
@@ -129,6 +151,7 @@ func (s *HttpServer) cachePut(c *gin.Context) {
 	ttl := int32(ttlInt)
 
 	if err := s.mem.CacheSet(key, value, ttl); err != nil {
+		log.Error(err)
 		c.Status(http.StatusInternalServerError)
 		return
 	}
@@ -173,6 +196,8 @@ func (s *HttpServer) countersPut(c *gin.Context) {
 }
 
 func (s *HttpServer) kvGet(c *gin.Context) {
+	log := s.log.WithField("op", "kv/get")
+
 	key := c.Param("key")
 
 	loc := &Location{
@@ -185,6 +210,7 @@ func (s *HttpServer) kvGet(c *gin.Context) {
 			c.Status(http.StatusNotFound)
 			return
 		} else {
+			log.Error(err)
 			c.String(http.StatusInternalServerError, err.Error())
 			return
 		}
@@ -200,6 +226,8 @@ func (s *HttpServer) kvGet(c *gin.Context) {
 }
 
 func (s *HttpServer) kvPut(c *gin.Context) {
+	log := s.log.WithField("op", "kv/put")
+
 	key := c.Param("key")
 	value := c.Param("value")
 
@@ -211,19 +239,29 @@ func (s *HttpServer) kvPut(c *gin.Context) {
 		Content: []byte(value),
 	}
 
-	s.mem.KVPut(loc, val)
+	if err := s.mem.KVPut(loc, val); err != nil {
+		log.Error(err)
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	c.Header("Location", fmt.Sprintf("/kv/%s", key))
 	c.Status(http.StatusCreated)
 }
 
 func (s *HttpServer) kvDelete(c *gin.Context) {
+	log := s.log.WithField("op", "kv/delete")
+
 	key := c.Param("key")
 	loc := &Location{
 		Key: key,
 	}
 
-	s.mem.KVDelete(loc)
+	if err := s.mem.KVDelete(loc); err != nil {
+		log.Error(err)
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	c.Status(http.StatusAccepted)
 }

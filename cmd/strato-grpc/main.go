@@ -1,20 +1,41 @@
 package main
 
 import (
-	"fmt"
 	"github.com/lucperkins/strato"
-	"os"
+	"github.com/lucperkins/strato/cmd"
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
 
-func main() {
-	srv, err := strato.NewGrpcServer(os.Args)
-	exitOnError(err)
-	exitOnError(srv.Start())
+func command() *cobra.Command {
+	var config strato.GrpcConfig
+
+	v := viper.New()
+	v.AutomaticEnv()
+	v.SetEnvPrefix("strato_grpc")
+
+	command := &cobra.Command{
+		Use: "strato-grpc",
+		PreRun: func(_ *cobra.Command, _ []string) {
+			cmd.ExitOnError(v.Unmarshal(&config))
+		},
+		Run: func(_ *cobra.Command, _ []string) {
+			srv, err := strato.NewGrpcServer(&config)
+			cmd.ExitOnError(err)
+			cmd.ExitOnError(srv.Start())
+		},
+	}
+
+	flags := pflag.NewFlagSet("strato-grpc", pflag.ExitOnError)
+	flags.IntP("port", "p", 8080, "Strato server port")
+	flags.Bool("debug", false, "Debug mode")
+
+	cmd.BindFlagsToCmd(command, flags, v)
+
+	return command
 }
 
-func exitOnError(err error) {
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+func main() {
+	cmd.ExitOnError(command().Execute())
 }
