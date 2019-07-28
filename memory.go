@@ -89,7 +89,7 @@ func getTtl(ttl int32) int32 {
 	}
 }
 
-func (m *Memory) IncrementCounter(key string, increment int32) {
+func (m *Memory) CounterIncrement(key string, increment int32) {
 	counter, ok := m.counters[key]
 	if !ok {
 		m.counters[key] = increment
@@ -98,7 +98,7 @@ func (m *Memory) IncrementCounter(key string, increment int32) {
 	}
 }
 
-func (m *Memory) GetCounter(key string) int32 {
+func (m *Memory) CounterGet(key string) int32 {
 	return m.counters[key]
 }
 

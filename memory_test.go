@@ -46,13 +46,13 @@ func TestMemoryImpl(t *testing.T) {
 	t.Run("Counter", func(t *testing.T) {
 		key := "my-counter"
 
-		is.Zero(mem.GetCounter(key))
+		is.Zero(mem.CounterGet(key))
 
-		mem.IncrementCounter(key, int32(10))
-		is.Equal(mem.GetCounter(key), int32(10))
-		mem.IncrementCounter(key, int32(-50))
-		is.Equal(mem.GetCounter(key), int32(-40))
-		is.Zero(mem.GetCounter("does-not-yet-exist"), 0)
+		mem.CounterIncrement(key, int32(10))
+		is.Equal(mem.CounterGet(key), int32(10))
+		mem.CounterIncrement(key, int32(-50))
+		is.Equal(mem.CounterGet(key), int32(-40))
+		is.Zero(mem.CounterGet("does-not-yet-exist"), 0)
 	})
 
 	t.Run("KV", func(t *testing.T) {

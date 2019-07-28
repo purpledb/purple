@@ -72,13 +72,13 @@ func (s *Server) CacheSet(_ context.Context, req *proto.CacheSetRequest) (*proto
 }
 
 func (s *Server) IncrementCounter(_ context.Context, req *proto.IncrementCounterRequest) (*proto.Empty, error) {
-	s.mem.IncrementCounter(req.Key, req.Amount)
+	s.mem.CounterIncrement(req.Key, req.Amount)
 
 	return &proto.Empty{}, nil
 }
 
 func (s *Server) GetCounter(_ context.Context, req *proto.GetCounterRequest) (*proto.GetCounterResponse, error) {
-	val := s.mem.GetCounter(req.Key)
+	val := s.mem.CounterGet(req.Key)
 
 	return &proto.GetCounterResponse{
 		Value: val,
