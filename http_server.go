@@ -29,7 +29,7 @@ func NewHttpServer(args []string) *HttpServer {
 
 func (s *HttpServer) Start() error {
 	srv := &http.Server{
-		Addr:    ":8081",
+		Addr:    s.address,
 		Handler: s.routes(),
 	}
 
