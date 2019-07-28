@@ -192,7 +192,7 @@ func (c *Client) GetSet(set string) ([]string, error) {
 
 func (c *Client) AddToSet(set, item string) error {
 	req := &proto.ModifySetRequest{
-		Set: set,
+		Set:  set,
 		Item: item,
 	}
 
@@ -205,7 +205,7 @@ func (c *Client) AddToSet(set, item string) error {
 
 func (c *Client) RemoveFromSet(set, item string) error {
 	req := &proto.ModifySetRequest{
-		Set: set,
+		Set:  set,
 		Item: item,
 	}
 
