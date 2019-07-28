@@ -41,7 +41,7 @@ func TestClient(t *testing.T) {
 		is.NoError(err)
 		is.NotNil(badCl)
 
-		err = badCl.KVDelete(&Location{Key: "does-not-exist"})
+		err = badCl.KVDelete(&Location{Bucket: "does-not-exist", Key: "does-not-exist"})
 		stat, ok := status.FromError(err)
 		is.True(ok)
 		is.Equal(stat.Code(), codes.Unavailable)
@@ -62,6 +62,7 @@ func TestClient(t *testing.T) {
 
 	t.Run("KV", func(t *testing.T) {
 		goodLoc := &Location{
+			Bucket: "exists",
 			Key: "exists",
 		}
 
@@ -77,6 +78,7 @@ func TestClient(t *testing.T) {
 		is.NotNil(fetched)
 
 		badLoc := &Location{
+			Bucket: "does-not-exist",
 			Key: "does-not-exist",
 		}
 
@@ -89,7 +91,7 @@ func TestClient(t *testing.T) {
 		t.Run("Nils", func(t *testing.T) {
 			err = cl.KVPut(nil, nil)
 			is.Equal(err, ErrNoLocation)
-			err = cl.KVPut(&Location{Key: "test"}, nil)
+			err = cl.KVPut(&Location{Bucket: "test", Key: "test"}, nil)
 			is.Equal(err, ErrNoValue)
 			err = cl.KVPut(nil, &Value{Content: []byte("some bytes")})
 		})

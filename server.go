@@ -107,6 +107,7 @@ func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetRes
 
 func (s *Server) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
 	loc := &Location{
+		Bucket: req.Location.Bucket,
 		Key: req.Location.Key,
 	}
 
@@ -114,17 +115,22 @@ func (s *Server) Put(_ context.Context, req *proto.PutRequest) (*proto.Empty, er
 		Content: req.Value.Content,
 	}
 
-	s.mem.KVPut(loc, val)
+	if err := s.mem.KVPut(loc, val); err != nil {
+		return nil, err
+	}
 
 	return &proto.Empty{}, nil
 }
 
 func (s *Server) Delete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
 	loc := &Location{
+		Bucket: location.Bucket,
 		Key: location.Key,
 	}
 
-	s.mem.KVDelete(loc)
+	if err := s.mem.KVDelete(loc); err != nil {
+		return nil, err
+	}
 
 	return &proto.Empty{}, nil
 }
