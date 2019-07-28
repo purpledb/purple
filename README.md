@@ -1,5 +1,7 @@
 # Strato
 
+[![Actions Status](https://wdp9fww0r9.execute-api.us-west-2.amazonaws.com/production/badge/lucperkins/strato)](https://github.com/lucperkins/strato/actions) [![GoDoc](https://godoc.org/github.com/lucperkins/strato?status.svg)](https://godoc.org/github.com/lucperkins/strato) 
+
 An all-in-one data service with support for:
 
 * Key/value operations
