@@ -18,7 +18,8 @@ func main() {
 	}
 
 	loc := &strato.Location{
-		Key: "some-key",
+		Bucket: "some-bucket",
+		Key:    "some-key",
 	}
 
 	value := &strato.Value{
@@ -29,7 +30,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Println("Successful PUT operation")
+	log.Println("Successful PUT operation to", loc.String())
 
 	val, err := client.KVGet(loc)
 	if err != nil {

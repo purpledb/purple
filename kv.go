@@ -41,7 +41,8 @@ func (l *Location) String() string {
 
 func (l *Location) Proto() *proto.Location {
 	return &proto.Location{
-		Key: l.Key,
+		Bucket: l.Bucket,
+		Key:    l.Key,
 	}
 }
 

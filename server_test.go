@@ -41,8 +41,6 @@ var (
 )
 
 func TestServer(t *testing.T) {
-	t.Parallel()
-
 	is := assert.New(t)
 
 	srv, err := NewServer(goodServerCfg)

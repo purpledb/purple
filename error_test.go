@@ -7,8 +7,6 @@ import (
 )
 
 func TestErrors(t *testing.T) {
-	t.Parallel()
-
 	is := assert.New(t)
 
 	t.Run("Cache", func(t *testing.T) {

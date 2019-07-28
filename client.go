@@ -111,6 +111,14 @@ func (c *Client) GetCounter(key string) (int32, error) {
 }
 
 func (c *Client) KVGet(location *Location) (*Value, error) {
+	if location == nil {
+		return nil, ErrNoLocation
+	}
+
+	if err := location.validate(); err != nil {
+		return nil, err
+	}
+
 	res, err := c.kvClient.Get(c.ctx, location.Proto())
 	if err != nil {
 		return nil, err
@@ -126,6 +134,10 @@ func (c *Client) KVGet(location *Location) (*Value, error) {
 func (c *Client) KVPut(location *Location, value *Value) error {
 	if location == nil {
 		return ErrNoLocation
+	}
+
+	if err := location.validate(); err != nil {
+		return err
 	}
 
 	if value == nil {
@@ -145,6 +157,14 @@ func (c *Client) KVPut(location *Location, value *Value) error {
 }
 
 func (c *Client) KVDelete(location *Location) error {
+	if location == nil {
+		return ErrNoLocation
+	}
+
+	if err := location.validate(); err != nil {
+		return err
+	}
+
 	if _, err := c.kvClient.Delete(c.ctx, location.Proto()); err != nil {
 		return err
 	}

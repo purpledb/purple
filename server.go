@@ -87,6 +87,7 @@ func (s *Server) GetCounter(_ context.Context, req *proto.GetCounterRequest) (*p
 
 func (s *Server) Get(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
 	loc := &Location{
+		Bucket: location.Bucket,
 		Key: location.Key,
 	}
 

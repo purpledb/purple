@@ -135,7 +135,7 @@ func (m *Memory) KVGet(location *Location) (*Value, error) {
 
 		return nil
 	}); err != nil {
-			return nil, err
+		return nil, err
 	}
 
 	return &Value{
@@ -226,4 +226,8 @@ func (m *Memory) RemoveFromSet(set, item string) {
 			m.sets[set] = append(m.sets[set][:idx], m.sets[set][idx+1:]...)
 		}
 	}
+}
+
+func (m *Memory) Close() error {
+	return m.kv.Close()
 }
