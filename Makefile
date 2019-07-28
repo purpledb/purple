@@ -36,9 +36,19 @@ coverage:
 	$(GO) test -v -coverprofile $(COVER_OUT) ./...
 	$(GO) tool cover -html=$(COVER_OUT)
 
-docker-build:
+docker-build-grpc:
 	docker build --build-arg serverType=grpc -t $(GRPC_IMG) .
+
+docker-build-http:
 	docker build --build-arg serverType=http -t $(HTTP_IMG) .
+
+docker-build-all: docker-build-grpc docker-build-http
+
+docker-push-grpc: docker-build-grpc
+	docker push $(GRPC_IMG)
+
+docker-push-http: docker-build-http
+	docker push $(HTTP_IMG)
 
 docker-run-grpc:
 	docker run --rm --interactive --tty -p 8080:8080 $(GRPC_IMG)
@@ -46,6 +56,4 @@ docker-run-grpc:
 docker-run-http:
 	docker run --rm --interactive --tty -p 8081:8081 $(HTTP_IMG)
 
-docker-push: docker-build
-	docker push $(GRPC_IMG)
-	docker push $(HTTP_IMG)
+docker-push-all: docker-push-grpc docker-push-http
