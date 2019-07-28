@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-type Client struct {
+type GrpcClient struct {
 	cacheClient   proto.CacheClient
 	counterClient proto.CounterClient
 	kvClient      proto.KVClient
@@ -18,7 +18,7 @@ type Client struct {
 	ctx           context.Context
 }
 
-func NewClient(cfg *ClientConfig) (*Client, error) {
+func NewClient(cfg *ClientConfig) (*GrpcClient, error) {
 	if err := cfg.validate(); err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func NewClient(cfg *ClientConfig) (*Client, error) {
 
 	ctx := context.Background()
 
-	return &Client{
+	return &GrpcClient{
 		cacheClient:   cacheClient,
 		counterClient: counterClient,
 		kvClient:      kvClient,
@@ -55,7 +55,7 @@ func connect(addr string) (*grpc.ClientConn, error) {
 	return grpc.Dial(addr, grpc.WithInsecure())
 }
 
-func (c *Client) CacheGet(key string) (string, error) {
+func (c *GrpcClient) CacheGet(key string) (string, error) {
 	req := &proto.CacheGetRequest{
 		Key: key,
 	}
@@ -68,7 +68,7 @@ func (c *Client) CacheGet(key string) (string, error) {
 	return val.Value, nil
 }
 
-func (c *Client) CacheSet(key, value string, ttl int32) error {
+func (c *GrpcClient) CacheSet(key, value string, ttl int32) error {
 	req := &proto.CacheSetRequest{
 		Key: key,
 		Item: &proto.CacheItem{
@@ -84,7 +84,7 @@ func (c *Client) CacheSet(key, value string, ttl int32) error {
 	return nil
 }
 
-func (c *Client) IncrementCounter(key string, amount int32) error {
+func (c *GrpcClient) IncrementCounter(key string, amount int32) error {
 	req := &proto.IncrementCounterRequest{
 		Key:    key,
 		Amount: amount,
@@ -97,7 +97,7 @@ func (c *Client) IncrementCounter(key string, amount int32) error {
 	return nil
 }
 
-func (c *Client) GetCounter(key string) (int32, error) {
+func (c *GrpcClient) GetCounter(key string) (int32, error) {
 	req := &proto.GetCounterRequest{
 		Key: key,
 	}
@@ -110,7 +110,7 @@ func (c *Client) GetCounter(key string) (int32, error) {
 	return res.Value, nil
 }
 
-func (c *Client) KVGet(location *Location) (*Value, error) {
+func (c *GrpcClient) KVGet(location *Location) (*Value, error) {
 	res, err := c.kvClient.Get(c.ctx, location.Proto())
 	if err != nil {
 		return nil, err
@@ -123,7 +123,7 @@ func (c *Client) KVGet(location *Location) (*Value, error) {
 	return val, nil
 }
 
-func (c *Client) KVPut(location *Location, value *Value) error {
+func (c *GrpcClient) KVPut(location *Location, value *Value) error {
 	if location == nil {
 		return ErrNoLocation
 	}
@@ -144,7 +144,7 @@ func (c *Client) KVPut(location *Location, value *Value) error {
 	return nil
 }
 
-func (c *Client) KVDelete(location *Location) error {
+func (c *GrpcClient) KVDelete(location *Location) error {
 	if _, err := c.kvClient.Delete(c.ctx, location.Proto()); err != nil {
 		return err
 	}
@@ -152,7 +152,7 @@ func (c *Client) KVDelete(location *Location) error {
 	return nil
 }
 
-func (c *Client) Index(doc *Document) error {
+func (c *GrpcClient) Index(doc *Document) error {
 	req := &proto.IndexRequest{
 		Document: doc.toProto(),
 	}
@@ -164,7 +164,7 @@ func (c *Client) Index(doc *Document) error {
 	return nil
 }
 
-func (c *Client) Query(q string) ([]*Document, error) {
+func (c *GrpcClient) Query(q string) ([]*Document, error) {
 	query := &proto.SearchQuery{
 		Query: q,
 	}
@@ -177,7 +177,7 @@ func (c *Client) Query(q string) ([]*Document, error) {
 	return docsFromProto(res.Documents), nil
 }
 
-func (c *Client) GetSet(set string) ([]string, error) {
+func (c *GrpcClient) GetSet(set string) ([]string, error) {
 	req := &proto.GetSetRequest{
 		Set: set,
 	}
@@ -190,7 +190,7 @@ func (c *Client) GetSet(set string) ([]string, error) {
 	return res.Items, nil
 }
 
-func (c *Client) AddToSet(set, item string) error {
+func (c *GrpcClient) AddToSet(set, item string) error {
 	req := &proto.ModifySetRequest{
 		Set:  set,
 		Item: item,
@@ -203,7 +203,7 @@ func (c *Client) AddToSet(set, item string) error {
 	return nil
 }
 
-func (c *Client) RemoveFromSet(set, item string) error {
+func (c *GrpcClient) RemoveFromSet(set, item string) error {
 	req := &proto.ModifySetRequest{
 		Set:  set,
 		Item: item,

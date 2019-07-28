@@ -19,7 +19,7 @@ var (
 func TestConfigInstantiation(t *testing.T) {
 	is := assert.New(t)
 
-	t.Run("Client", func(t *testing.T) {
+	t.Run("GrpcClient", func(t *testing.T) {
 		emptyCfg := &ClientConfig{}
 
 		err := emptyCfg.validate()
