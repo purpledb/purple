@@ -2,7 +2,8 @@ GO        = go
 PROTOC    = protoc
 PROTO_DIR = proto
 COVER_OUT = coverage.out
-IMG_TAG   = lucperkins/strato:latest
+GRPC_IMG  = lucperkins/strato-grpc:latest
+HTTP_IMG  = lucperkins/strato-http:latest
 
 build:
 	$(GO) build -v ./...
@@ -36,10 +37,15 @@ coverage:
 	$(GO) tool cover -html=$(COVER_OUT)
 
 docker-build:
-	docker build -t $(IMG_TAG) .
+	docker build --build-arg serverType=grpc -t $(GRPC_IMG) .
+	docker build --build-arg serverType=http -t $(HTTP_IMG) .
 
-docker-run:
-	docker run --rm --interactive --tty -p 8080:8080 $(IMG_TAG)
+docker-run-grpc:
+	docker run --rm --interactive --tty -p 8080:8080 $(GRPC_IMG)
+
+docker-run-http:
+	docker run --rm --interactive --tty -p 8081:8081 $(HTTP_IMG)
 
 docker-push: docker-build
-	docker push $(IMG_TAG)
+	docker push $(GRPC_IMG)
+	docker push $(HTTP_IMG)

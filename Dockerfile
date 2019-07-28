@@ -8,13 +8,15 @@ RUN protoc --proto_path=/build --go_out=plugins=grpc:/output /build/*.proto
 
 FROM golang:1.12.7 AS go-builder
 
+ARG serverType
+
 ADD . /build
 
 WORKDIR /build
 
 COPY --from=protoc-builder /output /build/proto
 
-RUN CGO_ENABLED=0 GOOS=linux go build -mod vendor -o strato ./cmd/strato-grpc
+RUN CGO_ENABLED=0 GOOS=linux go build -mod vendor -o strato ./cmd/strato-${serverType}
 
 FROM alpine:3.9.4
 
