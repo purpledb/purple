@@ -84,7 +84,7 @@ To install the Strato gRPC server:
 
 ```bash
 # Executable
-go install github.com/lucperkins/strato/cmd/strato-grpc
+go get github.com/lucperkins/strato/cmd/strato-grpc
 
 # Docker image
 docker pull lucperkins/strato-grpc:latest
@@ -112,7 +112,7 @@ To install the Strato HTTP server:
 
 ```bash
 # Executable
-go install github.com/lucperkins/strato/cmd/strato-http
+go get github.com/lucperkins/strato/cmd/strato-http
 
 # Docker image
 docker pull lucperkins/strato-http:latest
