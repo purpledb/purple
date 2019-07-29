@@ -9,7 +9,7 @@ An all-in-one data service with support for:
 * Caching with TTL
 * Search indexing and querying
 
-Strato is mean to abstract away complex database interfaces (Redis, DynamoDB, Mongo, etc.) in favor of a unified set of dead-simple operations (see the full [list of operations](#operations) below).
+Strato is meant to abstract away complex database interfaces (Redis, DynamoDB, Mongo, etc.) in favor of a unified set of dead-simple operations (see the full [list of operations](#operations) below).
 
 You can run Strato as a [gRPC server](#grpc-server) or an [HTTP server](#http-server) (both expose the same interfaces). There's currently a [gRPC client](#grpc-client) for Go only but in principle gRPC clients could be added for other languages.
 
