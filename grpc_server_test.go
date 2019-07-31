@@ -16,6 +16,10 @@ func TestGrpcServer(t *testing.T) {
 
 	srv, err := NewGrpcServer(goodServerCfg)
 
+	go func() {
+		is.NoError(srv.Start())
+	}()
+
 	t.Run("Instantiation", func(_ *testing.T) {
 		is.NoError(err)
 		is.NotNil(srv)
@@ -135,6 +139,6 @@ func TestGrpcServer(t *testing.T) {
 	})
 
 	t.Run("Shutdown", func(_ *testing.T) {
-		is.NoError(srv.mem.Close())
+		is.NoError(srv.ShutDown())
 	})
 }

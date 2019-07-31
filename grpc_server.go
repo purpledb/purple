@@ -201,10 +201,14 @@ func (s *GrpcServer) Start() error {
 	return s.srv.Serve(lis)
 }
 
-func (s *GrpcServer) ShutDown() {
+func (s *GrpcServer) ShutDown() error {
 	s.log.Debug("shutting down")
 
-	var _ = s.mem.Close()
+	if err := s.mem.Close(); err != nil {
+		return err
+	}
 
 	s.srv.GracefulStop()
+
+	return nil
 }
