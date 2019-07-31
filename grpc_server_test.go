@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/lucperkins/strato/proto"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"testing"
 )
 
@@ -66,5 +68,73 @@ func TestGrpcServer(t *testing.T) {
 		is.Equal(res.Value, int32(100))
 	})
 
-	is.NoError(srv.mem.Close())
+	t.Run("KV", func(_ *testing.T) {
+		locationReq := &proto.Location{
+			Bucket: "buck",
+			Key: "key",
+		}
+
+		val, err := srv.KVGet(ctx, locationReq)
+
+		stat, ok := status.FromError(err)
+		is.True(ok)
+		is.Equal(stat.Code(), codes.NotFound)
+		is.Nil(val)
+
+		putReq := &proto.PutRequest{
+			Location: &proto.Location{
+				Bucket: "buck",
+				Key: "key",
+			},
+			Value: &proto.Value{
+				Content: []byte("some content"),
+			},
+		}
+
+		empty, err := srv.KVPut(ctx, putReq)
+		is.NoError(err)
+		is.NotNil(empty)
+
+		val, err = srv.KVGet(ctx, locationReq)
+		is.NoError(err)
+		is.NotNil(val)
+		is.Equal(val.Value.Content, []byte("some content"))
+
+		empty, err = srv.KVDelete(ctx, locationReq)
+		is.NoError(err)
+		is.NotNil(empty)
+
+		val, err = srv.KVGet(ctx, locationReq)
+		stat, ok = status.FromError(err)
+		is.True(ok)
+		is.Equal(stat.Code(), codes.NotFound)
+	})
+
+	t.Run("Set", func(_ *testing.T) {
+		getReq := &proto.GetSetRequest{
+			Set: "set1",
+		}
+
+		set, err := srv.GetSet(ctx, getReq)
+		is.NoError(err)
+		is.NotNil(set)
+		is.Equal(set.Items, []string{})
+
+		addReq := &proto.ModifySetRequest{
+			Set: "set1",
+			Item: "item1",
+		}
+
+		empty, err := srv.AddToSet(ctx, addReq)
+		is.NoError(err)
+		is.NotNil(empty)
+
+		set, err = srv.GetSet(ctx, getReq)
+		is.NoError(err)
+		is.Equal(set.Items, []string{"item1"})
+	})
+
+	t.Run("Shutdown", func(_ *testing.T) {
+		is.NoError(srv.mem.Close())
+	})
 }
