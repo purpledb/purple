@@ -114,6 +114,34 @@ func TestGrpcServer(t *testing.T) {
 		is.Equal(stat.Code(), codes.NotFound)
 	})
 
+	t.Run("Search", func(_ *testing.T) {
+		searchReq := &proto.SearchQuery{
+			Query: "exaggerate",
+		}
+
+		res, err := srv.Query(ctx, searchReq)
+		is.NoError(err)
+		is.NotNil(res)
+		is.Equal(res.Documents, []*proto.Document{})
+
+		indexReq := &proto.IndexRequest{
+			Document: &proto.Document{
+				Id: "my-doc",
+				Content: "I do not exaggerate",
+			},
+		}
+
+		empty, err := srv.Index(ctx, indexReq)
+		is.NoError(err)
+		is.NotNil(empty)
+
+		res, err = srv.Query(ctx, searchReq)
+		is.NoError(err)
+		is.Len(res.Documents, 1)
+		is.Equal(res.Documents[0].Id, "my-doc")
+		is.Equal(res.Documents[0].Content, "i do not exaggerate")
+	})
+
 	t.Run("Set", func(_ *testing.T) {
 		getReq := &proto.GetSetRequest{
 			Set: "set1",
@@ -124,18 +152,26 @@ func TestGrpcServer(t *testing.T) {
 		is.NotNil(set)
 		is.Equal(set.Items, []string{})
 
-		addReq := &proto.ModifySetRequest{
+		modifyReq := &proto.ModifySetRequest{
 			Set: "set1",
 			Item: "item1",
 		}
 
-		empty, err := srv.AddToSet(ctx, addReq)
+		empty, err := srv.AddToSet(ctx, modifyReq)
 		is.NoError(err)
 		is.NotNil(empty)
 
 		set, err = srv.GetSet(ctx, getReq)
 		is.NoError(err)
 		is.Equal(set.Items, []string{"item1"})
+
+		empty, err = srv.RemoveFromSet(ctx, modifyReq)
+		is.NoError(err)
+		is.NotNil(empty)
+
+		set, err = srv.GetSet(ctx, getReq)
+		is.NoError(err)
+		is.Equal(set.Items, []string{})
 	})
 
 	t.Run("Shutdown", func(_ *testing.T) {
