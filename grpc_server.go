@@ -204,5 +204,7 @@ func (s *GrpcServer) Start() error {
 func (s *GrpcServer) ShutDown() {
 	s.log.Debug("shutting down")
 
+	var _ = s.mem.Close()
+
 	s.srv.GracefulStop()
 }
