@@ -22,8 +22,8 @@ spruce: tidy fmt imports
 gen-protobuf:
 	$(PROTOC) --proto_path=$(PROTO_DIR) --go_out=plugins=grpc:$(PROTO_DIR) $(PROTO_DIR)/*.proto
 
-test: gen-protobuf
-	$(GO) test -v ./...
+test:
+	$(GO) test -p 1 -v ./...
 
 coverage:
 	$(GO) test -v -coverprofile $(COVER_OUT) ./...
