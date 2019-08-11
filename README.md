@@ -152,3 +152,33 @@ if err := client.CacheSet("player1-session", "a1b2c3d4e5f6", 120); err != nil {
     // Handle error
 }
 ```
+
+## Deployment
+
+### Kubernetes
+
+There are two configuration files in the [`deploy`](./deploy) directory that enable you to run the Strato gRPC and HTTP servers, respectively, on Kubernetes. Both use the `default` namespace.
+
+#### gRPC
+
+```bash
+kubectl apply -f deploy/strato-grpc-k8s.yaml
+```
+
+#### HTTP
+
+```bash
+kubectl apply -f deploy/strato-http-k8s.yaml
+```
+
+#### Accessing the service
+
+Once you've deployed Strato on Kubernetes, you can access it in your local environment using port forwarding:
+
+```bash
+# gRPC
+kubectl port-forward svc/strato 8080:8080
+
+# HTTP
+kubectl port-forward svc/strato 8081:8081
+```
