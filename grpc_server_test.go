@@ -30,7 +30,7 @@ func TestGrpcServer(t *testing.T) {
 			Key: "key",
 			Item: &proto.CacheItem{
 				Value: "value",
-				Ttl: 2,
+				Ttl:   2,
 			},
 		}
 
@@ -59,7 +59,7 @@ func TestGrpcServer(t *testing.T) {
 		is.Zero(res.Value)
 
 		incrReq := &proto.IncrementCounterRequest{
-			Key: "player1",
+			Key:    "player1",
 			Amount: int32(100),
 		}
 
@@ -75,7 +75,7 @@ func TestGrpcServer(t *testing.T) {
 	t.Run("KV", func(_ *testing.T) {
 		locationReq := &proto.Location{
 			Bucket: "buck",
-			Key: "key",
+			Key:    "key",
 		}
 
 		val, err := srv.KVGet(ctx, locationReq)
@@ -88,7 +88,7 @@ func TestGrpcServer(t *testing.T) {
 		putReq := &proto.PutRequest{
 			Location: &proto.Location{
 				Bucket: "buck",
-				Key: "key",
+				Key:    "key",
 			},
 			Value: &proto.Value{
 				Content: []byte("some content"),
@@ -126,7 +126,7 @@ func TestGrpcServer(t *testing.T) {
 
 		indexReq := &proto.IndexRequest{
 			Document: &proto.Document{
-				Id: "my-doc",
+				Id:      "my-doc",
 				Content: "I do not exaggerate",
 			},
 		}
@@ -153,7 +153,7 @@ func TestGrpcServer(t *testing.T) {
 		is.Equal(set.Items, []string{})
 
 		modifyReq := &proto.ModifySetRequest{
-			Set: "set1",
+			Set:  "set1",
 			Item: "item1",
 		}
 

@@ -7,17 +7,18 @@ import (
 )
 
 var (
-	ErrExpired        = CacheError{"item has expired"}
-	ErrNoCacheItem    = CacheError{"no item found"}
-	ErrNoCacheKey     = CacheError{"no cache key specified"}
-	ErrNoCacheValue   = CacheError{"no cache value specified"}
-	ErrNoBucket       = KVError{"no bucket specified"}
-	ErrNoKey          = KVError{"no key specified"}
-	ErrNoLocation     = KVError{"no location specified"}
-	ErrNoValue        = KVError{"no value specified"}
-	ErrNoAddress      = ConfigError{"no server address provided"}
-	ErrNoPort         = ConfigError{"no server port supplied"}
-	ErrPortOutOfRange = ConfigError{"port must be between 1024 and 49151"}
+	ErrExpired              = CacheError{"item has expired"}
+	ErrNoCacheItem          = CacheError{"no item found"}
+	ErrNoCacheKey           = CacheError{"no cache key specified"}
+	ErrNoCacheValue         = CacheError{"no cache value specified"}
+	ErrNoBucket             = KVError{"no bucket specified"}
+	ErrNoKey                = KVError{"no key specified"}
+	ErrNoLocation           = KVError{"no location specified"}
+	ErrNoValue              = KVError{"no value specified"}
+	ErrNoAddress            = ConfigError{"no server address provided"}
+	ErrNoPort               = ConfigError{"no server port supplied"}
+	ErrPortOutOfRange       = ConfigError{"port must be between 1024 and 49151"}
+	ErrBackendNotRecognized = ConfigError{"backend key not recognized"}
 )
 
 type (
