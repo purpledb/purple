@@ -11,27 +11,62 @@ const (
 	dir = "tmp"
 )
 
+func TestGenericDiskFunctions(t *testing.T) {
+	is := assert.New(t)
+
+	disk := setup(is)
+
+	key := []byte("some-key")
+	value := []byte("some value")
+
+	val, err := disk.read(key)
+	is.Equal(err, badger.ErrKeyNotFound)
+	is.Nil(val)
+
+	is.NoError(disk.write(key, value))
+
+	val, err = disk.read(key)
+	is.NoError(err)
+	is.Equal(val, value)
+
+	is.NoError(disk.delete(key))
+
+	val, err = disk.read(key)
+	is.Equal(err, badger.ErrKeyNotFound)
+	is.Nil(val)
+
+	clean(is)
+}
+
 func TestDiskCache(t *testing.T) {
 	is := assert.New(t)
 
-	disk := setup(is, dir)
+	disk := setup(is)
 
-	k, v := "key", "value"
-	ttl := int32(2)
+	key, value := "some-cache-key", "some-value"
+	ttl := int32(3600)
 
-	is.NoError(disk.CacheSet(k, v, ttl))
+	val, err := disk.CacheGet(key)
+	is.Equal(err, badger.ErrKeyNotFound)
+	is.Empty(val)
 
-	val, err := disk.CacheGet(k)
+	is.NoError(disk.CacheSet(key, value, ttl))
+
+	val, err = disk.CacheGet(key)
 	is.NoError(err)
-	is.Equal(val, v)
+	is.Equal(val, value)
 
-	teardown(is, dir)
+	is.NoError(disk.CacheSet(key, value, 0))
+	val, err = disk.CacheGet(key)
+	is.Empty(val)
+
+	clean(is)
 }
 
 func TestDiskKV(t *testing.T) {
 	is := assert.New(t)
 
-	disk := setup(is, dir)
+	disk := setup(is)
 
 	loc := &Location{
 		Bucket: "test",
@@ -55,16 +90,16 @@ func TestDiskKV(t *testing.T) {
 	is.Equal(err.Error(), badger.ErrKeyNotFound.Error())
 	is.Nil(fetched)
 
-	teardown(is, dir)
+	clean(is)
 }
 
-func setup(is *assert.Assertions, dir string) *Disk {
+func setup(is *assert.Assertions) *Disk {
 	disk, err := NewDisk(dir)
 	is.NoError(err)
 	is.NotNil(disk)
 	return disk
 }
 
-func teardown(is *assert.Assertions, dir string) {
+func clean(is *assert.Assertions) {
 	is.NoError(os.RemoveAll(dir))
 }

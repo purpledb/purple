@@ -2,6 +2,7 @@ package strato
 
 import (
 	"fmt"
+	"github.com/dgraph-io/badger"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
@@ -162,7 +163,16 @@ func (s *HttpServer) cachePut(c *gin.Context) {
 func (s *HttpServer) countersGet(c *gin.Context) {
 	counter := c.Param("counter")
 
-	value := s.mem.CounterGet(counter)
+	value, err := s.mem.CounterGet(counter)
+	if err != nil {
+		if err == badger.ErrKeyNotFound {
+			c.Status(http.StatusNotFound)
+			return
+		} else {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+	}
 
 	res := struct {
 		Counter string `json:"counter"`
@@ -190,7 +200,10 @@ func (s *HttpServer) countersPut(c *gin.Context) {
 
 	increment := int32(i)
 
-	s.mem.CounterIncrement(counter, increment)
+	if err := s.mem.CounterIncrement(counter, increment); err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
 
 	c.Status(http.StatusAccepted)
 }

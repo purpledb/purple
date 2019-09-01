@@ -46,11 +46,20 @@ func TestMemoryImpl(t *testing.T) {
 
 		is.Zero(mem.CounterGet(key))
 
-		mem.CounterIncrement(key, int32(10))
-		is.Equal(mem.CounterGet(key), int32(10))
-		mem.CounterIncrement(key, int32(-50))
-		is.Equal(mem.CounterGet(key), int32(-40))
-		is.Zero(mem.CounterGet("does-not-yet-exist"), 0)
+		is.NoError(mem.CounterIncrement(key, int32(10)))
+
+		val, err := mem.CounterGet(key)
+		is.NoError(err)
+		is.Equal(val, int32(10))
+
+		is.NoError(mem.CounterIncrement(key, int32(-50)))
+		val, err = mem.CounterGet(key)
+		is.NoError(err)
+		is.Equal(val, int32(-40))
+
+		val, err = mem.CounterGet("does-not-yet-exist")
+		is.NoError(err)
+		is.Zero(val)
 	})
 
 	t.Run("KV", func(t *testing.T) {

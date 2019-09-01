@@ -11,8 +11,8 @@ type Disk struct {
 }
 
 var (
-	_ Cache = (*Disk)(nil)
-	_ KV    = (*Disk)(nil)
+	_ Cache   = (*Disk)(nil)
+	_ KV      = (*Disk)(nil)
 )
 
 func NewDisk(file string) (*Disk, error) {
@@ -25,39 +25,71 @@ func NewDisk(file string) (*Disk, error) {
 	}, nil
 }
 
-func (d *Disk) CacheGet(key string) (string, error) {
-	var value string
-	k := []byte(key)
+// Generic functions
+func (d *Disk) read(key []byte) ([]byte, error) {
+	var value []byte
 
 	if err := d.db.View(func(tx *badger.Txn) error {
-		it, err := tx.Get(k)
+		it, err := tx.Get(key)
 		if err != nil {
 			return err
 		}
 
-		return it.Value(func(val []byte) error {
-			value = string(val)
+		val, err := it.ValueCopy(nil)
+		if err != nil {
+			return err
+		}
 
-			return nil
-		})
+		value = val
+
+		return nil
 	}); err != nil {
-		return "", err
+		return nil, err
 	}
 
 	return value, nil
 }
 
-func (d *Disk) CacheSet(key string, value string, ttl int32) error {
-	k, v := []byte(key), []byte(value)
+func (d *Disk) write(key, value []byte) error {
+	return d.db.Update(func(tx *badger.Txn) error {
+		return tx.Set(key, value)
+	})
+}
 
-	t := time.Duration(ttl) * time.Second
+func (d *Disk) delete(key []byte) error {
+	return d.db.Update(func(tx *badger.Txn) error {
+		return tx.Delete(key)
+	})
+}
+
+func (d *Disk) setEntry(key, value []byte, ttl time.Duration) error {
+	entry := badger.NewEntry(key, value).WithTTL(ttl)
 
 	return d.db.Update(func(tx *badger.Txn) error {
-		entry := badger.NewEntry(k, v).WithTTL(t)
 		return tx.SetEntry(entry)
 	})
 }
 
+// Cache
+func (d *Disk) CacheGet(key string) (string, error) {
+	k := cacheKey(key)
+	val, err := d.read(k)
+	if err != nil {
+		return "", err
+	}
+
+	return string(val), nil
+}
+
+func (d *Disk) CacheSet(key string, value string, ttl int32) error {
+	k, v := cacheKey(key), []byte(value)
+
+	t := time.Duration(ttl) * time.Second
+
+	return d.setEntry(k, v, t)
+}
+
+// KV
 func (d *Disk) KVGet(location *Location) (*Value, error) {
 	var content []byte
 
@@ -96,7 +128,11 @@ func (d *Disk) KVPut(location *Location, value *Value) error {
 		key := locationToKey(location)
 		val := value.Content
 
-		return tx.Set(key, val)
+		if err := tx.Set(key, val); err != nil {
+			return err
+		}
+
+		return tx.Commit()
 	})
 }
 
@@ -112,6 +148,15 @@ func (d *Disk) Close() error {
 	return d.db.Close()
 }
 
+// Helpers
 func locationToKey(location *Location) []byte {
 	return []byte(fmt.Sprintf("%s__%s", location.Bucket, location.Key))
+}
+
+func counterKey(key string) []byte {
+	return []byte(fmt.Sprintf("counter__%s", key))
+}
+
+func cacheKey(key string) []byte {
+	return []byte(fmt.Sprintf("cache__%s", key))
 }

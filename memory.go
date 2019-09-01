@@ -52,6 +52,7 @@ func NewMemoryBackend() *Memory {
 	}
 }
 
+// Cache
 func (m *Memory) CacheGet(key string) (string, error) {
 	val, ok := m.cache[key]
 
@@ -100,17 +101,20 @@ func getTtl(ttl int32) int32 {
 	}
 }
 
-func (m *Memory) CounterIncrement(key string, increment int32) {
+// Counter
+func (m *Memory) CounterIncrement(key string, increment int32) error {
 	counter, ok := m.counters[key]
 	if !ok {
 		m.counters[key] = increment
 	} else {
 		m.counters[key] = counter + increment
 	}
+
+	return nil
 }
 
-func (m *Memory) CounterGet(key string) int32 {
-	return m.counters[key]
+func (m *Memory) CounterGet(key string) (int32, error) {
+	return m.counters[key], nil
 }
 
 func (m *Memory) KVGet(location *Location) (*Value, error) {

@@ -74,13 +74,18 @@ func (s *GrpcServer) CacheSet(_ context.Context, req *proto.CacheSetRequest) (*p
 }
 
 func (s *GrpcServer) IncrementCounter(_ context.Context, req *proto.IncrementCounterRequest) (*proto.Empty, error) {
-	s.mem.CounterIncrement(req.Key, req.Amount)
+	if err := s.mem.CounterIncrement(req.Key, req.Amount); err != nil {
+		return nil, err
+	}
 
 	return &proto.Empty{}, nil
 }
 
 func (s *GrpcServer) GetCounter(_ context.Context, req *proto.GetCounterRequest) (*proto.GetCounterResponse, error) {
-	val := s.mem.CounterGet(req.Key)
+	val, err := s.mem.CounterGet(req.Key)
+	if err != nil {
+		return nil, err
+	}
 
 	return &proto.GetCounterResponse{
 		Value: val,
