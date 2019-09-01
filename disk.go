@@ -91,57 +91,26 @@ func (d *Disk) CacheSet(key string, value string, ttl int32) error {
 
 // KV
 func (d *Disk) KVGet(location *Location) (*Value, error) {
-	var content []byte
+	key := locationToKey(location)
 
-	if err := location.validate(); err != nil {
-		return nil, err
-	}
-
-	if err := d.db.View(func(tx *badger.Txn) error {
-		key := locationToKey(location)
-
-		it, err := tx.Get(key)
-		if err != nil {
-			return err
-		}
-
-		if err := it.Value(func(val []byte) error {
-			content = val
-
-			return nil
-		}); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
+	val, err := d.read(key)
+	if err != nil {
 		return nil, err
 	}
 
 	return &Value{
-		Content: content,
+		Content: val,
 	}, nil
 }
 
 func (d *Disk) KVPut(location *Location, value *Value) error {
-	return d.db.Update(func(tx *badger.Txn) error {
-		key := locationToKey(location)
-		val := value.Content
-
-		if err := tx.Set(key, val); err != nil {
-			return err
-		}
-
-		return tx.Commit()
-	})
+	key := locationToKey(location)
+	return d.write(key, value.Content)
 }
 
 func (d *Disk) KVDelete(location *Location) error {
-	return d.db.Update(func(tx *badger.Txn) error {
-		key := locationToKey(location)
-
-		return tx.Delete(key)
-	})
+	key := locationToKey(location)
+	return d.delete(key)
 }
 
 func (d *Disk) Close() error {
