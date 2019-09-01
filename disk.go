@@ -16,6 +16,7 @@ var (
 	_ Cache   = (*Disk)(nil)
 	_ Counter = (*Disk)(nil)
 	_ KV      = (*Disk)(nil)
+	_ Set     = (*Disk)(nil)
 )
 
 func NewDisk(file string) (*Disk, error) {
@@ -160,6 +161,83 @@ func (d *Disk) Close() error {
 }
 
 // Set
+func (d *Disk) GetSet(key string) ([]string, error) {
+	k := setKey(key)
+
+	val, err := d.read(k)
+	if err != nil {
+		if err == badger.ErrKeyNotFound {
+			return []string{}, nil
+		} else {
+			return nil, err
+		}
+	}
+
+	return bytesToSet(val)
+}
+
+func (d *Disk) AddToSet(key, item string) error {
+	k := setKey(key)
+
+	val, err := d.read(k)
+	if err != nil {
+		if err == badger.ErrKeyNotFound {
+			s := []string{item}
+			value, err := setToBytes(s)
+			if err != nil {
+				return err
+			}
+			return d.write(k, value)
+		} else {
+			return err
+		}
+	}
+
+	s, err := bytesToSet(val)
+	if err != nil {
+		return err
+	}
+
+	s = append(s, item)
+
+	value, err := setToBytes(s)
+	if err != nil {
+		return err
+	}
+
+	return d.write(k, value)
+}
+
+func (d *Disk) RemoveFromSet(key, item string) error {
+	k := setKey(key)
+
+	val, err := d.read(k)
+	if err != nil {
+		if err == badger.ErrKeyNotFound {
+			return ErrNoSet
+		} else {
+			return err
+		}
+	}
+
+	s, err := bytesToSet(val)
+	if err != nil {
+		return err
+	}
+
+	for idx, i := range s {
+		if i == item {
+			s = append(s[:idx], s[idx+1:]...)
+		}
+	}
+
+	value, err := setToBytes(s)
+	if err != nil {
+		return err
+	}
+
+	return d.write(k, value)
+}
 
 // Helpers
 func cacheKey(key string) []byte {

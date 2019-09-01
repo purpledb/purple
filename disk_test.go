@@ -117,6 +117,38 @@ func TestDiskKV(t *testing.T) {
 	clean(is)
 }
 
+func TestDiskSet(t *testing.T) {
+	is := assert.New(t)
+
+	disk := setup(is)
+
+	key := "some-set"
+
+	set, err := disk.GetSet(key)
+	is.NoError(err)
+	is.Empty(set)
+
+	is.NoError(disk.AddToSet(key, "some-item"))
+
+	set, err = disk.GetSet(key)
+	is.NoError(err)
+	is.Len(set, 1)
+	is.Equal(set[0], "some-item")
+
+	is.NoError(disk.RemoveFromSet(key, "never-existed-anyway"))
+
+	is.NoError(disk.RemoveFromSet(key, "some-item"))
+	set, err = disk.GetSet(key)
+	is.NoError(err)
+	is.Empty(set)
+
+	set, err = disk.GetSet("no-set-here")
+	is.NoError(err)
+	is.Empty(set)
+
+	clean(is)
+}
+
 func TestDiskHelperFunctions(t *testing.T) {
 	is := assert.New(t)
 
