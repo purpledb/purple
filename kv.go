@@ -2,8 +2,6 @@ package strato
 
 import (
 	"fmt"
-	"strings"
-
 	"github.com/lucperkins/strato/proto"
 )
 
@@ -23,19 +21,6 @@ type (
 		Content []byte `json:"content"`
 	}
 )
-
-func SelectKV(key string) (KV, error) {
-	k := strings.ToLower(key)
-
-	switch k {
-	case "memory", "mem":
-		return NewMemoryBackend(), nil
-	case "disk":
-		return NewDisk("tmp/strato")
-	default:
-		return nil, ErrBackendNotRecognized
-	}
-}
 
 func (l *Location) validate() error {
 	if l.Bucket == "" {
