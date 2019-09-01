@@ -15,6 +15,7 @@ var (
 	ErrNoKey                = KVError{"no key specified"}
 	ErrNoLocation           = KVError{"no location specified"}
 	ErrNoValue              = KVError{"no value specified"}
+	ErrNoSet                = SetError{"set does not exist"}
 	ErrNoAddress            = ConfigError{"no server address provided"}
 	ErrNoPort               = ConfigError{"no server port supplied"}
 	ErrPortOutOfRange       = ConfigError{"port must be between 1024 and 49151"}
@@ -36,6 +37,10 @@ type (
 
 	NotFoundError struct {
 		location *Location
+	}
+
+	SetError struct {
+		string
 	}
 )
 
@@ -75,6 +80,10 @@ func (e ConfigError) Error() string {
 func IsConfigError(err error) bool {
 	_, ok := err.(ConfigError)
 	return ok
+}
+
+func (e SetError) Error() string {
+	return fmt.Sprintf("set error: %s", e.string)
 }
 
 func (e NotFoundError) Error() string {

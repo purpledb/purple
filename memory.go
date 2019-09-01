@@ -201,34 +201,38 @@ func (m *Memory) Query(q string) []*Document {
 	return docs
 }
 
-func (m *Memory) GetSet(set string) []string {
+func (m *Memory) GetSet(set string) ([]string, error) {
 	s, ok := m.sets[set]
 
 	if !ok {
-		return []string{}
+		return []string{}, nil
 	}
 
-	return s
+	return s, nil
 }
 
-func (m *Memory) AddToSet(set, item string) {
-	if _, ok := m.sets[set]; !ok {
+func (m *Memory) AddToSet(set, item string) error {
+	if _, ok := m.sets[set]; ok {
+		m.sets[set] = append(m.sets[set], item)
+	} else {
 		m.sets[set] = []string{item}
-		return
 	}
 
-	m.sets[set] = append(m.sets[set], item)
+	return nil
 }
 
-func (m *Memory) RemoveFromSet(set, item string) {
-	if _, ok := m.sets[set]; !ok {
-		return
-	}
-
-	for idx, it := range m.sets[set] {
-		if it == item {
-			m.sets[set] = append(m.sets[set][:idx], m.sets[set][idx+1:]...)
+func (m *Memory) RemoveFromSet(set, item string) error {
+	_, ok := m.sets[set]
+	if ok {
+		for idx, it := range m.sets[set] {
+			if it == item {
+				m.sets[set] = append(m.sets[set][:idx], m.sets[set][idx+1:]...)
+			}
 		}
+
+		return nil
+	} else {
+		return ErrNoSet
 	}
 }
 

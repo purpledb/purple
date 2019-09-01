@@ -159,7 +159,10 @@ func (s *GrpcServer) Query(_ context.Context, query *proto.SearchQuery) (*proto.
 }
 
 func (s *GrpcServer) GetSet(_ context.Context, req *proto.GetSetRequest) (*proto.SetResponse, error) {
-	items := s.mem.GetSet(req.Set)
+	items, err := s.mem.GetSet(req.Set)
+	if err != nil {
+		return nil, err
+	}
 
 	return &proto.SetResponse{
 		Items: items,

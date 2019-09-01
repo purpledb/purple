@@ -1,6 +1,7 @@
 package strato
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/dgraph-io/badger"
 	"strconv"
@@ -132,7 +133,7 @@ func (d *Disk) CounterIncrement(key string, increment int64) error {
 
 // KV
 func (d *Disk) KVGet(location *Location) (*Value, error) {
-	key := locationToKey(location)
+	key := kvKey(location)
 
 	val, err := d.read(key)
 	if err != nil {
@@ -145,12 +146,12 @@ func (d *Disk) KVGet(location *Location) (*Value, error) {
 }
 
 func (d *Disk) KVPut(location *Location, value *Value) error {
-	key := locationToKey(location)
+	key := kvKey(location)
 	return d.write(key, value.Content)
 }
 
 func (d *Disk) KVDelete(location *Location) error {
-	key := locationToKey(location)
+	key := kvKey(location)
 	return d.delete(key)
 }
 
@@ -158,19 +159,39 @@ func (d *Disk) Close() error {
 	return d.db.Close()
 }
 
+// Set
+
 // Helpers
-func locationToKey(location *Location) []byte {
-	return []byte(fmt.Sprintf("%s__%s", location.Bucket, location.Key))
+func cacheKey(key string) []byte {
+	return []byte(fmt.Sprintf("cache__%s", key))
 }
 
 func counterKey(key string) []byte {
 	return []byte(fmt.Sprintf("counter__%s", key))
 }
 
-func cacheKey(key string) []byte {
-	return []byte(fmt.Sprintf("cache__%s", key))
+func kvKey(location *Location) []byte {
+	return []byte(fmt.Sprintf("%s__%s", location.Bucket, location.Key))
+}
+
+func setKey(key string) []byte {
+	return []byte(fmt.Sprintf("set__%s", key))
 }
 
 func intToBytes(i int64) []byte {
 	return []byte(strconv.FormatInt(i, 10))
+}
+
+func bytesToSet(bs []byte) ([]string, error) {
+	var set []string
+
+	if err := json.Unmarshal(bs, &set); err != nil {
+		return nil, err
+	}
+
+	return set, nil
+}
+
+func setToBytes(set []string) ([]byte, error) {
+	return json.Marshal(set)
 }

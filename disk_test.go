@@ -117,6 +117,20 @@ func TestDiskKV(t *testing.T) {
 	clean(is)
 }
 
+func TestDiskHelperFunctions(t *testing.T) {
+	is := assert.New(t)
+
+	set := []string{"apple", "orange", "banana"}
+
+	bs, err := setToBytes(set)
+	is.NoError(err)
+	is.NotNil(bs)
+
+	s, err := bytesToSet(bs)
+	is.NoError(err)
+	is.Equal(s, set)
+}
+
 func setup(is *assert.Assertions) *Disk {
 	is.NoError(os.MkdirAll(dir, os.ModePerm))
 

@@ -317,7 +317,16 @@ func (s *HttpServer) searchPut(c *gin.Context) {
 func (s *HttpServer) setsGet(c *gin.Context) {
 	set := c.Param("set")
 
-	items := s.mem.GetSet(set)
+	items, err := s.mem.GetSet(set)
+	if err != nil {
+		if err == ErrNoSet {
+			c.Status(http.StatusNotFound)
+			return
+		} else {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+	}
 
 	res := struct {
 		Set   string   `json:"set"`
