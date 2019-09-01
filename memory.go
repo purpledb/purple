@@ -11,7 +11,7 @@ const dbFile = "strato-kv.db"
 
 type Memory struct {
 	cache    map[string]*CacheItem
-	counters map[string]int32
+	counters map[string]int64
 	kv       *bolt.DB
 	docs     []*Document
 	sets     map[string][]string
@@ -28,7 +28,7 @@ var (
 func NewMemoryBackend() *Memory {
 	cache := make(map[string]*CacheItem)
 
-	counters := make(map[string]int32)
+	counters := make(map[string]int64)
 
 	docs := make([]*Document, 0)
 
@@ -102,7 +102,7 @@ func getTtl(ttl int32) int32 {
 }
 
 // Counter
-func (m *Memory) CounterIncrement(key string, increment int32) error {
+func (m *Memory) CounterIncrement(key string, increment int64) error {
 	counter, ok := m.counters[key]
 	if !ok {
 		m.counters[key] = increment
@@ -113,7 +113,7 @@ func (m *Memory) CounterIncrement(key string, increment int32) error {
 	return nil
 }
 
-func (m *Memory) CounterGet(key string) (int32, error) {
+func (m *Memory) CounterGet(key string) (int64, error) {
 	return m.counters[key], nil
 }
 

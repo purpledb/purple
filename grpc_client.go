@@ -84,7 +84,7 @@ func (c *GrpcClient) CacheSet(key, value string, ttl int32) error {
 	return nil
 }
 
-func (c *GrpcClient) IncrementCounter(key string, amount int32) error {
+func (c *GrpcClient) IncrementCounter(key string, amount int64) error {
 	req := &proto.IncrementCounterRequest{
 		Key:    key,
 		Amount: amount,
@@ -97,7 +97,7 @@ func (c *GrpcClient) IncrementCounter(key string, amount int32) error {
 	return nil
 }
 
-func (c *GrpcClient) GetCounter(key string) (int32, error) {
+func (c *GrpcClient) GetCounter(key string) (int64, error) {
 	req := &proto.GetCounterRequest{
 		Key: key,
 	}

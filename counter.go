@@ -1,6 +1,6 @@
 package strato
 
 type Counter interface {
-	CounterIncrement(key string, amount int32) error
-	CounterGet(key string) (int32, error)
+	CounterIncrement(key string, amount int64) error
+	CounterGet(key string) (int64, error)
 }

@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	dir = "tmp"
+	dir = "tmp/badger"
 )
 
 func TestGenericDiskFunctions(t *testing.T) {
@@ -63,6 +63,30 @@ func TestDiskCache(t *testing.T) {
 	clean(is)
 }
 
+func TestDiskCounter(t *testing.T) {
+	is := assert.New(t)
+
+	disk := setup(is)
+
+	key := "some-counter-key"
+
+	count, err := disk.CounterGet(key)
+	is.NoError(err)
+	is.Zero(count)
+
+	is.NoError(disk.CounterIncrement(key, int64(100)))
+
+	count, err = disk.CounterGet(key)
+	is.NoError(err)
+	is.Equal(count, int64(100))
+
+	is.NoError(disk.CounterIncrement(key, int64(-200)))
+	count, err = disk.CounterGet(key)
+	is.NoError(err)
+
+	clean(is)
+}
+
 func TestDiskKV(t *testing.T) {
 	is := assert.New(t)
 
@@ -94,6 +118,8 @@ func TestDiskKV(t *testing.T) {
 }
 
 func setup(is *assert.Assertions) *Disk {
+	is.NoError(os.MkdirAll(dir, os.ModePerm))
+
 	disk, err := NewDisk(dir)
 	is.NoError(err)
 	is.NotNil(disk)

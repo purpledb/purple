@@ -3,6 +3,7 @@ package strato
 import (
 	"fmt"
 	"github.com/dgraph-io/badger"
+	"strconv"
 	"time"
 )
 
@@ -12,6 +13,7 @@ type Disk struct {
 
 var (
 	_ Cache   = (*Disk)(nil)
+	_ Counter = (*Disk)(nil)
 	_ KV      = (*Disk)(nil)
 )
 
@@ -89,6 +91,45 @@ func (d *Disk) CacheSet(key string, value string, ttl int32) error {
 	return d.setEntry(k, v, t)
 }
 
+// Counter
+func (d *Disk) CounterGet(key string) (int64, error) {
+	k := counterKey(key)
+
+	val, err := d.read(k)
+	if err != nil {
+		if err == badger.ErrKeyNotFound {
+			return 0, nil
+		} else {
+			return 0, err
+		}
+	}
+
+	return int64(val[0]), nil
+}
+
+func (d *Disk) CounterIncrement(key string, increment int64) error {
+	k := counterKey(key)
+
+	val, err := d.read(k)
+	if err != nil {
+		if err == badger.ErrKeyNotFound {
+			v := []byte{byte(increment)}
+
+			return d.write(k, v)
+		} else {
+			return err
+		}
+	}
+
+	count := int64(val[0])
+
+	count += increment
+
+	newVal := intToBytes(count)
+
+	return d.write(k, newVal)
+}
+
 // KV
 func (d *Disk) KVGet(location *Location) (*Value, error) {
 	key := locationToKey(location)
@@ -128,4 +169,8 @@ func counterKey(key string) []byte {
 
 func cacheKey(key string) []byte {
 	return []byte(fmt.Sprintf("cache__%s", key))
+}
+
+func intToBytes(i int64) []byte {
+	return []byte(strconv.FormatInt(i, 10))
 }

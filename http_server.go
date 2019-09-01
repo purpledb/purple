@@ -176,7 +176,7 @@ func (s *HttpServer) countersGet(c *gin.Context) {
 
 	res := struct {
 		Counter string `json:"counter"`
-		Value   int32  `json:"value"`
+		Value   int64  `json:"value"`
 	}{
 		Counter: counter,
 		Value:   value,
@@ -196,11 +196,10 @@ func (s *HttpServer) countersPut(c *gin.Context) {
 	i, err := strconv.Atoi(incr)
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())
+		return
 	}
 
-	increment := int32(i)
-
-	if err := s.mem.CounterIncrement(counter, increment); err != nil {
+	if err := s.mem.CounterIncrement(counter, int64(i)); err != nil {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}

@@ -6,7 +6,7 @@ import "common.proto";
 
 message IncrementCounterRequest {
     string key = 1;
-    int32 amount = 2;
+    int64 amount = 2;
 }
 
 message GetCounterRequest {
@@ -14,7 +14,7 @@ message GetCounterRequest {
 }
 
 message GetCounterResponse {
-    int32 value = 1;
+    int64 value = 1;
 }
 
 service Counter {
