@@ -2,8 +2,6 @@ package strato
 
 import (
 	"fmt"
-	"os"
-
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -39,13 +37,6 @@ type (
 		location *Location
 	}
 )
-
-func exitOnErr(err error) {
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-}
 
 func (e CacheError) Error() string {
 	return fmt.Sprintf("cache error: %s", e.string)
