@@ -7,11 +7,16 @@ import (
 )
 
 func main() {
-	serverCfg := &strato.HttpConfig{
-		Port: 8081,
+	serverCfg := &strato.ServerConfig{
+		Port:    8081,
+		Backend: "disk",
+		Debug:   true,
 	}
 
-	restSrv := strato.NewHttpServer(serverCfg)
+	restSrv, err := strato.NewHttpServer(serverCfg)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	if err := restSrv.Start(); err != nil {
 		log.Fatal(err)

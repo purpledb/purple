@@ -12,7 +12,6 @@ type GrpcClient struct {
 	cacheClient   proto.CacheClient
 	counterClient proto.CounterClient
 	kvClient      proto.KVClient
-	searchClient  proto.SearchClient
 	setClient     proto.SetClient
 	conn          *grpc.ClientConn
 	ctx           context.Context
@@ -34,8 +33,6 @@ func NewClient(cfg *ClientConfig) (*GrpcClient, error) {
 
 	kvClient := proto.NewKVClient(conn)
 
-	searchClient := proto.NewSearchClient(conn)
-
 	setClient := proto.NewSetClient(conn)
 
 	ctx := context.Background()
@@ -44,7 +41,6 @@ func NewClient(cfg *ClientConfig) (*GrpcClient, error) {
 		cacheClient:   cacheClient,
 		counterClient: counterClient,
 		kvClient:      kvClient,
-		searchClient:  searchClient,
 		setClient:     setClient,
 		conn:          conn,
 		ctx:           ctx,
@@ -84,7 +80,7 @@ func (c *GrpcClient) CacheSet(key, value string, ttl int32) error {
 	return nil
 }
 
-func (c *GrpcClient) IncrementCounter(key string, amount int32) error {
+func (c *GrpcClient) IncrementCounter(key string, amount int64) error {
 	req := &proto.IncrementCounterRequest{
 		Key:    key,
 		Amount: amount,
@@ -97,7 +93,7 @@ func (c *GrpcClient) IncrementCounter(key string, amount int32) error {
 	return nil
 }
 
-func (c *GrpcClient) GetCounter(key string) (int32, error) {
+func (c *GrpcClient) GetCounter(key string) (int64, error) {
 	req := &proto.GetCounterRequest{
 		Key: key,
 	}
@@ -170,31 +166,6 @@ func (c *GrpcClient) KVDelete(location *Location) error {
 	}
 
 	return nil
-}
-
-func (c *GrpcClient) Index(doc *Document) error {
-	req := &proto.IndexRequest{
-		Document: doc.toProto(),
-	}
-
-	if _, err := c.searchClient.Index(c.ctx, req); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (c *GrpcClient) Query(q string) ([]*Document, error) {
-	query := &proto.SearchQuery{
-		Query: q,
-	}
-
-	res, err := c.searchClient.Query(c.ctx, query)
-	if err != nil {
-		return nil, err
-	}
-
-	return docsFromProto(res.Documents), nil
 }
 
 func (c *GrpcClient) GetSet(set string) ([]string, error) {

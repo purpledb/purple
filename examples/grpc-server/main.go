@@ -9,8 +9,10 @@ import (
 func main() {
 	port := 8080
 
-	srvCfg := &strato.GrpcConfig{
-		Port: port,
+	srvCfg := &strato.ServerConfig{
+		Port:    port,
+		Backend: "disk",
+		Debug:   true,
 	}
 
 	srv, err := strato.NewGrpcServer(srvCfg)

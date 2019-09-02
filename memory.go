@@ -1,19 +1,18 @@
 package strato
 
 import (
-	bolt "github.com/etcd-io/bbolt"
 	"os"
-	"strings"
 	"time"
+
+	bolt "github.com/etcd-io/bbolt"
 )
 
 const dbFile = "strato-kv.db"
 
 type Memory struct {
 	cache    map[string]*CacheItem
-	counters map[string]int32
+	counters map[string]int64
 	kv       *bolt.DB
-	docs     []*Document
 	sets     map[string][]string
 }
 
@@ -21,16 +20,13 @@ var (
 	_ Cache   = (*Memory)(nil)
 	_ Counter = (*Memory)(nil)
 	_ KV      = (*Memory)(nil)
-	_ Search  = (*Memory)(nil)
 	_ Set     = (*Memory)(nil)
 )
 
 func NewMemoryBackend() *Memory {
 	cache := make(map[string]*CacheItem)
 
-	counters := make(map[string]int32)
-
-	docs := make([]*Document, 0)
+	counters := make(map[string]int64)
 
 	sets := make(map[string][]string)
 
@@ -47,11 +43,20 @@ func NewMemoryBackend() *Memory {
 		cache:    cache,
 		counters: counters,
 		kv:       kv,
-		docs:     docs,
 		sets:     sets,
 	}
 }
 
+// Backend methods
+func (m *Memory) Close() error {
+	return m.kv.Close()
+}
+
+func (m *Memory) Flush() error {
+	return nil
+}
+
+// Cache
 func (m *Memory) CacheGet(key string) (string, error) {
 	val, ok := m.cache[key]
 
@@ -100,17 +105,20 @@ func getTtl(ttl int32) int32 {
 	}
 }
 
-func (m *Memory) CounterIncrement(key string, increment int32) {
+// Counter
+func (m *Memory) CounterIncrement(key string, increment int64) error {
 	counter, ok := m.counters[key]
 	if !ok {
 		m.counters[key] = increment
 	} else {
 		m.counters[key] = counter + increment
 	}
+
+	return nil
 }
 
-func (m *Memory) CounterGet(key string) int32 {
-	return m.counters[key]
+func (m *Memory) CounterGet(key string) (int64, error) {
+	return m.counters[key], nil
 }
 
 func (m *Memory) KVGet(location *Location) (*Value, error) {
@@ -173,61 +181,37 @@ func (m *Memory) KVDelete(location *Location) error {
 	})
 }
 
-func (m *Memory) Index(doc *Document) {
-	doc = doc.prepare()
-
-	m.docs = append(m.docs, doc)
-}
-
-func (m *Memory) Query(q string) []*Document {
-	strings.ToLower(q)
-
-	docs := make([]*Document, 0)
-
-	if len(m.docs) == 0 {
-		return []*Document{}
-	}
-
-	for _, doc := range m.docs {
-		if strings.Contains(doc.Content, q) {
-			docs = append(docs, doc)
-		}
-	}
-
-	return docs
-}
-
-func (m *Memory) GetSet(set string) []string {
+func (m *Memory) GetSet(set string) ([]string, error) {
 	s, ok := m.sets[set]
 
 	if !ok {
-		return []string{}
+		return []string{}, nil
 	}
 
-	return s
+	return s, nil
 }
 
-func (m *Memory) AddToSet(set, item string) {
-	if _, ok := m.sets[set]; !ok {
+func (m *Memory) AddToSet(set, item string) error {
+	if _, ok := m.sets[set]; ok {
+		m.sets[set] = append(m.sets[set], item)
+	} else {
 		m.sets[set] = []string{item}
-		return
 	}
 
-	m.sets[set] = append(m.sets[set], item)
+	return nil
 }
 
-func (m *Memory) RemoveFromSet(set, item string) {
-	if _, ok := m.sets[set]; !ok {
-		return
-	}
-
-	for idx, it := range m.sets[set] {
-		if it == item {
-			m.sets[set] = append(m.sets[set][:idx], m.sets[set][idx+1:]...)
+func (m *Memory) RemoveFromSet(set, item string) error {
+	_, ok := m.sets[set]
+	if ok {
+		for idx, it := range m.sets[set] {
+			if it == item {
+				m.sets[set] = append(m.sets[set][:idx], m.sets[set][idx+1:]...)
+			}
 		}
-	}
-}
 
-func (m *Memory) Close() error {
-	return m.kv.Close()
+		return nil
+	} else {
+		return ErrNoSet
+	}
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func command() *cobra.Command {
-	var config strato.GrpcConfig
+	var cfg strato.ServerConfig
 
 	v := viper.New()
 	v.AutomaticEnv()
@@ -18,10 +18,10 @@ func command() *cobra.Command {
 	command := &cobra.Command{
 		Use: "strato-grpc",
 		PreRun: func(_ *cobra.Command, _ []string) {
-			cmd.ExitOnError(v.Unmarshal(&config))
+			cmd.ExitOnError(v.Unmarshal(&cfg))
 		},
 		Run: func(_ *cobra.Command, _ []string) {
-			srv, err := strato.NewGrpcServer(&config)
+			srv, err := strato.NewGrpcServer(&cfg)
 			cmd.ExitOnError(err)
 			cmd.ExitOnError(srv.Start())
 		},
@@ -30,6 +30,7 @@ func command() *cobra.Command {
 	flags := pflag.NewFlagSet("strato-grpc", pflag.ExitOnError)
 	flags.IntP("port", "p", 8080, "Strato server port")
 	flags.Bool("debug", false, "Debug mode")
+	flags.String("backend", "disk", `Data backend (options are "disk" and "memory")`)
 
 	cmd.BindFlagsToCmd(command, flags, v)
 

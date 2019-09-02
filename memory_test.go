@@ -42,15 +42,24 @@ func TestMemoryImpl(t *testing.T) {
 	})
 
 	t.Run("Counter", func(t *testing.T) {
-		key := "my-counter"
+		key, incr := "my-counter", int64(10)
 
 		is.Zero(mem.CounterGet(key))
 
-		mem.CounterIncrement(key, int32(10))
-		is.Equal(mem.CounterGet(key), int32(10))
-		mem.CounterIncrement(key, int32(-50))
-		is.Equal(mem.CounterGet(key), int32(-40))
-		is.Zero(mem.CounterGet("does-not-yet-exist"), 0)
+		is.NoError(mem.CounterIncrement(key, incr))
+
+		val, err := mem.CounterGet(key)
+		is.NoError(err)
+		is.Equal(val, incr)
+
+		is.NoError(mem.CounterIncrement(key, int64(-50)))
+		val, err = mem.CounterGet(key)
+		is.NoError(err)
+		is.Equal(val, int64(-40))
+
+		val, err = mem.CounterGet("does-not-yet-exist")
+		is.NoError(err)
+		is.Zero(val)
 	})
 
 	t.Run("KV", func(t *testing.T) {
@@ -80,39 +89,33 @@ func TestMemoryImpl(t *testing.T) {
 		is.Nil(fetched)
 	})
 
-	t.Run("Search", func(t *testing.T) {
-		doc := &Document{
-			ID:      "doc-1",
-			Content: "Here lies searchable content",
-		}
-
-		goodQuery, badQuery := "here", "oops"
-
-		res := mem.Query(goodQuery)
-		is.Empty(res)
-
-		mem.Index(doc)
-		res = mem.Query(goodQuery)
-		is.Len(res, 1)
-
-		res = mem.Query(badQuery)
-		is.Empty(res)
-	})
-
 	t.Run("Set", func(t *testing.T) {
 		set, item1, item2 := "example-set", "example-item-1", "example-item-2"
 
 		is.Empty(mem.GetSet(set))
-		mem.AddToSet(set, item1)
+		is.NoError(mem.AddToSet(set, item1))
 		is.NotEmpty(mem.GetSet(set))
-		is.Len(mem.GetSet(set), 1)
-		is.Equal(mem.GetSet(set)[0], item1)
-		mem.AddToSet(set, item2)
-		is.Len(mem.GetSet(set), 2)
-		mem.RemoveFromSet(set, item1)
-		is.Len(mem.GetSet(set), 1)
-		is.Equal(mem.GetSet(set)[0], item2)
-		mem.RemoveFromSet(set, item2)
-		is.Empty(mem.GetSet(set))
+
+		s, err := mem.GetSet(set)
+		is.NoError(err)
+		is.Len(s, 1)
+		is.Equal(s[0], item1)
+
+		is.NoError(mem.AddToSet(set, item2))
+
+		s, err = mem.GetSet(set)
+		is.Len(s, 2)
+
+		is.NoError(mem.RemoveFromSet(set, item1))
+
+		s, err = mem.GetSet(set)
+		is.NoError(err)
+		is.Len(s, 1)
+		is.Equal(s[0], item2)
+
+		is.NoError(mem.RemoveFromSet(set, item2))
+		s, err = mem.GetSet(set)
+		is.NoError(err)
+		is.Empty(s)
 	})
 }

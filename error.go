@@ -2,24 +2,26 @@ package strato
 
 import (
 	"fmt"
-	"os"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 var (
-	ErrExpired        = CacheError{"item has expired"}
-	ErrNoCacheItem    = CacheError{"no item found"}
-	ErrNoCacheKey     = CacheError{"no cache key specified"}
-	ErrNoCacheValue   = CacheError{"no cache value specified"}
-	ErrNoBucket       = KVError{"no bucket specified"}
-	ErrNoKey          = KVError{"no key specified"}
-	ErrNoLocation     = KVError{"no location specified"}
-	ErrNoValue        = KVError{"no value specified"}
-	ErrNoAddress      = ConfigError{"no server address provided"}
-	ErrNoPort         = ConfigError{"no server port supplied"}
-	ErrPortOutOfRange = ConfigError{"port must be between 1024 and 49151"}
+	ErrExpired              = CacheError{"item has expired"}
+	ErrNoCacheItem          = CacheError{"no item found"}
+	ErrNoCacheKey           = CacheError{"no cache key specified"}
+	ErrNoCacheValue         = CacheError{"no cache value specified"}
+	ErrNoBucket             = KVError{"no bucket specified"}
+	ErrNoKey                = KVError{"no key specified"}
+	ErrNoLocation           = KVError{"no location specified"}
+	ErrNoValue              = KVError{"no value specified"}
+	ErrNoSet                = SetError{"set does not exist"}
+	ErrNoAddress            = ConfigError{"no server address provided"}
+	ErrNoPort               = ConfigError{"no server port supplied"}
+	ErrPortOutOfRange       = ConfigError{"port must be between 1024 and 49151"}
+	ErrBackendNotRecognized = ConfigError{"backend key not recognized"}
+	ErrNoBackend            = ConfigError{"no backend specified"}
 )
 
 type (
@@ -38,14 +40,11 @@ type (
 	NotFoundError struct {
 		location *Location
 	}
-)
 
-func exitOnErr(err error) {
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	SetError struct {
+		string
 	}
-}
+)
 
 func (e CacheError) Error() string {
 	return fmt.Sprintf("cache error: %s", e.string)
@@ -83,6 +82,10 @@ func (e ConfigError) Error() string {
 func IsConfigError(err error) bool {
 	_, ok := err.(ConfigError)
 	return ok
+}
+
+func (e SetError) Error() string {
+	return fmt.Sprintf("set error: %s", e.string)
 }
 
 func (e NotFoundError) Error() string {

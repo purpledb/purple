@@ -2,24 +2,27 @@ package strato
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
-	"strings"
 
+	"github.com/dgraph-io/badger"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type HttpServer struct {
 	address string
-	mem     *Memory
+	backend Backend
 	log     *logrus.Entry
 }
 
-func NewHttpServer(cfg *HttpConfig) *HttpServer {
+func NewHttpServer(cfg *ServerConfig) (*HttpServer, error) {
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
-	mem := NewMemoryBackend()
+	backend, err := NewBackend(cfg)
+	if err != nil {
+		return nil, err
+	}
 
 	logger := logrus.New()
 
@@ -34,9 +37,9 @@ func NewHttpServer(cfg *HttpConfig) *HttpServer {
 
 	return &HttpServer{
 		address: addr,
-		mem:     mem,
+		backend: backend,
 		log:     log,
-	}
+	}, nil
 }
 
 func (s *HttpServer) Start() error {
@@ -72,12 +75,6 @@ func (s *HttpServer) routes() *gin.Engine {
 		kv.DELETE("/:key", s.kvDelete)
 	}
 
-	search := r.Group("/search")
-	{
-		search.GET("", s.searchGet)
-		search.PUT("", s.searchPut)
-	}
-
 	sets := r.Group("/sets")
 	{
 		sets.GET("/:set", s.setsGet)
@@ -97,7 +94,7 @@ func (s *HttpServer) cacheGet(c *gin.Context) {
 		return
 	}
 
-	val, err := s.mem.CacheGet(key)
+	val, err := s.backend.CacheGet(key)
 	if err != nil {
 		if IsNoItemFound(err) {
 			c.Status(http.StatusNotFound)
@@ -150,7 +147,7 @@ func (s *HttpServer) cachePut(c *gin.Context) {
 
 	ttl := int32(ttlInt)
 
-	if err := s.mem.CacheSet(key, value, ttl); err != nil {
+	if err := s.backend.CacheSet(key, value, ttl); err != nil {
 		log.Error(err)
 		c.Status(http.StatusInternalServerError)
 		return
@@ -162,11 +159,20 @@ func (s *HttpServer) cachePut(c *gin.Context) {
 func (s *HttpServer) countersGet(c *gin.Context) {
 	counter := c.Param("counter")
 
-	value := s.mem.CounterGet(counter)
+	value, err := s.backend.CounterGet(counter)
+	if err != nil {
+		if err == badger.ErrKeyNotFound {
+			c.Status(http.StatusNotFound)
+			return
+		} else {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+	}
 
 	res := struct {
 		Counter string `json:"counter"`
-		Value   int32  `json:"value"`
+		Value   int64  `json:"value"`
 	}{
 		Counter: counter,
 		Value:   value,
@@ -186,11 +192,13 @@ func (s *HttpServer) countersPut(c *gin.Context) {
 	i, err := strconv.Atoi(incr)
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())
+		return
 	}
 
-	increment := int32(i)
-
-	s.mem.CounterIncrement(counter, increment)
+	if err := s.backend.CounterIncrement(counter, int64(i)); err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
 
 	c.Status(http.StatusAccepted)
 }
@@ -204,7 +212,7 @@ func (s *HttpServer) kvGet(c *gin.Context) {
 		Key: key,
 	}
 
-	val, err := s.mem.KVGet(loc)
+	val, err := s.backend.KVGet(loc)
 	if err != nil {
 		if IsNotFound(err) {
 			c.Status(http.StatusNotFound)
@@ -239,7 +247,7 @@ func (s *HttpServer) kvPut(c *gin.Context) {
 		Content: []byte(value),
 	}
 
-	if err := s.mem.KVPut(loc, val); err != nil {
+	if err := s.backend.KVPut(loc, val); err != nil {
 		log.Error(err)
 		c.String(http.StatusInternalServerError, err.Error())
 		return
@@ -257,7 +265,7 @@ func (s *HttpServer) kvDelete(c *gin.Context) {
 		Key: key,
 	}
 
-	if err := s.mem.KVDelete(loc); err != nil {
+	if err := s.backend.KVDelete(loc); err != nil {
 		log.Error(err)
 		c.String(http.StatusInternalServerError, err.Error())
 		return
@@ -266,46 +274,19 @@ func (s *HttpServer) kvDelete(c *gin.Context) {
 	c.Status(http.StatusAccepted)
 }
 
-func (s *HttpServer) searchGet(c *gin.Context) {
-	q := c.Query("q")
-
-	if q == "" {
-		c.String(http.StatusBadRequest, "no query string provided")
-		return
-	}
-
-	q = strings.ToLower(q)
-
-	docs := s.mem.Query(q)
-
-	res := struct {
-		Query     string      `json:"query"`
-		Documents []*Document `json:"documents"`
-	}{
-		Query:     q,
-		Documents: docs,
-	}
-
-	c.JSON(http.StatusOK, res)
-}
-
-func (s *HttpServer) searchPut(c *gin.Context) {
-	var doc Document
-
-	if err := c.ShouldBind(&doc); err != nil {
-		c.String(http.StatusBadRequest, err.Error())
-		return
-	}
-
-	s.mem.Index(&doc)
-
-	c.Status(http.StatusAccepted)
-}
-
 func (s *HttpServer) setsGet(c *gin.Context) {
 	set := c.Param("set")
 
-	items := s.mem.GetSet(set)
+	items, err := s.backend.GetSet(set)
+	if err != nil {
+		if err == ErrNoSet {
+			c.Status(http.StatusNotFound)
+			return
+		} else {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+	}
 
 	res := struct {
 		Set   string   `json:"set"`
@@ -321,7 +302,10 @@ func (s *HttpServer) setsGet(c *gin.Context) {
 func (s *HttpServer) setsPut(c *gin.Context) {
 	set, item := c.Param("set"), c.Param("item")
 
-	s.mem.AddToSet(set, item)
+	if err := s.backend.AddToSet(set, item); err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	c.Status(http.StatusAccepted)
 }
@@ -329,7 +313,10 @@ func (s *HttpServer) setsPut(c *gin.Context) {
 func (s *HttpServer) setsDelete(c *gin.Context) {
 	set, item := c.Param("set"), c.Param("item")
 
-	s.mem.RemoveFromSet(set, item)
+	if err := s.backend.RemoveFromSet(set, item); err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	c.Status(http.StatusAccepted)
 }

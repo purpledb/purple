@@ -2,11 +2,12 @@ package strato
 
 import (
 	"context"
+	"testing"
+
 	"github.com/lucperkins/strato/proto"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"testing"
 )
 
 func TestGrpcServer(t *testing.T) {
@@ -15,6 +16,8 @@ func TestGrpcServer(t *testing.T) {
 	ctx := context.Background()
 
 	srv, err := NewGrpcServer(goodServerCfg)
+	is.NoError(err)
+	is.NoError(srv.backend.Flush())
 
 	go func() {
 		is.NoError(srv.Start())
@@ -30,7 +33,7 @@ func TestGrpcServer(t *testing.T) {
 			Key: "key",
 			Item: &proto.CacheItem{
 				Value: "value",
-				Ttl: 2,
+				Ttl:   2,
 			},
 		}
 
@@ -59,8 +62,8 @@ func TestGrpcServer(t *testing.T) {
 		is.Zero(res.Value)
 
 		incrReq := &proto.IncrementCounterRequest{
-			Key: "player1",
-			Amount: int32(100),
+			Key:    "player1",
+			Amount: 100,
 		}
 
 		empty, err := srv.IncrementCounter(ctx, incrReq)
@@ -69,13 +72,13 @@ func TestGrpcServer(t *testing.T) {
 
 		res, err = srv.GetCounter(ctx, getReq)
 		is.NoError(err)
-		is.Equal(res.Value, int32(100))
+		is.Equal(res.Value, int64(100))
 	})
 
 	t.Run("KV", func(_ *testing.T) {
 		locationReq := &proto.Location{
 			Bucket: "buck",
-			Key: "key",
+			Key:    "key",
 		}
 
 		val, err := srv.KVGet(ctx, locationReq)
@@ -88,7 +91,7 @@ func TestGrpcServer(t *testing.T) {
 		putReq := &proto.PutRequest{
 			Location: &proto.Location{
 				Bucket: "buck",
-				Key: "key",
+				Key:    "key",
 			},
 			Value: &proto.Value{
 				Content: []byte("some content"),
@@ -114,34 +117,6 @@ func TestGrpcServer(t *testing.T) {
 		is.Equal(stat.Code(), codes.NotFound)
 	})
 
-	t.Run("Search", func(_ *testing.T) {
-		searchReq := &proto.SearchQuery{
-			Query: "exaggerate",
-		}
-
-		res, err := srv.Query(ctx, searchReq)
-		is.NoError(err)
-		is.NotNil(res)
-		is.Equal(res.Documents, []*proto.Document{})
-
-		indexReq := &proto.IndexRequest{
-			Document: &proto.Document{
-				Id: "my-doc",
-				Content: "I do not exaggerate",
-			},
-		}
-
-		empty, err := srv.Index(ctx, indexReq)
-		is.NoError(err)
-		is.NotNil(empty)
-
-		res, err = srv.Query(ctx, searchReq)
-		is.NoError(err)
-		is.Len(res.Documents, 1)
-		is.Equal(res.Documents[0].Id, "my-doc")
-		is.Equal(res.Documents[0].Content, "i do not exaggerate")
-	})
-
 	t.Run("Set", func(_ *testing.T) {
 		getReq := &proto.GetSetRequest{
 			Set: "set1",
@@ -153,7 +128,7 @@ func TestGrpcServer(t *testing.T) {
 		is.Equal(set.Items, []string{})
 
 		modifyReq := &proto.ModifySetRequest{
-			Set: "set1",
+			Set:  "set1",
 			Item: "item1",
 		}
 
