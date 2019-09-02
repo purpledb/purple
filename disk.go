@@ -10,7 +10,7 @@ import (
 	"github.com/dgraph-io/badger"
 )
 
-const dbDir = "tmp/strato"
+const dataDir = "tmp/strato"
 
 type Disk struct {
 	db      *badger.DB
@@ -23,13 +23,13 @@ var (
 	_ Set     = (*Disk)(nil)
 )
 
-func NewDisk(dataDir string) (*Disk, error) {
-	db, err := badger.Open(badger.DefaultOptions(dataDir))
-	if err != nil {
+func NewDisk() (*Disk, error) {
+	if err := createDataDir(dataDir); err != nil {
 		return nil, err
 	}
 
-	if err := createDataDir(dataDir); err != nil {
+	db, err := badger.Open(badger.DefaultOptions(dataDir))
+	if err != nil {
 		return nil, err
 	}
 

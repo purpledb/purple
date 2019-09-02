@@ -24,7 +24,7 @@ var (
 func NewBackend(cfg *ServerConfig) (*BackendObj, error) {
 	switch cfg.Backend {
 	case "disk":
-		backend, err := NewDisk(dbDir)
+		backend, err := NewDisk()
 		if err != nil {
 			return nil, err
 		}

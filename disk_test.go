@@ -8,10 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const (
-	dir = "tmp/badger"
-)
-
 func TestGenericDiskFunctions(t *testing.T) {
 	is := assert.New(t)
 
@@ -165,9 +161,7 @@ func TestDiskHelperFunctions(t *testing.T) {
 }
 
 func setup(is *assert.Assertions) *Disk {
-	is.NoError(os.MkdirAll(dir, os.ModePerm))
-
-	disk, err := NewDisk(dir)
+	disk, err := NewDisk()
 	is.NoError(err)
 	is.NotNil(disk)
 
@@ -177,5 +171,5 @@ func setup(is *assert.Assertions) *Disk {
 }
 
 func clean(is *assert.Assertions) {
-	is.NoError(os.RemoveAll(dir))
+	is.NoError(os.RemoveAll(dataDir))
 }
