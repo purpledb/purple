@@ -3,9 +3,10 @@ package strato
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dgraph-io/badger"
 	"strconv"
 	"time"
+
+	"github.com/dgraph-io/badger"
 )
 
 const dbDir = "tmp/strato"

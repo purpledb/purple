@@ -2,11 +2,12 @@ package strato
 
 import (
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/dgraph-io/badger"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"net/http"
-	"strconv"
 )
 
 type HttpServer struct {

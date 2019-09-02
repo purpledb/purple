@@ -2,6 +2,7 @@ package strato
 
 import (
 	"fmt"
+
 	"github.com/lucperkins/strato/proto"
 )
 

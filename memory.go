@@ -1,9 +1,10 @@
 package strato
 
 import (
-	bolt "github.com/etcd-io/bbolt"
 	"os"
 	"time"
+
+	bolt "github.com/etcd-io/bbolt"
 )
 
 const dbFile = "strato-kv.db"

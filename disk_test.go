@@ -1,10 +1,11 @@
 package strato
 
 import (
-	"github.com/dgraph-io/badger"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
+
+	"github.com/dgraph-io/badger"
+	"github.com/stretchr/testify/assert"
 )
 
 const (

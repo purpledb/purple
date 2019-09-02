@@ -10,7 +10,9 @@ func main() {
 	port := 8080
 
 	srvCfg := &strato.ServerConfig{
-		Port: port,
+		Port:    port,
+		Backend: "disk",
+		Debug:   true,
 	}
 
 	srv, err := strato.NewGrpcServer(srvCfg)
