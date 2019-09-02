@@ -8,6 +8,7 @@ type (
 		Set
 
 		Close() error
+		Flush() error
 	}
 
 	BackendObj struct {

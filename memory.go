@@ -52,6 +52,10 @@ func (m *Memory) Close() error {
 	return m.kv.Close()
 }
 
+func (m *Memory) Flush() error {
+	return nil
+}
+
 // Cache
 func (m *Memory) CacheGet(key string) (string, error) {
 	val, ok := m.cache[key]

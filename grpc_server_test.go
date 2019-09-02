@@ -16,6 +16,8 @@ func TestGrpcServer(t *testing.T) {
 	ctx := context.Background()
 
 	srv, err := NewGrpcServer(goodServerCfg)
+	is.NoError(err)
+	is.NoError(srv.backend.Flush())
 
 	go func() {
 		is.NoError(srv.Start())
