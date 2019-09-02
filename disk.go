@@ -3,6 +3,7 @@ package strato
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"strconv"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 const dbDir = "tmp/strato"
 
 type Disk struct {
-	db *badger.DB
+	db      *badger.DB
 }
 
 var (
@@ -22,23 +23,32 @@ var (
 	_ Set     = (*Disk)(nil)
 )
 
-func NewDisk(file string) (*Disk, error) {
-	db, err := badger.Open(badger.DefaultOptions(file))
+func NewDisk(dataDir string) (*Disk, error) {
+	db, err := badger.Open(badger.DefaultOptions(dataDir))
 	if err != nil {
 		return nil, err
 	}
+
+	if err := createDataDir(dataDir); err != nil {
+		return nil, err
+	}
+
 	return &Disk{
-		db: db,
+		db:      db,
 	}, nil
 }
 
-func (d *Disk) Flush() error {
-	return d.db.DropAll()
+func createDataDir(dataDir string) error {
+	return os.MkdirAll(dataDir, os.ModePerm)
 }
 
 // Backend methods
 func (d *Disk) Close() error {
 	return d.db.Close()
+}
+
+func (d *Disk) Flush() error {
+	return d.db.DropAll()
 }
 
 // Generic functions
