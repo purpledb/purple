@@ -93,7 +93,7 @@ func (s *HttpServer) cacheGet(c *gin.Context) {
 		return
 	}
 
-	val, err := s.mem.CacheGet(key)
+	val, err := s.backend.CacheGet(key)
 	if err != nil {
 		if IsNoItemFound(err) {
 			c.Status(http.StatusNotFound)
@@ -146,7 +146,7 @@ func (s *HttpServer) cachePut(c *gin.Context) {
 
 	ttl := int32(ttlInt)
 
-	if err := s.mem.CacheSet(key, value, ttl); err != nil {
+	if err := s.backend.CacheSet(key, value, ttl); err != nil {
 		log.Error(err)
 		c.Status(http.StatusInternalServerError)
 		return
@@ -158,7 +158,7 @@ func (s *HttpServer) cachePut(c *gin.Context) {
 func (s *HttpServer) countersGet(c *gin.Context) {
 	counter := c.Param("counter")
 
-	value, err := s.mem.CounterGet(counter)
+	value, err := s.backend.CounterGet(counter)
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
 			c.Status(http.StatusNotFound)
@@ -194,7 +194,7 @@ func (s *HttpServer) countersPut(c *gin.Context) {
 		return
 	}
 
-	if err := s.mem.CounterIncrement(counter, int64(i)); err != nil {
+	if err := s.backend.CounterIncrement(counter, int64(i)); err != nil {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
@@ -211,7 +211,7 @@ func (s *HttpServer) kvGet(c *gin.Context) {
 		Key: key,
 	}
 
-	val, err := s.mem.KVGet(loc)
+	val, err := s.backend.KVGet(loc)
 	if err != nil {
 		if IsNotFound(err) {
 			c.Status(http.StatusNotFound)
@@ -246,7 +246,7 @@ func (s *HttpServer) kvPut(c *gin.Context) {
 		Content: []byte(value),
 	}
 
-	if err := s.mem.KVPut(loc, val); err != nil {
+	if err := s.backend.KVPut(loc, val); err != nil {
 		log.Error(err)
 		c.String(http.StatusInternalServerError, err.Error())
 		return
@@ -264,7 +264,7 @@ func (s *HttpServer) kvDelete(c *gin.Context) {
 		Key: key,
 	}
 
-	if err := s.mem.KVDelete(loc); err != nil {
+	if err := s.backend.KVDelete(loc); err != nil {
 		log.Error(err)
 		c.String(http.StatusInternalServerError, err.Error())
 		return
@@ -276,7 +276,7 @@ func (s *HttpServer) kvDelete(c *gin.Context) {
 func (s *HttpServer) setsGet(c *gin.Context) {
 	set := c.Param("set")
 
-	items, err := s.mem.GetSet(set)
+	items, err := s.backend.GetSet(set)
 	if err != nil {
 		if err == ErrNoSet {
 			c.Status(http.StatusNotFound)
@@ -301,7 +301,10 @@ func (s *HttpServer) setsGet(c *gin.Context) {
 func (s *HttpServer) setsPut(c *gin.Context) {
 	set, item := c.Param("set"), c.Param("item")
 
-	s.mem.AddToSet(set, item)
+	if err := s.backend.AddToSet(set, item); err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	c.Status(http.StatusAccepted)
 }
@@ -309,7 +312,10 @@ func (s *HttpServer) setsPut(c *gin.Context) {
 func (s *HttpServer) setsDelete(c *gin.Context) {
 	set, item := c.Param("set"), c.Param("item")
 
-	s.mem.RemoveFromSet(set, item)
+	if err := s.backend.RemoveFromSet(set, item); err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	c.Status(http.StatusAccepted)
 }
