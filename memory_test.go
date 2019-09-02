@@ -89,25 +89,6 @@ func TestMemoryImpl(t *testing.T) {
 		is.Nil(fetched)
 	})
 
-	t.Run("Search", func(t *testing.T) {
-		doc := &Document{
-			ID:      "doc-1",
-			Content: "Here lies searchable content",
-		}
-
-		goodQuery, badQuery := "here", "oops"
-
-		res := mem.Query(goodQuery)
-		is.Empty(res)
-
-		mem.Index(doc)
-		res = mem.Query(goodQuery)
-		is.Len(res, 1)
-
-		res = mem.Query(badQuery)
-		is.Empty(res)
-	})
-
 	t.Run("Set", func(t *testing.T) {
 		set, item1, item2 := "example-set", "example-item-1", "example-item-2"
 

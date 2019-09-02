@@ -11,8 +11,9 @@ var (
 		Address: "localhost:2222",
 	}
 
-	goodServerCfg = &GrpcConfig{
-		Port: 2222,
+	goodServerCfg = &ServerConfig{
+		Port:    2222,
+		Backend: "disk",
 	}
 )
 
@@ -31,9 +32,9 @@ func TestConfigInstantiation(t *testing.T) {
 	})
 
 	t.Run("GrpcServer", func(t *testing.T) {
-		emptyCfg := &GrpcConfig{}
+		emptyCfg := &ServerConfig{}
 
-		lowPortCfg := &GrpcConfig{
+		lowPortCfg := &ServerConfig{
 			Port: 10,
 		}
 

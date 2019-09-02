@@ -9,7 +9,7 @@ import (
 func main() {
 	port := 8080
 
-	srvCfg := &strato.GrpcConfig{
+	srvCfg := &strato.ServerConfig{
 		Port: port,
 	}
 

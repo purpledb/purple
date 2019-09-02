@@ -7,8 +7,9 @@ import (
 )
 
 func main() {
-	serverCfg := &strato.HttpConfig{
-		Port: 8081,
+	serverCfg := &strato.ServerConfig{
+		Port:    8081,
+		Backend: "memory",
 	}
 
 	restSrv := strato.NewHttpServer(serverCfg)

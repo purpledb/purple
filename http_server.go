@@ -3,12 +3,10 @@ package strato
 import (
 	"fmt"
 	"github.com/dgraph-io/badger"
+	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
-	"strings"
-
-	"github.com/gin-gonic/gin"
 )
 
 type HttpServer struct {
@@ -17,7 +15,7 @@ type HttpServer struct {
 	log     *logrus.Entry
 }
 
-func NewHttpServer(cfg *HttpConfig) *HttpServer {
+func NewHttpServer(cfg *ServerConfig) *HttpServer {
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
 	mem := NewMemoryBackend()
@@ -71,12 +69,6 @@ func (s *HttpServer) routes() *gin.Engine {
 		kv.GET("/:key", s.kvGet)
 		kv.PUT("/:key/:value", s.kvPut)
 		kv.DELETE("/:key", s.kvDelete)
-	}
-
-	search := r.Group("/search")
-	{
-		search.GET("", s.searchGet)
-		search.PUT("", s.searchPut)
 	}
 
 	sets := r.Group("/sets")
@@ -274,42 +266,6 @@ func (s *HttpServer) kvDelete(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	c.Status(http.StatusAccepted)
-}
-
-func (s *HttpServer) searchGet(c *gin.Context) {
-	q := c.Query("q")
-
-	if q == "" {
-		c.String(http.StatusBadRequest, "no query string provided")
-		return
-	}
-
-	q = strings.ToLower(q)
-
-	docs := s.mem.Query(q)
-
-	res := struct {
-		Query     string      `json:"query"`
-		Documents []*Document `json:"documents"`
-	}{
-		Query:     q,
-		Documents: docs,
-	}
-
-	c.JSON(http.StatusOK, res)
-}
-
-func (s *HttpServer) searchPut(c *gin.Context) {
-	var doc Document
-
-	if err := c.ShouldBind(&doc); err != nil {
-		c.String(http.StatusBadRequest, err.Error())
-		return
-	}
-
-	s.mem.Index(&doc)
 
 	c.Status(http.StatusAccepted)
 }

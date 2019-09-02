@@ -3,7 +3,6 @@ package strato
 import (
 	bolt "github.com/etcd-io/bbolt"
 	"os"
-	"strings"
 	"time"
 )
 
@@ -13,7 +12,6 @@ type Memory struct {
 	cache    map[string]*CacheItem
 	counters map[string]int64
 	kv       *bolt.DB
-	docs     []*Document
 	sets     map[string][]string
 }
 
@@ -21,7 +19,6 @@ var (
 	_ Cache   = (*Memory)(nil)
 	_ Counter = (*Memory)(nil)
 	_ KV      = (*Memory)(nil)
-	_ Search  = (*Memory)(nil)
 	_ Set     = (*Memory)(nil)
 )
 
@@ -29,8 +26,6 @@ func NewMemoryBackend() *Memory {
 	cache := make(map[string]*CacheItem)
 
 	counters := make(map[string]int64)
-
-	docs := make([]*Document, 0)
 
 	sets := make(map[string][]string)
 
@@ -47,9 +42,13 @@ func NewMemoryBackend() *Memory {
 		cache:    cache,
 		counters: counters,
 		kv:       kv,
-		docs:     docs,
 		sets:     sets,
 	}
+}
+
+// Backend methods
+func (m *Memory) Close() error {
+	return m.kv.Close()
 }
 
 // Cache
@@ -177,30 +176,6 @@ func (m *Memory) KVDelete(location *Location) error {
 	})
 }
 
-func (m *Memory) Index(doc *Document) {
-	doc = doc.prepare()
-
-	m.docs = append(m.docs, doc)
-}
-
-func (m *Memory) Query(q string) []*Document {
-	strings.ToLower(q)
-
-	docs := make([]*Document, 0)
-
-	if len(m.docs) == 0 {
-		return []*Document{}
-	}
-
-	for _, doc := range m.docs {
-		if strings.Contains(doc.Content, q) {
-			docs = append(docs, doc)
-		}
-	}
-
-	return docs
-}
-
 func (m *Memory) GetSet(set string) ([]string, error) {
 	s, ok := m.sets[set]
 
@@ -234,8 +209,4 @@ func (m *Memory) RemoveFromSet(set, item string) error {
 	} else {
 		return ErrNoSet
 	}
-}
-
-func (m *Memory) Close() error {
-	return m.kv.Close()
 }

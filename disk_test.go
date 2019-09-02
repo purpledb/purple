@@ -169,6 +169,9 @@ func setup(is *assert.Assertions) *Disk {
 	disk, err := NewDisk(dir)
 	is.NoError(err)
 	is.NotNil(disk)
+
+	is.NoError(disk.Flush())
+
 	return disk
 }
 

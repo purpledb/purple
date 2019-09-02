@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+const dbDir = "tmp/strato"
+
 type Disk struct {
 	db *badger.DB
 }
@@ -27,6 +29,15 @@ func NewDisk(file string) (*Disk, error) {
 	return &Disk{
 		db: db,
 	}, nil
+}
+
+func (d *Disk) Flush() error {
+	return d.db.DropAll()
+}
+
+// Backend methods
+func (d *Disk) Close() error {
+	return d.db.Close()
 }
 
 // Generic functions
@@ -154,10 +165,6 @@ func (d *Disk) KVPut(location *Location, value *Value) error {
 func (d *Disk) KVDelete(location *Location) error {
 	key := kvKey(location)
 	return d.delete(key)
-}
-
-func (d *Disk) Close() error {
-	return d.db.Close()
 }
 
 // Set

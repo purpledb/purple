@@ -114,34 +114,6 @@ func TestGrpcServer(t *testing.T) {
 		is.Equal(stat.Code(), codes.NotFound)
 	})
 
-	t.Run("Search", func(_ *testing.T) {
-		searchReq := &proto.SearchQuery{
-			Query: "exaggerate",
-		}
-
-		res, err := srv.Query(ctx, searchReq)
-		is.NoError(err)
-		is.NotNil(res)
-		is.Equal(res.Documents, []*proto.Document{})
-
-		indexReq := &proto.IndexRequest{
-			Document: &proto.Document{
-				Id:      "my-doc",
-				Content: "I do not exaggerate",
-			},
-		}
-
-		empty, err := srv.Index(ctx, indexReq)
-		is.NoError(err)
-		is.NotNil(empty)
-
-		res, err = srv.Query(ctx, searchReq)
-		is.NoError(err)
-		is.Len(res.Documents, 1)
-		is.Equal(res.Documents[0].Id, "my-doc")
-		is.Equal(res.Documents[0].Content, "i do not exaggerate")
-	})
-
 	t.Run("Set", func(_ *testing.T) {
 		getReq := &proto.GetSetRequest{
 			Set: "set1",

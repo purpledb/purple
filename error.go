@@ -20,6 +20,7 @@ var (
 	ErrNoPort               = ConfigError{"no server port supplied"}
 	ErrPortOutOfRange       = ConfigError{"port must be between 1024 and 49151"}
 	ErrBackendNotRecognized = ConfigError{"backend key not recognized"}
+	ErrNoBackend            = ConfigError{"no backend specified"}
 )
 
 type (
