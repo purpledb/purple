@@ -9,7 +9,7 @@ import (
 )
 
 func command() *cobra.Command {
-	var config strato.ServerConfig
+	var cfg strato.ServerConfig
 
 	v := viper.New()
 	v.AutomaticEnv()
@@ -18,10 +18,11 @@ func command() *cobra.Command {
 	command := &cobra.Command{
 		Use: "strato-http",
 		PreRun: func(_ *cobra.Command, _ []string) {
-			cmd.ExitOnError(v.Unmarshal(&config))
+			cmd.ExitOnError(v.Unmarshal(&cfg))
 		},
 		Run: func(_ *cobra.Command, _ []string) {
-			srv := strato.NewHttpServer(&config)
+			srv, err := strato.NewHttpServer(&cfg)
+			cmd.ExitOnError(err)
 			cmd.ExitOnError(srv.Start())
 		},
 	}

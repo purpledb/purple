@@ -11,14 +11,17 @@ import (
 
 type HttpServer struct {
 	address string
-	mem     *Memory
+	backend Backend
 	log     *logrus.Entry
 }
 
-func NewHttpServer(cfg *ServerConfig) *HttpServer {
+func NewHttpServer(cfg *ServerConfig) (*HttpServer, error) {
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
-	mem := NewMemoryBackend()
+	backend, err := NewBackend(cfg)
+	if err != nil {
+		return nil, err
+	}
 
 	logger := logrus.New()
 
@@ -33,9 +36,9 @@ func NewHttpServer(cfg *ServerConfig) *HttpServer {
 
 	return &HttpServer{
 		address: addr,
-		mem:     mem,
+		backend: backend,
 		log:     log,
-	}
+	}, nil
 }
 
 func (s *HttpServer) Start() error {
