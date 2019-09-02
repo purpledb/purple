@@ -128,7 +128,7 @@ func (d *Disk) CounterGet(key string) (int64, error) {
 		}
 	}
 
-	return int64(val[0]), nil
+	return bytesToInt64(val), nil
 }
 
 func (d *Disk) CounterIncrement(key string, increment int64) error {
@@ -137,7 +137,7 @@ func (d *Disk) CounterIncrement(key string, increment int64) error {
 	val, err := d.read(k)
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
-			v := []byte{byte(increment)}
+			v := int64ToBytes(increment)
 
 			return d.write(k, v)
 		} else {
@@ -145,11 +145,11 @@ func (d *Disk) CounterIncrement(key string, increment int64) error {
 		}
 	}
 
-	count := int64(val[0])
+	count := bytesToInt64(val)
 
 	count += increment
 
-	newVal := intToBytes(count)
+	newVal := int64ToBytes(count)
 
 	return d.write(k, newVal)
 }
@@ -274,7 +274,11 @@ func setKey(key string) []byte {
 	return []byte(fmt.Sprintf("set__%s", key))
 }
 
-func intToBytes(i int64) []byte {
+func bytesToInt64(bs []byte) int64 {
+	return int64(bs[0])
+}
+
+func int64ToBytes(i int64) []byte {
 	return []byte(strconv.FormatInt(i, 10))
 }
 
