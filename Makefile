@@ -50,3 +50,9 @@ docker-run-http:
 	docker run --rm --interactive --tty -p 8081:8081 $(HTTP_IMG)
 
 docker-push-all: docker-push-grpc docker-push-http
+
+run-local-grpc:
+	go run cmd/strato-grpc/main.go
+
+run-local-http:
+	go run cmd/strato-http/main.go

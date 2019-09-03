@@ -2,9 +2,10 @@ package strato
 
 import (
 	"fmt"
-	"github.com/lucperkins/strato/internal/data"
 	"os"
 	"time"
+
+	"github.com/lucperkins/strato/internal/data"
 
 	"github.com/dgraph-io/badger"
 )
@@ -12,7 +13,7 @@ import (
 const dataDir = "tmp/strato"
 
 type Disk struct {
-	db      *badger.DB
+	db *badger.DB
 }
 
 var (
@@ -33,7 +34,7 @@ func NewDisk() (*Disk, error) {
 	}
 
 	return &Disk{
-		db:      db,
+		db: db,
 	}, nil
 }
 
