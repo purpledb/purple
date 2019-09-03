@@ -38,10 +38,12 @@ docker-build-http:
 docker-build-all: docker-build-grpc docker-build-http
 
 docker-push-grpc: docker-build-grpc
-	docker push $(GRPC_IMG)
+	docker push $(GRPC_IMG):$(VERSION)
+	docker push $(GRPC_IMG):latest
 
 docker-push-http: docker-build-http
-	docker push $(HTTP_IMG)
+	docker push $(HTTP_IMG):$(VERSION)
+	docker push $(HTTP_IMG):latest
 
 docker-run-grpc:
 	docker run --rm --interactive --tty -p 8080:8080 $(GRPC_IMG)
