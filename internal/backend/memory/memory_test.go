@@ -1,6 +1,7 @@
-package strato
+package memory
 
 import (
+	"github.com/lucperkins/strato"
 	"testing"
 	"time"
 
@@ -28,17 +29,17 @@ func TestMemoryImpl(t *testing.T) {
 		is.NoError(mem.CacheSet(key, value, 1))
 		time.Sleep(2 * time.Second)
 		val, err = mem.CacheGet(key)
-		is.True(IsExpired(err))
+		is.True(strato.IsExpired(err))
 		is.Empty(val)
 
 		val, err = mem.CacheGet("does-not-exist")
-		is.True(IsNoItemFound(err))
+		is.True(strato.IsNoItemFound(err))
 		is.Empty(val)
 
 		err = mem.CacheSet("", "something", 5)
-		is.True(IsNoCacheKey(err))
+		is.True(strato.IsNoCacheKey(err))
 		err = mem.CacheSet("some-key", "", 5)
-		is.True(IsNoCacheValue(err))
+		is.True(strato.IsNoCacheValue(err))
 	})
 
 	t.Run("Counter", func(t *testing.T) {
@@ -63,29 +64,26 @@ func TestMemoryImpl(t *testing.T) {
 	})
 
 	t.Run("KV", func(t *testing.T) {
-		loc := &Location{
-			Bucket: "some-bucket",
-			Key:    "some-key",
-		}
+		key := "some-key"
 
-		val := &Value{
+		val := &strato.Value{
 			Content: []byte("here is a value"),
 		}
 
-		is.NoError(mem.KVPut(loc, val))
+		is.NoError(mem.KVPut(key, val))
 
-		fetched, err := mem.KVGet(&Location{Bucket: "does-not-exist", Key: "does-not-exist"})
-		is.True(IsNotFound(err))
+		fetched, err := mem.KVGet("does-not-exist")
+		is.True(strato.IsNotFound(err))
 		is.Nil(fetched)
 
-		fetched, err = mem.KVGet(loc)
+		fetched, err = mem.KVGet(key)
 		is.NoError(err)
 		is.NotNil(fetched)
 		is.Equal(fetched, val)
 
-		is.NoError(mem.KVDelete(loc))
-		fetched, err = mem.KVGet(loc)
-		is.True(IsNotFound(err))
+		is.NoError(mem.KVDelete(key))
+		fetched, err = mem.KVGet(key)
+		is.True(strato.IsNotFound(err))
 		is.Nil(fetched)
 	})
 

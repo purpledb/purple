@@ -24,7 +24,7 @@ var (
 	_ strato.Set     = (*Disk)(nil)
 )
 
-func NewDisk() (*Disk, error) {
+func NewDiskBackend() (*Disk, error) {
 	if err := createDataDir(dataDir); err != nil {
 		return nil, err
 	}
@@ -156,10 +156,10 @@ func (d *Disk) CounterIncrement(key string, increment int64) error {
 }
 
 // KV
-func (d *Disk) KVGet(location *strato.Location) (*strato.Value, error) {
-	key := kvKey(location)
+func (d *Disk) KVGet(key string) (*strato.Value, error) {
+	k := []byte(key)
 
-	val, err := d.read(key)
+	val, err := d.read(k)
 	if err != nil {
 		return nil, err
 	}
@@ -169,14 +169,15 @@ func (d *Disk) KVGet(location *strato.Location) (*strato.Value, error) {
 	}, nil
 }
 
-func (d *Disk) KVPut(location *strato.Location, value *strato.Value) error {
-	key := kvKey(location)
-	return d.write(key, value.Content)
+func (d *Disk) KVPut(key string, value *strato.Value) error {
+	k := []byte(key)
+
+	return d.write(k, value.Content)
 }
 
-func (d *Disk) KVDelete(location *strato.Location) error {
-	key := kvKey(location)
-	return d.delete(key)
+func (d *Disk) KVDelete(key string) error {
+	k := []byte(key)
+	return d.delete(k)
 }
 
 // Set
@@ -265,10 +266,6 @@ func cacheKey(key string) []byte {
 
 func counterKey(key string) []byte {
 	return []byte(fmt.Sprintf("counter__%s", key))
-}
-
-func kvKey(location *strato.Location) []byte {
-	return []byte(fmt.Sprintf("%s__%s", location.Bucket, location.Key))
 }
 
 func setKey(key string) []byte {

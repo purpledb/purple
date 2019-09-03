@@ -1,6 +1,6 @@
 package strato
 
-const defaultTtl = 5
+const DefaultTtl = 5
 
 type (
 	Cache interface {

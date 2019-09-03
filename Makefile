@@ -19,7 +19,7 @@ imports:
 
 spruce: tidy fmt imports
 
-gen-protobuf:
+protobuf-gen:
 	$(PROTOC) --proto_path=$(PROTO_DIR) --go_out=plugins=grpc:$(PROTO_DIR) $(PROTO_DIR)/*.proto
 
 test:

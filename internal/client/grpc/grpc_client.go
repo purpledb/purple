@@ -107,16 +107,16 @@ func (c *GrpcClient) GetCounter(key string) (int64, error) {
 	return res.Value, nil
 }
 
-func (c *GrpcClient) KVGet(location *strato.Location) (*strato.Value, error) {
-	if location == nil {
-		return nil, strato.ErrNoLocation
+func (c *GrpcClient) KVGet(key string) (*strato.Value, error) {
+	if key == "" {
+		return nil, strato.ErrNoKey
 	}
 
-	if err := location.Validate(); err != nil {
-		return nil, err
+	loc := &proto.Location{
+		Key: key,
 	}
 
-	res, err := c.kvClient.KVGet(c.ctx, location.Proto())
+	res, err := c.kvClient.KVGet(c.ctx, loc)
 	if err != nil {
 		return nil, err
 	}
@@ -128,21 +128,21 @@ func (c *GrpcClient) KVGet(location *strato.Location) (*strato.Value, error) {
 	return val, nil
 }
 
-func (c *GrpcClient) KVPut(location *strato.Location, value *strato.Value) error {
-	if location == nil {
-		return strato.ErrNoLocation
-	}
-
-	if err := location.Validate(); err != nil {
-		return err
+func (c *GrpcClient) KVPut(key string, value *strato.Value) error {
+	if key == "" {
+		return strato.ErrNoKey
 	}
 
 	if value == nil {
 		return strato.ErrNoValue
 	}
 
+	loc := &proto.Location{
+		Key: key,
+	}
+
 	req := &proto.PutRequest{
-		Location: location.Proto(),
+		Location: loc,
 		Value:    value.Proto(),
 	}
 
@@ -153,16 +153,17 @@ func (c *GrpcClient) KVPut(location *strato.Location, value *strato.Value) error
 	return nil
 }
 
-func (c *GrpcClient) KVDelete(location *strato.Location) error {
-	if location == nil {
-		return strato.ErrNoLocation
+func (c *GrpcClient) KVDelete(key string) error {
+	if key == "" {
+		return strato.ErrNoKey
 	}
 
-	if err := location.Validate(); err != nil {
-		return err
+	loc := &proto.Location{
+		Key: key,
 	}
 
-	if _, err := c.kvClient.KVDelete(c.ctx, location.Proto()); err != nil {
+
+	if _, err := c.kvClient.KVDelete(c.ctx, loc); err != nil {
 		return err
 	}
 

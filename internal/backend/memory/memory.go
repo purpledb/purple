@@ -1,43 +1,32 @@
-package strato
+package memory
 
 import (
-	"os"
+	"github.com/lucperkins/strato"
 	"time"
-
-	bolt "github.com/etcd-io/bbolt"
 )
 
-const dbFile = "strato-kv.db"
-
 type Memory struct {
-	cache    map[string]*CacheItem
+	cache    map[string]*strato.CacheItem
 	counters map[string]int64
-	kv       *bolt.DB
+	kv       map[string]*strato.Value
 	sets     map[string][]string
 }
 
 var (
-	_ Cache   = (*Memory)(nil)
-	_ Counter = (*Memory)(nil)
-	_ KV      = (*Memory)(nil)
-	_ Set     = (*Memory)(nil)
+	_ strato.Cache   = (*Memory)(nil)
+	_ strato.Counter = (*Memory)(nil)
+	_ strato.KV      = (*Memory)(nil)
+	_ strato.Set     = (*Memory)(nil)
 )
 
 func NewMemoryBackend() *Memory {
-	cache := make(map[string]*CacheItem)
+	cache := make(map[string]*strato.CacheItem)
 
 	counters := make(map[string]int64)
 
 	sets := make(map[string][]string)
 
-	if _, err := os.Create(dbFile); err != nil {
-		panic(err)
-	}
-
-	kv, err := bolt.Open(dbFile, 0666, nil)
-	if err != nil {
-		panic(err)
-	}
+	kv := make(map[string]*strato.Value)
 
 	return &Memory{
 		cache:    cache,
@@ -49,7 +38,7 @@ func NewMemoryBackend() *Memory {
 
 // Backend methods
 func (m *Memory) Close() error {
-	return m.kv.Close()
+	return nil
 }
 
 func (m *Memory) Flush() error {
@@ -61,7 +50,7 @@ func (m *Memory) CacheGet(key string) (string, error) {
 	val, ok := m.cache[key]
 
 	if !ok {
-		return "", ErrNoCacheItem
+		return "", strato.ErrNoCacheItem
 	}
 
 	now := time.Now().Unix()
@@ -71,7 +60,7 @@ func (m *Memory) CacheGet(key string) (string, error) {
 	if expired {
 		delete(m.cache, key)
 
-		return "", ErrExpired
+		return "", strato.ErrExpired
 	}
 
 	return val.Value, nil
@@ -79,14 +68,14 @@ func (m *Memory) CacheGet(key string) (string, error) {
 
 func (m *Memory) CacheSet(key, value string, ttl int32) error {
 	if key == "" {
-		return ErrNoCacheKey
+		return strato.ErrNoCacheKey
 	}
 
 	if value == "" {
-		return ErrNoCacheValue
+		return strato.ErrNoCacheValue
 	}
 
-	item := &CacheItem{
+	item := &strato.CacheItem{
 		Value:      value,
 		Timestamp:  time.Now().Unix(),
 		TTLSeconds: parseTtl(ttl),
@@ -99,7 +88,7 @@ func (m *Memory) CacheSet(key, value string, ttl int32) error {
 
 func parseTtl(ttl int32) int32 {
 	if ttl == 0 {
-		return defaultTtl
+		return strato.DefaultTtl
 	} else {
 		return ttl
 	}
@@ -121,64 +110,23 @@ func (m *Memory) CounterGet(key string) (int64, error) {
 	return m.counters[key], nil
 }
 
-func (m *Memory) KVGet(location *Location) (*Value, error) {
-	if err := location.Validate(); err != nil {
-		return nil, err
+func (m *Memory) KVGet(key string) (*strato.Value, error) {
+	val, ok := m.kv[key]
+	if !ok {
+		return nil, strato.NotFound(key)
 	}
 
-	var val []byte
-
-	if err := m.kv.View(func(tx *bolt.Tx) error {
-		buck := tx.Bucket([]byte(location.Bucket))
-
-		if buck == nil {
-			return NotFound(location)
-		}
-
-		val = buck.Get([]byte(location.Key))
-
-		if val == nil {
-			return NotFound(location)
-		}
-
-		return nil
-	}); err != nil {
-		return nil, err
-	}
-
-	return &Value{
-		Content: val,
-	}, nil
+	return val, nil
 }
 
-func (m *Memory) KVPut(location *Location, value *Value) error {
-	if err := location.Validate(); err != nil {
-		return err
-	}
-
-	return m.kv.Update(func(tx *bolt.Tx) error {
-		buck, err := tx.CreateBucketIfNotExists([]byte(location.Bucket))
-		if err != nil {
-			return err
-		}
-
-		return buck.Put([]byte(location.Key), []byte(value.Content))
-	})
+func (m *Memory) KVPut(key string, value *strato.Value) error {
+	m.kv[key] = value
+	return nil
 }
 
-func (m *Memory) KVDelete(location *Location) error {
-	if err := location.Validate(); err != nil {
-		return err
-	}
-
-	return m.kv.Update(func(tx *bolt.Tx) error {
-		buck := tx.Bucket([]byte(location.Bucket))
-		if buck == nil {
-			return nil
-		}
-
-		return buck.Delete([]byte(location.Key))
-	})
+func (m *Memory) KVDelete(key string) error {
+	delete(m.kv, key)
+	return nil
 }
 
 func (m *Memory) GetSet(set string) ([]string, error) {
@@ -212,6 +160,6 @@ func (m *Memory) RemoveFromSet(set, item string) error {
 
 		return nil
 	} else {
-		return ErrNoSet
+		return strato.ErrNoSet
 	}
 }

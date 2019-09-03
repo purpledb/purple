@@ -97,14 +97,11 @@ func (s *GrpcServer) GetCounter(_ context.Context, req *proto.GetCounterRequest)
 }
 
 func (s *GrpcServer) KVGet(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
-	loc := &strato.Location{
-		Bucket: location.Bucket,
-		Key:    location.Key,
-	}
+	key := location.Key
 
-	val, err := s.backend.KVGet(loc)
+	val, err := s.backend.KVGet(key)
 	if err != nil {
-		return nil, strato.NotFound(loc).AsProtoStatus()
+		return nil, strato.NotFound(key).AsProtoStatus()
 	}
 
 	res := &proto.GetResponse{
@@ -117,16 +114,13 @@ func (s *GrpcServer) KVGet(_ context.Context, location *proto.Location) (*proto.
 }
 
 func (s *GrpcServer) KVPut(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
-	loc := &strato.Location{
-		Bucket: req.Location.Bucket,
-		Key:    req.Location.Key,
-	}
+	key := req.Location.Key
 
 	val := &strato.Value{
 		Content: req.Value.Content,
 	}
 
-	if err := s.backend.KVPut(loc, val); err != nil {
+	if err := s.backend.KVPut(key, val); err != nil {
 		return nil, err
 	}
 
@@ -134,12 +128,9 @@ func (s *GrpcServer) KVPut(_ context.Context, req *proto.PutRequest) (*proto.Emp
 }
 
 func (s *GrpcServer) KVDelete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
-	loc := &strato.Location{
-		Bucket: location.Bucket,
-		Key:    location.Key,
-	}
+	key := location.Key
 
-	if err := s.backend.KVDelete(loc); err != nil {
+	if err := s.backend.KVDelete(key); err != nil {
 		return nil, err
 	}
 

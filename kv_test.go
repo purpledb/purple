@@ -11,19 +11,6 @@ import (
 func TestKVTypes(t *testing.T) {
 	is := assert.New(t)
 
-	t.Run("Location", func(t *testing.T) {
-		bucket, key := "some-bucket", "some-key"
-
-		loc := &Location{}
-		is.Equal(loc.Validate(), ErrNoBucket)
-
-		loc.Bucket = bucket
-		is.Equal(loc.Validate(), ErrNoKey)
-
-		loc.Key = key
-		is.NoError(loc.Validate())
-	})
-
 	t.Run("Value", func(t *testing.T) {
 		content := []byte("some test content")
 

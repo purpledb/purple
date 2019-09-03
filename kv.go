@@ -8,43 +8,15 @@ import (
 
 type (
 	KV interface {
-		KVGet(location *Location) (*Value, error)
-		KVPut(location *Location, value *Value) error
-		KVDelete(location *Location) error
-	}
-
-	Location struct {
-		Bucket string
-		Key    string
+		KVGet(key string) (*Value, error)
+		KVPut(key string, value *Value) error
+		KVDelete(string) error
 	}
 
 	Value struct {
 		Content []byte `json:"content"`
 	}
 )
-
-func (l *Location) Validate() error {
-	if l.Bucket == "" {
-		return ErrNoBucket
-	}
-
-	if l.Key == "" {
-		return ErrNoKey
-	}
-
-	return nil
-}
-
-func (l *Location) String() string {
-	return fmt.Sprintf("Location<bucket: %s, key: %s>", l.Bucket, l.Key)
-}
-
-func (l *Location) Proto() *proto.Location {
-	return &proto.Location{
-		Bucket: l.Bucket,
-		Key:    l.Key,
-	}
-}
 
 func (v *Value) String() string {
 	return fmt.Sprintf(`Value<content: "%s">`, v.Content)

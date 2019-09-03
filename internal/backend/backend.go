@@ -3,6 +3,7 @@ package backend
 import (
 	"github.com/lucperkins/strato"
 	"github.com/lucperkins/strato/internal/backend/disk"
+	"github.com/lucperkins/strato/internal/backend/memory"
 )
 
 type (
@@ -23,13 +24,13 @@ type (
 
 var (
 	_ Backend = (*disk.Disk)(nil)
-	_ Backend = (*strato.Memory)(nil)
+	_ Backend = (*memory.Memory)(nil)
 )
 
 func NewBackend(cfg *strato.ServerConfig) (*Holder, error) {
 	switch cfg.Backend {
 	case "disk":
-		backend, err := disk.NewDisk()
+		backend, err := disk.NewDiskBackend()
 		if err != nil {
 			return nil, err
 		}
@@ -37,8 +38,10 @@ func NewBackend(cfg *strato.ServerConfig) (*Holder, error) {
 			backend,
 		}, nil
 	case "memory":
+		backend := memory.NewMemoryBackend()
+
 		return &Holder{
-			strato.NewMemoryBackend(),
+			backend,
 		}, nil
 	default:
 		return nil, strato.ErrBackendNotRecognized

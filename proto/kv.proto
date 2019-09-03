@@ -5,8 +5,7 @@ package proto;
 import "common.proto";
 
 message Location {
-    string bucket = 1;
-    string key = 2;
+    string key = 1;
 }
 
 message Value {

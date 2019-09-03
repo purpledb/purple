@@ -83,7 +83,6 @@ func TestGrpcServer(t *testing.T) {
 
 	t.Run("KV", func(_ *testing.T) {
 		locationReq := &proto.Location{
-			Bucket: "buck",
 			Key:    "key",
 		}
 
@@ -96,7 +95,6 @@ func TestGrpcServer(t *testing.T) {
 
 		putReq := &proto.PutRequest{
 			Location: &proto.Location{
-				Bucket: "buck",
 				Key:    "key",
 			},
 			Value: &proto.Value{

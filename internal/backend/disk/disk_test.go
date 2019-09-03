@@ -91,24 +91,21 @@ func TestDiskKV(t *testing.T) {
 
 	disk := setup(is)
 
-	loc := &strato.Location{
-		Bucket: "test",
-		Key:    "test",
-	}
+	key := "test-key"
 
 	val := &strato.Value{
 		Content: []byte("here is some test content"),
 	}
 
-	is.NoError(disk.KVPut(loc, val))
+	is.NoError(disk.KVPut(key, val))
 
-	fetched, err := disk.KVGet(loc)
+	fetched, err := disk.KVGet(key)
 	is.NoError(err)
 	is.Equal(fetched, val)
 
-	is.NoError(disk.KVDelete(loc))
+	is.NoError(disk.KVDelete(key))
 
-	fetched, err = disk.KVGet(loc)
+	fetched, err = disk.KVGet(key)
 	is.Error(err)
 	is.Equal(err.Error(), badger.ErrKeyNotFound.Error())
 	is.Nil(fetched)
@@ -168,7 +165,7 @@ func TestDiskHelperFunctions(t *testing.T) {
 }
 
 func setup(is *assert.Assertions) *Disk {
-	disk, err := NewDisk()
+	disk, err := NewDiskBackend()
 	is.NoError(err)
 	is.NotNil(disk)
 

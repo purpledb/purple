@@ -206,9 +206,9 @@ func (s *HttpServer) countersPut(c *gin.Context) {
 func (s *HttpServer) kvGet(c *gin.Context) {
 	log := s.log.WithField("op", "kv/get")
 
-	loc := getLocation(c)
+	key := c.Param("key")
 
-	val, err := s.backend.KVGet(loc)
+	val, err := s.backend.KVGet(key)
 	if err != nil {
 		if strato.IsNotFound(err) {
 			c.Status(http.StatusNotFound)
@@ -232,43 +232,34 @@ func (s *HttpServer) kvGet(c *gin.Context) {
 func (s *HttpServer) kvPut(c *gin.Context) {
 	log := s.log.WithField("op", "kv/put")
 
-	loc := getLocation(c)
-
-	value := c.Param("value")
+	key, value := c.Param("key"), c.Param("value")
 
 	val := &strato.Value{
 		Content: []byte(value),
 	}
 
-	if err := s.backend.KVPut(loc, val); err != nil {
+	if err := s.backend.KVPut(key, val); err != nil {
 		log.Error(err)
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.Header("Location", fmt.Sprintf("/kv/%s/%s", loc.Bucket, loc.Key))
+	c.Header("Location", fmt.Sprintf("/kv/%s", key))
 	c.Status(http.StatusCreated)
 }
 
 func (s *HttpServer) kvDelete(c *gin.Context) {
 	log := s.log.WithField("op", "kv/delete")
 
-	loc := getLocation(c)
+	key := c.Param("key")
 
-	if err := s.backend.KVDelete(loc); err != nil {
+	if err := s.backend.KVDelete(key); err != nil {
 		log.Error(err)
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	c.Status(http.StatusAccepted)
-}
-
-func getLocation(c *gin.Context) *strato.Location {
-	return &strato.Location{
-		Bucket: c.Param("bucket"),
-		Key:    c.Param("key"),
-	}
 }
 
 // Sets

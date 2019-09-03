@@ -28,14 +28,11 @@ func TestErrors(t *testing.T) {
 	})
 
 	t.Run("NotFound", func(t *testing.T) {
-		loc := &Location{
-			Bucket: "some-bucket",
-			Key:    "some-key",
-		}
+		key := "some-key"
 
-		err := NotFound(loc)
-		is.Errorf(err, "not found: no value found for %s", loc.String())
+		err := NotFound(key)
+		is.Errorf(err, "not found: no value found for %s", key)
 		is.True(IsNotFound(err))
-		is.Equal(err.Error(), "no value found for Location<bucket: some-bucket, key: some-key>")
+		is.Equal(err.Error(), "no value found for some-key")
 	})
 }

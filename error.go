@@ -14,7 +14,6 @@ var (
 	ErrNoCacheValue         = CacheError{"no cache value specified"}
 	ErrNoBucket             = KVError{"no bucket specified"}
 	ErrNoKey                = KVError{"no key specified"}
-	ErrNoLocation           = KVError{"no location specified"}
 	ErrNoValue              = KVError{"no value specified"}
 	ErrNoSet                = SetError{"set does not exist"}
 	ErrNoAddress            = ConfigError{"no server address provided"}
@@ -38,7 +37,7 @@ type (
 	}
 
 	NotFoundError struct {
-		location *Location
+		string
 	}
 
 	SetError struct {
@@ -89,17 +88,15 @@ func (e SetError) Error() string {
 }
 
 func (e NotFoundError) Error() string {
-	return fmt.Sprintf(`no value found for %s`, e.location.String())
+	return fmt.Sprintf(`no value found for %s`, e.string)
 }
 
 func (e NotFoundError) AsProtoStatus() error {
 	return status.Error(codes.NotFound, e.Error())
 }
 
-func NotFound(location *Location) NotFoundError {
-	return NotFoundError{
-		location: location,
-	}
+func NotFound(key string) NotFoundError {
+	return NotFoundError{key}
 }
 
 func IsNotFound(err error) bool {

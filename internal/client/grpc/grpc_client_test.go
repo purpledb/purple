@@ -37,7 +37,7 @@ func TestGrpcClient(t *testing.T) {
 		is.NoError(err)
 		is.NotNil(badCl)
 
-		err = badCl.KVDelete(&strato.Location{Bucket: "does-not-exist", Key: "does-not-exist"})
+		err = badCl.KVDelete("does-not-exist")
 		stat, ok := status.FromError(err)
 		is.True(ok)
 		is.Equal(stat.Code(), codes.Unavailable)

@@ -18,22 +18,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	loc := &strato.Location{
-		Bucket: "some-bucket",
-		Key:    "some-key",
-	}
+	key := "some-key"
 
 	value := &strato.Value{
 		Content: []byte("here is some KV content"),
 	}
 
-	if err := client.KVPut(loc, value); err != nil {
+	if err := client.KVPut(key, value); err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println("Successful PUT operation to", loc.String())
+	log.Println("Successful PUT operation to", key)
 
-	val, err := client.KVGet(loc)
+	val, err := client.KVGet(key)
 	if err != nil {
 		log.Fatal(err)
 	}
