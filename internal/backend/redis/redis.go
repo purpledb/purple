@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+const defaultUrl = "localhost:6379"
+
 type Redis struct {
 	cache, counters, kv, sets *redis.Client
 }
@@ -18,6 +20,10 @@ var (
 )
 
 func NewRedisBackend(addr string) (*Redis, error) {
+	if addr == "" {
+		addr = defaultUrl
+	}
+
 	cache, err := newRedisClient(addr, 0)
 	if err != nil {
 		return nil, err

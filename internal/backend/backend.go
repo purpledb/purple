@@ -46,7 +46,7 @@ func NewBackend(cfg *strato.ServerConfig) (*Backend, error) {
 			backend,
 		}, nil
 	case "redis":
-		backend, err := redis.NewRedisBackend("localhost:6379")
+		backend, err := redis.NewRedisBackend(cfg.RedisUrl)
 		if err != nil {
 			return nil, err
 		}

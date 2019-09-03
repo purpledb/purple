@@ -67,7 +67,7 @@ Backend | Explanation
 :-------|:-----------
 Disk | Data is stored persistently on disk using the [Badger](https://godoc.org/github.com/dgraph-io/badger) library. Each service (cache, KV, etc.) is stored in its own separate on-disk DB, which guarantees key isolation.
 Memory | Data is stored in native Go data structures (maps, slices, etc.). This backend is blazing fast but all data is lost when the service restarts.
-[Redis](https://redis.io) | The Strato server stores all data in a persistent Redis database.
+[Redis](https://redis.io) | The Strato server stores all data in a persistent Redis database. Each service uses a different Redis database, which provides key isolation.
 
 ## Try it out
 

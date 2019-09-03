@@ -6,9 +6,10 @@ type (
 	}
 
 	ServerConfig struct {
-		Port    int
-		Debug   bool
-		Backend string
+		Port     int
+		Debug    bool
+		Backend  string
+		RedisUrl string
 	}
 )
 
