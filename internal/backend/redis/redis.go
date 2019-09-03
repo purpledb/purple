@@ -90,17 +90,23 @@ func (r *Redis) Flush() error {
 // Cache operations
 
 func (r *Redis) CacheGet(key string) (string, error) {
-	res := r.cache.Get(key)
+	s, err := r.cache.Get(key).Result()
 
-	return res.String(), res.Err()
+	if err != nil {
+		if err == redis.Nil {
+			return "", strato.NotFound(key)
+		} else {
+			return "", err
+		}
+	}
+
+	return s, nil
 }
 
 func (r *Redis) CacheSet(key, value string, ttl int32) error {
 	t := time.Duration(ttl) * time.Second
 
-	res := r.cache.Set(key, value, t)
-
-	return res.Err()
+	return r.cache.Set(key, value, t).Err()
 }
 
 // Counter operations

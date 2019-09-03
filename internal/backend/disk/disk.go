@@ -146,7 +146,11 @@ func (d *Disk) CacheGet(key string) (string, error) {
 
 	val, err := dbRead(d.cache, k)
 	if err != nil {
-		return "", err
+		if err == badger.ErrKeyNotFound {
+			return "", strato.NotFound(key)
+		} else {
+			return "", err
+		}
 	}
 
 	return string(val), nil

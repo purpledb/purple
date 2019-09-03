@@ -67,7 +67,7 @@ func (s *Server) cacheGet(c *gin.Context) {
 
 	val, err := s.backend.CacheGet(key)
 	if err != nil {
-		if strato.IsNoItemFound(err) {
+		if strato.IsNotFound(err) {
 			c.Status(http.StatusNotFound)
 			return
 		} else if strato.IsExpired(err) {
@@ -75,7 +75,7 @@ func (s *Server) cacheGet(c *gin.Context) {
 			return
 		} else {
 			log.Error(err)
-			c.String(http.StatusInternalServerError, err.Error())
+			c.Status(http.StatusInternalServerError)
 			return
 		}
 	}
