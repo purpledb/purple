@@ -2,8 +2,8 @@ GO        = go
 PROTOC    = protoc
 PROTO_DIR = proto
 COVER_OUT = coverage.out
-GRPC_IMG  = lucperkins/strato-grpc:latest
-HTTP_IMG  = lucperkins/strato-http:latest
+GRPC_IMG  = lucperkins/strato-grpc
+HTTP_IMG  = lucperkins/strato-http
 
 build:
 	$(GO) build -v ./...
@@ -30,10 +30,12 @@ coverage:
 	$(GO) tool cover -html=$(COVER_OUT)
 
 docker-build-grpc:
-	docker build --build-arg serverType=grpc -t $(GRPC_IMG) .
+	docker build -f Dockerfile.grpc -t $(GRPC_IMG):$(VERSION) .
+	docker build -f Dockerfile.grpc -t $(GRPC_IMG):latest .
 
 docker-build-http:
-	docker build --build-arg serverType=http -t $(HTTP_IMG) .
+	docker build -f Dockerfile.http -t $(HTTP_IMG):$(VERSION) .
+	docker build -f Dockerfile.http -t $(HTTP_IMG):latest .
 
 docker-build-all: docker-build-grpc docker-build-http
 
@@ -46,10 +48,12 @@ docker-push-http: docker-build-http
 	docker push $(HTTP_IMG):latest
 
 docker-run-grpc:
-	docker run --rm --interactive --tty -p 8080:8080 $(GRPC_IMG)
+	docker build -f Dockerfile.grpc -t $(GRPC_IMG):latest .
+	docker run --rm --interactive --tty -p 8080:8080 $(GRPC_IMG):latest
 
 docker-run-http:
-	docker run --rm --interactive --tty -p 8081:8081 $(HTTP_IMG)
+	docker build -f Dockerfile.http -t $(HTTP_IMG):latest .
+	docker run --rm --interactive --tty -p 8081:8081 $(HTTP_IMG):latest
 
 docker-push-all: docker-push-grpc docker-push-http
 
