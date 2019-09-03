@@ -79,7 +79,7 @@ func (s *HttpServer) routes() *gin.Engine {
 		counters.PUT("", s.countersPut)
 	}
 
-	kv := r.Group("/kv/:bucket/:key")
+	kv := r.Group("/kv/:key")
 	{
 		kv.GET("", s.kvGet)
 		kv.PUT("", s.kvPut)
@@ -232,16 +232,25 @@ func (s *HttpServer) kvGet(c *gin.Context) {
 func (s *HttpServer) kvPut(c *gin.Context) {
 	log := s.log.WithField("op", "kv/put")
 
-	key, value := c.Param("key"), c.Param("value")
+	key, value := c.Param("key"), c.Query("value")
+	if value == "" {
+		c.String(http.StatusBadRequest, "no value specified")
+		return
+	}
 
 	val := &strato.Value{
 		Content: []byte(value),
 	}
 
 	if err := s.backend.KVPut(key, val); err != nil {
-		log.Error(err)
-		c.String(http.StatusInternalServerError, err.Error())
-		return
+		if strato.IsNotFound(err) {
+			c.Status(http.StatusNotFound)
+			return
+		} else {
+			log.Error(err)
+			c.Status(http.StatusInternalServerError)
+			return
+		}
 	}
 
 	c.Header("Location", fmt.Sprintf("/kv/%s", key))

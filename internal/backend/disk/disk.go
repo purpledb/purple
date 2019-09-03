@@ -64,8 +64,10 @@ func createDb(dir string) (*badger.DB, error) {
 
 	path := filepath.Join(here, rootDataDir, dir)
 
-	if err := os.MkdirAll(path, os.ModePerm); err != nil {
-		return nil, err
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		if err := os.MkdirAll(path, os.ModePerm); err != nil {
+			return nil, err
+		}
 	}
 
 	return badger.Open(badger.DefaultOptions(path))
