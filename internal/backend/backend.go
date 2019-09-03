@@ -7,7 +7,7 @@ import (
 )
 
 type (
-	Backend interface {
+	Interface interface {
 		strato.Cache
 		strato.Counter
 		strato.KV
@@ -17,30 +17,30 @@ type (
 		Flush() error
 	}
 
-	Holder struct {
-		Backend
+	Backend struct {
+		Interface
 	}
 )
 
 var (
-	_ Backend = (*disk.Disk)(nil)
-	_ Backend = (*memory.Memory)(nil)
+	_ Interface = (*disk.Disk)(nil)
+	_ Interface = (*memory.Memory)(nil)
 )
 
-func NewBackend(cfg *strato.ServerConfig) (*Holder, error) {
+func NewBackend(cfg *strato.ServerConfig) (*Backend, error) {
 	switch cfg.Backend {
 	case "disk":
 		backend, err := disk.NewDiskBackend()
 		if err != nil {
 			return nil, err
 		}
-		return &Holder{
+		return &Backend{
 			backend,
 		}, nil
 	case "memory":
 		backend := memory.NewMemoryBackend()
 
-		return &Holder{
+		return &Backend{
 			backend,
 		}, nil
 	default:
@@ -48,6 +48,6 @@ func NewBackend(cfg *strato.ServerConfig) (*Holder, error) {
 	}
 }
 
-func (b *Holder) Close() error {
-	return b.Backend.Close()
+func (b *Backend) Close() error {
+	return b.Interface.Close()
 }

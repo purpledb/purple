@@ -15,7 +15,7 @@ import (
 // The core struct undergirding the Strato HTTP interface.
 type HttpServer struct {
 	address string
-	backend backend.Backend
+	backend backend.Interface
 	log     *logrus.Entry
 }
 

@@ -36,7 +36,7 @@ func NewMemoryBackend() *Memory {
 	}
 }
 
-// Backend methods
+// Interface methods
 func (m *Memory) Close() error {
 	return nil
 }

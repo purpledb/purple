@@ -17,7 +17,7 @@ import (
 type GrpcServer struct {
 	address string
 	srv     *grpc.Server
-	backend backend.Backend
+	backend backend.Interface
 	log     *logrus.Entry
 }
 

@@ -73,7 +73,7 @@ func createDb(dir string) (*badger.DB, error) {
 	return badger.Open(badger.DefaultOptions(path))
 }
 
-// Backend methods
+// Interface methods
 func (d *Disk) Close() error {
 	for _, bk := range []*badger.DB{
 		d.cache, d.counters, d.kv, d.sets,
