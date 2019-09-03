@@ -29,8 +29,10 @@ metadata:
   labels:
     run: strato
 spec:
+  type: NodePort
   ports:
   - port: 8080
+    nodePort: 31234
     protocol: TCP
   selector:
     run: strato
@@ -69,3 +71,14 @@ spec:
     targetPort: 6379
   selector:
     app: redis
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: strato-grpc-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  backend:
+    serviceName: strato-grpc
+    servicePort: 80

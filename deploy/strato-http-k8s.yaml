@@ -30,8 +30,8 @@ metadata:
     run: strato
 spec:
   ports:
-    - port: 8081
-      protocol: TCP
+  - port: 8081
+    protocol: TCP
   selector:
     run: strato
 ---
@@ -69,3 +69,14 @@ spec:
       targetPort: 6379
   selector:
     app: redis
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: strato-http-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  backend:
+    serviceName: strato-http
+    servicePort: 8080
