@@ -12,3 +12,22 @@ The initial version of Strato, which includes the following:
   * KV (get/put/delete)
   * Search (index document plus query all documents)
   * Set (get/add/remove)
+
+## v0.2.0
+
+Added:
+
+* Support for a disk backend using the Badger embedded DB for Go. This allows for persisting all data to files on disk.
+* Support for a Redis backend. This is Strato's first "external" backend.
+
+Removed:
+
+* The `Location` concept from the KV interface. Now that interface only uses keys (strings) rather than a bucket/key combo. A bucket construct may be added later if requested.
+* The search interface (i.e. the querying and indexing operations). A search interface will be re-added at a later date.
+
+Other changes:
+
+* Improved HTTP interface with more reliance on query parameters and less on URL params
+* Example Kubernetes updated to include Redis backend
+* Separate Dockerfiles for gRPC and HTTP (to avoid Protobuf-related steps when building the HTTP image)
+* Directory restructuring (e.g. significant chunks of the codebase were migrated from the root dir into `internal`)
