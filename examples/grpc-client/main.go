@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/lucperkins/strato/internal/services/kv"
 	"log"
 	"time"
 
@@ -21,7 +22,7 @@ func main() {
 
 	key := "some-key"
 
-	value := &strato.Value{
+	value := &kv.Value{
 		Content: []byte("here is some KV content"),
 	}
 

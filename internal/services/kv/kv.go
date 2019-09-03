@@ -1,4 +1,4 @@
-package strato
+package kv
 
 import (
 	"fmt"

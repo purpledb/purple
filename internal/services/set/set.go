@@ -1,4 +1,4 @@
-package strato
+package set
 
 type Set interface {
 	GetSet(set string) ([]string, error)

@@ -1,6 +1,7 @@
 package memory
 
 import (
+	"github.com/lucperkins/strato/internal/services/kv"
 	"testing"
 	"time"
 
@@ -67,7 +68,7 @@ func TestMemoryImpl(t *testing.T) {
 	t.Run("KV", func(t *testing.T) {
 		key := "some-key"
 
-		val := &strato.Value{
+		val := &kv.Value{
 			Content: []byte("here is a value"),
 		}
 

@@ -1,4 +1,4 @@
-package strato
+package counter
 
 type Counter interface {
 	CounterIncrement(key string, amount int64) error

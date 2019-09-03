@@ -1,11 +1,12 @@
 package disk
 
 import (
+	"github.com/lucperkins/strato"
+	"github.com/lucperkins/strato/internal/services/kv"
 	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/lucperkins/strato"
 	"github.com/lucperkins/strato/internal/data"
 
 	"github.com/dgraph-io/badger"
@@ -56,7 +57,7 @@ func TestDiskCache(t *testing.T) {
 	ttl := int32(3600)
 
 	val, err := disk.CacheGet(key)
-	is.Equal(err, badger.ErrKeyNotFound)
+	is.True(strato.IsNotFound(err))
 	is.Empty(val)
 
 	is.NoError(disk.CacheSet(key, value, ttl))
@@ -103,7 +104,7 @@ func TestDiskKV(t *testing.T) {
 
 	key := "test-key"
 
-	val := &strato.Value{
+	val := &kv.Value{
 		Content: []byte("here is some test content"),
 	}
 
@@ -172,6 +173,8 @@ func TestDiskHelperFunctions(t *testing.T) {
 		is.NoError(err)
 		is.Equal(s, tc)
 	}
+
+	clean(is)
 }
 
 func setup(is *assert.Assertions) *Disk {

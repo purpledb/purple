@@ -1,4 +1,4 @@
-package strato
+package cache
 
 const DefaultTtl = 5
 
@@ -8,7 +8,7 @@ type (
 		CacheSet(key, value string, ttl int32) error
 	}
 
-	CacheItem struct {
+	Item struct {
 		Value      string
 		Timestamp  int64
 		TTLSeconds int32

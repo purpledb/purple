@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"github.com/lucperkins/strato/internal/services/kv"
 
 	"github.com/lucperkins/strato"
 
@@ -108,7 +109,7 @@ func (c *GrpcClient) GetCounter(key string) (int64, error) {
 	return res.Value, nil
 }
 
-func (c *GrpcClient) KVGet(key string) (*strato.Value, error) {
+func (c *GrpcClient) KVGet(key string) (*kv.Value, error) {
 	if key == "" {
 		return nil, strato.ErrNoKey
 	}
@@ -122,14 +123,14 @@ func (c *GrpcClient) KVGet(key string) (*strato.Value, error) {
 		return nil, err
 	}
 
-	val := &strato.Value{
+	val := &kv.Value{
 		Content: res.Value.Content,
 	}
 
 	return val, nil
 }
 
-func (c *GrpcClient) KVPut(key string, value *strato.Value) error {
+func (c *GrpcClient) KVPut(key string, value *kv.Value) error {
 	if key == "" {
 		return strato.ErrNoKey
 	}

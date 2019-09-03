@@ -1,6 +1,10 @@
 package redis
 
 import (
+	"github.com/lucperkins/strato/internal/services/cache"
+	"github.com/lucperkins/strato/internal/services/counter"
+	"github.com/lucperkins/strato/internal/services/kv"
+	"github.com/lucperkins/strato/internal/services/set"
 	"time"
 
 	"github.com/go-redis/redis"
@@ -14,10 +18,10 @@ type Redis struct {
 }
 
 var (
-	_ strato.Cache   = (*Redis)(nil)
-	_ strato.Counter = (*Redis)(nil)
-	_ strato.KV      = (*Redis)(nil)
-	_ strato.Set     = (*Redis)(nil)
+	_ cache.Cache     = (*Redis)(nil)
+	_ counter.Counter = (*Redis)(nil)
+	_ kv.KV           = (*Redis)(nil)
+	_ set.Set         = (*Redis)(nil)
 )
 
 func NewRedisBackend(addr string) (*Redis, error) {
@@ -134,7 +138,7 @@ func (r *Redis) CounterIncrement(key string, increment int64) error {
 
 // KV operations
 
-func (r *Redis) KVGet(key string) (*strato.Value, error) {
+func (r *Redis) KVGet(key string) (*kv.Value, error) {
 	s, err := r.kv.Get(key).Result()
 	if err != nil {
 		if err == redis.Nil {
@@ -144,12 +148,12 @@ func (r *Redis) KVGet(key string) (*strato.Value, error) {
 		}
 	}
 
-	return &strato.Value{
+	return &kv.Value{
 		Content: []byte(s),
 	}, nil
 }
 
-func (r *Redis) KVPut(key string, value *strato.Value) error {
+func (r *Redis) KVPut(key string, value *kv.Value) error {
 	return r.kv.Set(key, value.Content, 0).Err()
 }
 

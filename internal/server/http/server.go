@@ -2,6 +2,7 @@ package http
 
 import (
 	"fmt"
+	"github.com/lucperkins/strato/internal/services/kv"
 	"net/http"
 	"strconv"
 
@@ -196,7 +197,7 @@ func (s *Server) kvPut(c *gin.Context) {
 		return
 	}
 
-	val := &strato.Value{
+	val := &kv.Value{
 		Content: []byte(value),
 	}
 

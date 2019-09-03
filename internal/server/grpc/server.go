@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"github.com/lucperkins/strato/internal/services/kv"
 	"net"
 
 	"github.com/lucperkins/strato"
@@ -117,7 +118,7 @@ func (s *Server) KVGet(_ context.Context, location *proto.Location) (*proto.GetR
 func (s *Server) KVPut(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
 	key := req.Location.Key
 
-	val := &strato.Value{
+	val := &kv.Value{
 		Content: req.Value.Content,
 	}
 

@@ -1,6 +1,10 @@
 package disk
 
 import (
+	"github.com/lucperkins/strato/internal/services/cache"
+	"github.com/lucperkins/strato/internal/services/counter"
+	"github.com/lucperkins/strato/internal/services/kv"
+	"github.com/lucperkins/strato/internal/services/set"
 	"os"
 	"path/filepath"
 	"time"
@@ -19,10 +23,10 @@ type Disk struct {
 }
 
 var (
-	_ strato.Cache   = (*Disk)(nil)
-	_ strato.Counter = (*Disk)(nil)
-	_ strato.KV      = (*Disk)(nil)
-	_ strato.Set     = (*Disk)(nil)
+	_ cache.Cache     = (*Disk)(nil)
+	_ counter.Counter = (*Disk)(nil)
+	_ kv.KV           = (*Disk)(nil)
+	_ set.Set         = (*Disk)(nil)
 )
 
 func NewDiskBackend() (*Disk, error) {
@@ -205,7 +209,7 @@ func (d *Disk) CounterIncrement(key string, increment int64) error {
 }
 
 // KV
-func (d *Disk) KVGet(key string) (*strato.Value, error) {
+func (d *Disk) KVGet(key string) (*kv.Value, error) {
 	k := []byte(key)
 
 	val, err := dbRead(d.kv, k)
@@ -213,12 +217,12 @@ func (d *Disk) KVGet(key string) (*strato.Value, error) {
 		return nil, err
 	}
 
-	return &strato.Value{
+	return &kv.Value{
 		Content: val,
 	}, nil
 }
 
-func (d *Disk) KVPut(key string, value *strato.Value) error {
+func (d *Disk) KVPut(key string, value *kv.Value) error {
 	k := []byte(key)
 
 	return dbWrite(d.kv, k, value.Content)

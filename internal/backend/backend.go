@@ -5,14 +5,18 @@ import (
 	"github.com/lucperkins/strato/internal/backend/disk"
 	"github.com/lucperkins/strato/internal/backend/memory"
 	"github.com/lucperkins/strato/internal/backend/redis"
+	"github.com/lucperkins/strato/internal/services/cache"
+	"github.com/lucperkins/strato/internal/services/counter"
+	"github.com/lucperkins/strato/internal/services/kv"
+	"github.com/lucperkins/strato/internal/services/set"
 )
 
 type (
 	Interface interface {
-		strato.Cache
-		strato.Counter
-		strato.KV
-		strato.Set
+		cache.Cache
+		counter.Counter
+		kv.KV
+		set.Set
 
 		Close() error
 		Flush() error
@@ -40,11 +44,11 @@ func NewBackend(cfg *strato.ServerConfig) (*Backend, error) {
 			backend,
 		}, nil
 	case "memory":
-		backend := memory.NewMemoryBackend()
+			backend := memory.NewMemoryBackend()
 
-		return &Backend{
-			backend,
-		}, nil
+			return &Backend{
+				backend,
+			}, nil
 	case "redis":
 		backend, err := redis.NewRedisBackend(cfg.RedisUrl)
 		if err != nil {

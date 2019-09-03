@@ -1,33 +1,37 @@
 package memory
 
 import (
+	"github.com/lucperkins/strato/internal/services/cache"
+	"github.com/lucperkins/strato/internal/services/counter"
+	"github.com/lucperkins/strato/internal/services/kv"
+	"github.com/lucperkins/strato/internal/services/set"
 	"time"
 
 	"github.com/lucperkins/strato"
 )
 
 type Memory struct {
-	cache    map[string]*strato.CacheItem
+	cache    map[string]*cache.Item
 	counters map[string]int64
-	kv       map[string]*strato.Value
+	kv       map[string]*kv.Value
 	sets     map[string][]string
 }
 
 var (
-	_ strato.Cache   = (*Memory)(nil)
-	_ strato.Counter = (*Memory)(nil)
-	_ strato.KV      = (*Memory)(nil)
-	_ strato.Set     = (*Memory)(nil)
+	_ cache.Cache     = (*Memory)(nil)
+	_ counter.Counter = (*Memory)(nil)
+	_ kv.KV           = (*Memory)(nil)
+	_ set.Set         = (*Memory)(nil)
 )
 
 func NewMemoryBackend() *Memory {
-	cache := make(map[string]*strato.CacheItem)
+	cache := make(map[string]*cache.Item)
 
 	counters := make(map[string]int64)
 
 	sets := make(map[string][]string)
 
-	kv := make(map[string]*strato.Value)
+	kv := make(map[string]*kv.Value)
 
 	return &Memory{
 		cache:    cache,
@@ -76,7 +80,7 @@ func (m *Memory) CacheSet(key, value string, ttl int32) error {
 		return strato.ErrNoCacheValue
 	}
 
-	item := &strato.CacheItem{
+	item := &cache.Item{
 		Value:      value,
 		Timestamp:  time.Now().Unix(),
 		TTLSeconds: parseTtl(ttl),
@@ -89,7 +93,7 @@ func (m *Memory) CacheSet(key, value string, ttl int32) error {
 
 func parseTtl(ttl int32) int32 {
 	if ttl == 0 {
-		return strato.DefaultTtl
+		return cache.DefaultTtl
 	} else {
 		return ttl
 	}
@@ -111,7 +115,7 @@ func (m *Memory) CounterGet(key string) (int64, error) {
 	return m.counters[key], nil
 }
 
-func (m *Memory) KVGet(key string) (*strato.Value, error) {
+func (m *Memory) KVGet(key string) (*kv.Value, error) {
 	val, ok := m.kv[key]
 	if !ok {
 		return nil, strato.NotFound(key)
@@ -120,7 +124,7 @@ func (m *Memory) KVGet(key string) (*strato.Value, error) {
 	return val, nil
 }
 
-func (m *Memory) KVPut(key string, value *strato.Value) error {
+func (m *Memory) KVPut(key string, value *kv.Value) error {
 	m.kv[key] = value
 	return nil
 }
