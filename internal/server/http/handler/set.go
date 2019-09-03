@@ -37,8 +37,9 @@ func (h *Handler) SetPut(c *gin.Context) {
 
 	key, item := c.Param("key"), getItem(c)
 
-	if err := h.b.AddToSet(key, item); err != nil {
-		if strato.IsNotFound(err) {
+	items, err := h.b.AddToSet(key, item)
+	if err != nil {
+		if err == strato.ErrNoSet {
 			c.Status(http.StatusNotFound)
 			return
 		} else {
@@ -48,7 +49,12 @@ func (h *Handler) SetPut(c *gin.Context) {
 		}
 	}
 
-	c.Status(http.StatusNoContent)
+	res := gin.H{
+		"set":   key,
+		"items": items,
+	}
+
+	c.JSON(http.StatusOK, res)
 }
 
 func (h *Handler) SetDelete(c *gin.Context) {
@@ -56,8 +62,9 @@ func (h *Handler) SetDelete(c *gin.Context) {
 
 	key, item := c.Param("key"), getItem(c)
 
-	if err := h.b.RemoveFromSet(key, item); err != nil {
-		if strato.IsNotFound(err) {
+	items, err := h.b.RemoveFromSet(key, item)
+	if err != nil {
+		if err == strato.ErrNoSet {
 			c.Status(http.StatusNotFound)
 			return
 		} else {
@@ -67,5 +74,10 @@ func (h *Handler) SetDelete(c *gin.Context) {
 		}
 	}
 
-	c.Status(http.StatusNoContent)
+	res := gin.H{
+		"set":   key,
+		"items": items,
+	}
+
+	c.JSON(http.StatusOK, res)
 }

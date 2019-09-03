@@ -168,10 +168,18 @@ func (r *Redis) GetSet(set string) ([]string, error) {
 	return r.sets.SMembers(set).Result()
 }
 
-func (r *Redis) AddToSet(set, item string) error {
-	return r.sets.SAdd(set, item).Err()
+func (r *Redis) AddToSet(set, item string) ([]string, error) {
+	if err := r.sets.SAdd(set, item).Err(); err != nil {
+		return nil, err
+	}
+
+	return r.sets.SMembers(set).Result()
 }
 
-func (r *Redis) RemoveFromSet(set, item string) error {
-	return r.sets.SRem(set, item).Err()
+func (r *Redis) RemoveFromSet(set, item string) ([]string, error) {
+	if err := r.sets.SRem(set, item).Err(); err != nil {
+		return nil, err
+	}
+
+	return r.sets.SMembers(set).Result()
 }

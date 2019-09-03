@@ -250,7 +250,7 @@ func (d *Disk) GetSet(key string) ([]string, error) {
 	return data.BytesToSet(val)
 }
 
-func (d *Disk) AddToSet(key, item string) error {
+func (d *Disk) AddToSet(key, item string) ([]string, error) {
 	k := []byte(key)
 
 	val, err := dbRead(d.sets, k)
@@ -259,44 +259,53 @@ func (d *Disk) AddToSet(key, item string) error {
 			s := []string{item}
 			value, err := data.SetToBytes(s)
 			if err != nil {
-				return err
+				return nil, err
 			}
-			return dbWrite(d.sets, k, value)
+
+			if err := dbWrite(d.sets, k, value); err != nil {
+				return nil, err
+			}
+
+			return s, nil
 		} else {
-			return err
+			return nil, err
 		}
 	}
 
 	s, err := data.BytesToSet(val)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	s = append(s, item)
 
 	value, err := data.SetToBytes(s)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return dbWrite(d.sets, k, value)
+	if err := dbWrite(d.sets, k, value); err != nil {
+		return nil, err
+	}
+
+	return s, nil
 }
 
-func (d *Disk) RemoveFromSet(key, item string) error {
+func (d *Disk) RemoveFromSet(key, item string) ([]string, error) {
 	k := []byte(key)
 
 	val, err := dbRead(d.sets, k)
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
-			return strato.ErrNoSet
+			return []string{}, nil
 		} else {
-			return err
+			return nil, err
 		}
 	}
 
 	s, err := data.BytesToSet(val)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for idx, i := range s {
@@ -307,8 +316,12 @@ func (d *Disk) RemoveFromSet(key, item string) error {
 
 	value, err := data.SetToBytes(s)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return dbWrite(d.sets, k, value)
+	if err := dbWrite(d.sets, k, value); err != nil {
+		return nil, err
+	}
+
+	return s, nil
 }

@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package proto;
 
-import "common.proto";
-
 message GetSetRequest {
     string set = 1;
 }
@@ -19,6 +17,6 @@ message SetResponse {
 
 service Set {
     rpc GetSet (GetSetRequest) returns (SetResponse);
-    rpc AddToSet (ModifySetRequest) returns (Empty);
-    rpc RemoveFromSet (ModifySetRequest) returns (Empty);
+    rpc AddToSet (ModifySetRequest) returns (SetResponse);
+    rpc RemoveFromSet (ModifySetRequest) returns (SetResponse);
 }

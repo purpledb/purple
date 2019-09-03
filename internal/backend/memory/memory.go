@@ -145,17 +145,17 @@ func (m *Memory) GetSet(set string) ([]string, error) {
 	return s, nil
 }
 
-func (m *Memory) AddToSet(set, item string) error {
+func (m *Memory) AddToSet(set, item string) ([]string, error) {
 	if _, ok := m.sets[set]; ok {
 		m.sets[set] = append(m.sets[set], item)
 	} else {
 		m.sets[set] = []string{item}
 	}
 
-	return nil
+	return m.sets[set], nil
 }
 
-func (m *Memory) RemoveFromSet(set, item string) error {
+func (m *Memory) RemoveFromSet(set, item string) ([]string, error) {
 	_, ok := m.sets[set]
 	if ok {
 		for idx, it := range m.sets[set] {
@@ -164,8 +164,8 @@ func (m *Memory) RemoveFromSet(set, item string) error {
 			}
 		}
 
-		return nil
+		return m.sets[set], nil
 	} else {
-		return strato.ErrNoSet
+		return []string{}, nil
 	}
 }

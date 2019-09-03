@@ -151,20 +151,26 @@ func (s *Server) GetSet(_ context.Context, req *proto.GetSetRequest) (*proto.Set
 	}, nil
 }
 
-func (s *Server) AddToSet(_ context.Context, req *proto.ModifySetRequest) (*proto.Empty, error) {
-	if err := s.backend.AddToSet(req.Set, req.Item); err != nil {
+func (s *Server) AddToSet(_ context.Context, req *proto.ModifySetRequest) (*proto.SetResponse, error) {
+	items, err := s.backend.AddToSet(req.Set, req.Item)
+	if err != nil {
 		return nil, err
 	}
 
-	return &proto.Empty{}, nil
+	return &proto.SetResponse{
+		Items: items,
+	}, nil
 }
 
-func (s *Server) RemoveFromSet(_ context.Context, req *proto.ModifySetRequest) (*proto.Empty, error) {
-	if err := s.backend.RemoveFromSet(req.Set, req.Item); err != nil {
+func (s *Server) RemoveFromSet(_ context.Context, req *proto.ModifySetRequest) (*proto.SetResponse, error) {
+	items, err := s.backend.RemoveFromSet(req.Set, req.Item)
+	if err != nil {
 		return nil, err
 	}
 
-	return &proto.Empty{}, nil
+	return &proto.SetResponse{
+		Items: items,
+	}, nil
 }
 
 func (s *Server) Start() error {
