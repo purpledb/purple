@@ -1,11 +1,12 @@
 package disk
 
 import (
-	"github.com/lucperkins/strato"
-	"github.com/lucperkins/strato/internal/data"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/lucperkins/strato"
+	"github.com/lucperkins/strato/internal/data"
 
 	"github.com/dgraph-io/badger"
 	"github.com/stretchr/testify/assert"

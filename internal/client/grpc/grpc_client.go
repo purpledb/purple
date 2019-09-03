@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+
 	"github.com/lucperkins/strato"
 
 	"github.com/lucperkins/strato/proto"

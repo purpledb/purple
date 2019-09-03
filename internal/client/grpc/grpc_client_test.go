@@ -1,8 +1,9 @@
 package grpc
 
 import (
-	"github.com/lucperkins/strato"
 	"testing"
+
+	"github.com/lucperkins/strato"
 
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"

@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/lucperkins/strato/internal/server/http"
 	"log"
+
+	"github.com/lucperkins/strato/internal/server/http"
 
 	"github.com/lucperkins/strato"
 )

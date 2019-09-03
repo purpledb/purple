@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/lucperkins/strato/internal/server/grpc"
 	"log"
+
+	"github.com/lucperkins/strato/internal/server/grpc"
 
 	"github.com/lucperkins/strato"
 )

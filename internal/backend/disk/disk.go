@@ -1,10 +1,11 @@
 package disk
 
 import (
-	"github.com/lucperkins/strato"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/lucperkins/strato"
 
 	"github.com/lucperkins/strato/internal/data"
 

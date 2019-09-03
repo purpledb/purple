@@ -3,9 +3,10 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"net"
+
 	"github.com/lucperkins/strato"
 	"github.com/lucperkins/strato/internal/backend"
-	"net"
 
 	"github.com/lucperkins/strato/proto"
 

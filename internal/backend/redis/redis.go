@@ -1,9 +1,10 @@
 package redis
 
 import (
+	"time"
+
 	"github.com/go-redis/redis"
 	"github.com/lucperkins/strato"
-	"time"
 )
 
 const defaultUrl = "localhost:6379"

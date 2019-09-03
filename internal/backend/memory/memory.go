@@ -1,8 +1,9 @@
 package memory
 
 import (
-	"github.com/lucperkins/strato"
 	"time"
+
+	"github.com/lucperkins/strato"
 )
 
 type Memory struct {

@@ -2,10 +2,11 @@ package http
 
 import (
 	"fmt"
-	"github.com/lucperkins/strato"
-	"github.com/lucperkins/strato/internal/backend"
 	"net/http"
 	"strconv"
+
+	"github.com/lucperkins/strato"
+	"github.com/lucperkins/strato/internal/backend"
 
 	"github.com/dgraph-io/badger"
 	"github.com/gin-gonic/gin"

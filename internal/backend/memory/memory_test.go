@@ -1,9 +1,10 @@
 package memory
 
 import (
-	"github.com/lucperkins/strato"
 	"testing"
 	"time"
+
+	"github.com/lucperkins/strato"
 
 	"github.com/stretchr/testify/assert"
 )
