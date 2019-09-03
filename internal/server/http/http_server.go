@@ -3,6 +3,7 @@ package http
 import (
 	"fmt"
 	"github.com/lucperkins/strato"
+	"github.com/lucperkins/strato/internal/backend"
 	"net/http"
 	"strconv"
 
@@ -14,7 +15,7 @@ import (
 // The core struct undergirding the Strato HTTP interface.
 type HttpServer struct {
 	address string
-	backend strato.Backend
+	backend backend.Backend
 	log     *logrus.Entry
 }
 
@@ -22,7 +23,7 @@ type HttpServer struct {
 func NewHttpServer(cfg *strato.ServerConfig) (*HttpServer, error) {
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
-	backend, err := strato.NewBackend(cfg)
+	backend, err := backend.NewBackend(cfg)
 	if err != nil {
 		return nil, err
 	}

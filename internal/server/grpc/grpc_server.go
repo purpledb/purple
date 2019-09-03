@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/lucperkins/strato"
+	"github.com/lucperkins/strato/internal/backend"
 	"net"
 
 	"github.com/lucperkins/strato/proto"
@@ -16,7 +17,7 @@ import (
 type GrpcServer struct {
 	address string
 	srv     *grpc.Server
-	backend strato.Backend
+	backend backend.Backend
 	log     *logrus.Entry
 }
 
@@ -32,7 +33,7 @@ func NewGrpcServer(cfg *strato.ServerConfig) (*GrpcServer, error) {
 
 	srv := grpc.NewServer()
 
-	backend, err := strato.NewBackend(cfg)
+	backend, err := backend.NewBackend(cfg)
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,8 @@
-package strato
+package disk
 
 import (
 	"fmt"
+	"github.com/lucperkins/strato"
 	"os"
 	"time"
 
@@ -17,10 +18,10 @@ type Disk struct {
 }
 
 var (
-	_ Cache   = (*Disk)(nil)
-	_ Counter = (*Disk)(nil)
-	_ KV      = (*Disk)(nil)
-	_ Set     = (*Disk)(nil)
+	_ strato.Cache   = (*Disk)(nil)
+	_ strato.Counter = (*Disk)(nil)
+	_ strato.KV      = (*Disk)(nil)
+	_ strato.Set     = (*Disk)(nil)
 )
 
 func NewDisk() (*Disk, error) {
@@ -155,7 +156,7 @@ func (d *Disk) CounterIncrement(key string, increment int64) error {
 }
 
 // KV
-func (d *Disk) KVGet(location *Location) (*Value, error) {
+func (d *Disk) KVGet(location *strato.Location) (*strato.Value, error) {
 	key := kvKey(location)
 
 	val, err := d.read(key)
@@ -163,17 +164,17 @@ func (d *Disk) KVGet(location *Location) (*Value, error) {
 		return nil, err
 	}
 
-	return &Value{
+	return &strato.Value{
 		Content: val,
 	}, nil
 }
 
-func (d *Disk) KVPut(location *Location, value *Value) error {
+func (d *Disk) KVPut(location *strato.Location, value *strato.Value) error {
 	key := kvKey(location)
 	return d.write(key, value.Content)
 }
 
-func (d *Disk) KVDelete(location *Location) error {
+func (d *Disk) KVDelete(location *strato.Location) error {
 	key := kvKey(location)
 	return d.delete(key)
 }
@@ -232,7 +233,7 @@ func (d *Disk) RemoveFromSet(key, item string) error {
 	val, err := d.read(k)
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
-			return ErrNoSet
+			return strato.ErrNoSet
 		} else {
 			return err
 		}
@@ -266,7 +267,7 @@ func counterKey(key string) []byte {
 	return []byte(fmt.Sprintf("counter__%s", key))
 }
 
-func kvKey(location *Location) []byte {
+func kvKey(location *strato.Location) []byte {
 	return []byte(fmt.Sprintf("%s__%s", location.Bucket, location.Key))
 }
 

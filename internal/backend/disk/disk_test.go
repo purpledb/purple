@@ -1,6 +1,7 @@
-package strato
+package disk
 
 import (
+	"github.com/lucperkins/strato"
 	"github.com/lucperkins/strato/internal/data"
 	"os"
 	"testing"
@@ -90,12 +91,12 @@ func TestDiskKV(t *testing.T) {
 
 	disk := setup(is)
 
-	loc := &Location{
+	loc := &strato.Location{
 		Bucket: "test",
 		Key:    "test",
 	}
 
-	val := &Value{
+	val := &strato.Value{
 		Content: []byte("here is some test content"),
 	}
 
