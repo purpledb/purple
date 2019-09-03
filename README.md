@@ -7,9 +7,8 @@ An all-in-one data service with support for:
 * Key/value operations
 * Counters and sets
 * Caching with TTL
-* Search indexing and querying
 
-Strato is meant to abstract away complex database interfaces (Redis, DynamoDB, Mongo, etc.) in favor of a unified set of dead-simple operations (see the full [list of operations](#operations) below).
+Strato is meant to abstract away complex database interfaces (Redis, DynamoDB, Mongo, memory, disk, etc.) in favor of a unified set of dead-simple operations (see the full [list of operations](#operations) below).
 
 You can run Strato as a [gRPC server](#grpc-server) or an [HTTP server](#http-server) (both expose the same interfaces). There's currently a [gRPC client](#grpc-client) for Go only but in principle gRPC clients could be added for other languages.
 
@@ -17,15 +16,15 @@ You can run Strato as a [gRPC server](#grpc-server) or an [HTTP server](#http-se
 
 ### Goals
 
-Microservices or FaaS functions that rely on stateful data operations no longer have to interact with multiple databases and can interact only with Strato for all stateful data needs. This greatly simplifies the service/function development process by sharply reducing the hassle of dealing with databases (i.e. no need to install/learn/use 5 different database clients).
+Microservices or FaaS functions that rely on stateful data operations can use Strato instead of needing to interact with multiple databases. This greatly simplifies the service/function development process by sharply reducing the hassle of dealing with databases (i.e. no need to install/learn/use 5 different database clients).
 
 Does your service need something that isn't provided by Strato? File an issue or submit a PR and I'll add it!
 
 ### Current status
 
-Strato is in its *very* early stages. The data interfaces it provides are almost comically simple and it has only an [in-memory](./memory.go) implementation, which means that Strato data is not durable.
+Strato is in its *very* early stages. The data interfaces it provides are almost comically simple. Please do *not* use Strato as a production data service just yet (though I'd like to get there). Instead, use it for prototyping and experimenting.
 
-So please do *not* use Strato as a production data service just yet (though I'd like to get there). Instead, use it for prototyping and experimenting. It runs as a single instance and has no clustering built in.
+Also be aware that Strato runs as a single instance and has no clustering built in (and thus isn't highly available). If you use the Redis backend, however, you can run multiple instances of Strato that connect to a single Redis cluster.
 
 ### Future directions
 
@@ -34,7 +33,7 @@ In the future, I imagine Strato acting as an abstraction layer over lots of diff
 * Making the current data interfaces more sophisticated and capable of covering a wider range of use cases
 * Adding new interfaces, such as a timeseries interface, a simple graph interface, etc.
 * Providing a relational interface that supports a subset of SQL (SQLite would likely suffice for this)
-* Providing optional pluggable backends behind Strato (e.g. using Redis for caching, Elasticsearch for search)
+* Providing optional pluggable backends behind Strato (e.g. using Redis for caching, Elasticsearch for search, etc.)
 * Providing a message queue/pub-sub interface, eliminating the need for a Kafka/Pulsar/RabbitMQ/etc. client
 
 ### Want to contribute?
@@ -48,19 +47,27 @@ The table below lists the available [client operations](./client.go) for the Go 
 Operation | Domain | Explanation
 :---------|:-------|:-----------
 `CacheGet(key string)` | Cache | Fetches the value of a key from the cache. Returns an error if the TTL has been exceeded.
-`CacheSet(key, value string, ttl in32)` | Cache | Sets the value associated with a key and assigns a TTL (the default is 5 seconds).
-`CounterIncrement(key string, amount in32)` | Counter | Increments a counter by the designated amount.
+`CacheSet(key, value string, ttl int32)` | Cache | Sets the value associated with a key and assigns a TTL (the default is 5 seconds).
+`CounterIncrement(key string, amount int64)` | Counter | Increments a counter by the designated amount.
 `CounterGet(key string)` | Counter | Fetches the current value of a counter.
 `GetSet(set string)` | Set | Fetch the items currently in the specified set.
 `AddToSet(set, item string)` | Set | Add an item to the specified set.
 `RemoveFromSet(set, item string)` | Set | Remove an item from the specified set.
-`KVGet(location *Location)` | KV | Gets the value associated with a [`Location`](./kv.go). Location is currently just a key but could be made more complex later (e.g. a bucket + key scheme).
-`KVPut(location *Location, value *Value)` | KV | Sets the value associated with a location. The value is currently just a byte array payload but could be made more complex later (e.g. a payload plus a content type, metadata, etc.).
+`KVGet(key string)` | KV | Gets the value associated with a key.
+`KVPut(key string, value *Value)` | KV | Sets the value associated with a key. The value is currently just a byte array payload but could be made more complex later (e.g. a payload plus a content type, metadata, etc.).
 `KVDelete(location *Location)` | KV | Deletes the value associated with a key.
-`Index(doc *Document)` | Search | Indexes a search [`Document`](./search.go).
-`Query(q string)` | Search | Returns a set of documents that matches the supplied search term. At the moment, it simply uses the raw query string but more sophisticated schemes will be added later.
 
 > The Go client is currently only for the gRPC interface.
+
+## Backends
+
+There are three backends available for Strato:
+
+Backend | Explanation
+:-------|:-----------
+Disk | Data is stored persistently on disk using the [Badger](https://godoc.org/github.com/dgraph-io/badger) library. Each service (cache, KV, etc.) is stored in its own separate on-disk DB, which guarantees key isolation.
+Memory | Data is stored in native Go data structures (maps, slices, etc.). This backend is blazing fast but all data is lost when the service restarts.
+[Redis](https://redis.io) | The Strato server stores all data in a persistent Redis database.
 
 ## Try it out
 
