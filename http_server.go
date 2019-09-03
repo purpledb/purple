@@ -70,9 +70,9 @@ func (s *HttpServer) routes() *gin.Engine {
 
 	kv := r.Group("/kv")
 	{
-		kv.GET("/:key", s.kvGet)
-		kv.PUT("/:key/:value", s.kvPut)
-		kv.DELETE("/:key", s.kvDelete)
+		kv.GET("/:bucket/:key", s.kvGet)
+		kv.PUT("/:bucket/:key/:value", s.kvPut)
+		kv.DELETE("/:bucket/:key", s.kvDelete)
 	}
 
 	sets := r.Group("/sets")
@@ -203,14 +203,18 @@ func (s *HttpServer) countersPut(c *gin.Context) {
 	c.Status(http.StatusAccepted)
 }
 
+// KV
+func getLocation(c *gin.Context) *Location {
+	return &Location{
+		Bucket: c.Param("bucket"),
+		Key:    c.Param("key"),
+	}
+}
+
 func (s *HttpServer) kvGet(c *gin.Context) {
 	log := s.log.WithField("op", "kv/get")
 
-	key := c.Param("key")
-
-	loc := &Location{
-		Key: key,
-	}
+	loc := getLocation(c)
 
 	val, err := s.backend.KVGet(loc)
 	if err != nil {
@@ -236,12 +240,9 @@ func (s *HttpServer) kvGet(c *gin.Context) {
 func (s *HttpServer) kvPut(c *gin.Context) {
 	log := s.log.WithField("op", "kv/put")
 
-	key := c.Param("key")
-	value := c.Param("value")
+	loc := getLocation(c)
 
-	loc := &Location{
-		Key: key,
-	}
+	value := c.Param("value")
 
 	val := &Value{
 		Content: []byte(value),
@@ -253,17 +254,14 @@ func (s *HttpServer) kvPut(c *gin.Context) {
 		return
 	}
 
-	c.Header("Location", fmt.Sprintf("/kv/%s", key))
+	c.Header("Location", fmt.Sprintf("/kv/%s/%s", loc.Bucket, loc.Key))
 	c.Status(http.StatusCreated)
 }
 
 func (s *HttpServer) kvDelete(c *gin.Context) {
 	log := s.log.WithField("op", "kv/delete")
 
-	key := c.Param("key")
-	loc := &Location{
-		Key: key,
-	}
+	loc := getLocation(c)
 
 	if err := s.backend.KVDelete(loc); err != nil {
 		log.Error(err)
