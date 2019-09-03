@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-type GrpcServer struct {
+type Server struct {
 	address string
 	srv     *grpc.Server
 	backend backend.Interface
@@ -22,13 +22,13 @@ type GrpcServer struct {
 }
 
 var (
-	_ proto.CacheServer   = (*GrpcServer)(nil)
-	_ proto.CounterServer = (*GrpcServer)(nil)
-	_ proto.KVServer      = (*GrpcServer)(nil)
-	_ proto.SetServer     = (*GrpcServer)(nil)
+	_ proto.CacheServer   = (*Server)(nil)
+	_ proto.CounterServer = (*Server)(nil)
+	_ proto.KVServer      = (*Server)(nil)
+	_ proto.SetServer     = (*Server)(nil)
 )
 
-func NewGrpcServer(cfg *strato.ServerConfig) (*GrpcServer, error) {
+func NewGrpcServer(cfg *strato.ServerConfig) (*Server, error) {
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
 	srv := grpc.NewServer()
@@ -46,7 +46,7 @@ func NewGrpcServer(cfg *strato.ServerConfig) (*GrpcServer, error) {
 
 	log := logger.WithField("server", "grpc")
 
-	return &GrpcServer{
+	return &Server{
 		address: addr,
 		srv:     srv,
 		backend: backend,
@@ -54,7 +54,7 @@ func NewGrpcServer(cfg *strato.ServerConfig) (*GrpcServer, error) {
 	}, nil
 }
 
-func (s *GrpcServer) CacheGet(_ context.Context, req *proto.CacheGetRequest) (*proto.CacheGetResponse, error) {
+func (s *Server) CacheGet(_ context.Context, req *proto.CacheGetRequest) (*proto.CacheGetResponse, error) {
 	val, err := s.backend.CacheGet(req.Key)
 	if err != nil {
 		return nil, err
@@ -67,7 +67,7 @@ func (s *GrpcServer) CacheGet(_ context.Context, req *proto.CacheGetRequest) (*p
 	return res, nil
 }
 
-func (s *GrpcServer) CacheSet(_ context.Context, req *proto.CacheSetRequest) (*proto.Empty, error) {
+func (s *Server) CacheSet(_ context.Context, req *proto.CacheSetRequest) (*proto.Empty, error) {
 	key, val, ttl := req.Key, req.Item.Value, req.Item.Ttl
 
 	if err := s.backend.CacheSet(key, val, ttl); err != nil {
@@ -77,7 +77,7 @@ func (s *GrpcServer) CacheSet(_ context.Context, req *proto.CacheSetRequest) (*p
 	return &proto.Empty{}, nil
 }
 
-func (s *GrpcServer) IncrementCounter(_ context.Context, req *proto.IncrementCounterRequest) (*proto.Empty, error) {
+func (s *Server) IncrementCounter(_ context.Context, req *proto.IncrementCounterRequest) (*proto.Empty, error) {
 	if err := s.backend.CounterIncrement(req.Key, req.Amount); err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (s *GrpcServer) IncrementCounter(_ context.Context, req *proto.IncrementCou
 	return &proto.Empty{}, nil
 }
 
-func (s *GrpcServer) GetCounter(_ context.Context, req *proto.GetCounterRequest) (*proto.GetCounterResponse, error) {
+func (s *Server) GetCounter(_ context.Context, req *proto.GetCounterRequest) (*proto.GetCounterResponse, error) {
 	val, err := s.backend.CounterGet(req.Key)
 	if err != nil {
 		return nil, err
@@ -96,7 +96,7 @@ func (s *GrpcServer) GetCounter(_ context.Context, req *proto.GetCounterRequest)
 	}, nil
 }
 
-func (s *GrpcServer) KVGet(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
+func (s *Server) KVGet(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
 	key := location.Key
 
 	val, err := s.backend.KVGet(key)
@@ -113,7 +113,7 @@ func (s *GrpcServer) KVGet(_ context.Context, location *proto.Location) (*proto.
 	return res, nil
 }
 
-func (s *GrpcServer) KVPut(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
+func (s *Server) KVPut(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
 	key := req.Location.Key
 
 	val := &strato.Value{
@@ -127,7 +127,7 @@ func (s *GrpcServer) KVPut(_ context.Context, req *proto.PutRequest) (*proto.Emp
 	return &proto.Empty{}, nil
 }
 
-func (s *GrpcServer) KVDelete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
+func (s *Server) KVDelete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
 	key := location.Key
 
 	if err := s.backend.KVDelete(key); err != nil {
@@ -137,7 +137,7 @@ func (s *GrpcServer) KVDelete(_ context.Context, location *proto.Location) (*pro
 	return &proto.Empty{}, nil
 }
 
-func (s *GrpcServer) GetSet(_ context.Context, req *proto.GetSetRequest) (*proto.SetResponse, error) {
+func (s *Server) GetSet(_ context.Context, req *proto.GetSetRequest) (*proto.SetResponse, error) {
 	items, err := s.backend.GetSet(req.Set)
 	if err != nil {
 		return nil, err
@@ -148,7 +148,7 @@ func (s *GrpcServer) GetSet(_ context.Context, req *proto.GetSetRequest) (*proto
 	}, nil
 }
 
-func (s *GrpcServer) AddToSet(_ context.Context, req *proto.ModifySetRequest) (*proto.Empty, error) {
+func (s *Server) AddToSet(_ context.Context, req *proto.ModifySetRequest) (*proto.Empty, error) {
 	if err := s.backend.AddToSet(req.Set, req.Item); err != nil {
 		return nil, err
 	}
@@ -156,7 +156,7 @@ func (s *GrpcServer) AddToSet(_ context.Context, req *proto.ModifySetRequest) (*
 	return &proto.Empty{}, nil
 }
 
-func (s *GrpcServer) RemoveFromSet(_ context.Context, req *proto.ModifySetRequest) (*proto.Empty, error) {
+func (s *Server) RemoveFromSet(_ context.Context, req *proto.ModifySetRequest) (*proto.Empty, error) {
 	if err := s.backend.RemoveFromSet(req.Set, req.Item); err != nil {
 		return nil, err
 	}
@@ -164,7 +164,7 @@ func (s *GrpcServer) RemoveFromSet(_ context.Context, req *proto.ModifySetReques
 	return &proto.Empty{}, nil
 }
 
-func (s *GrpcServer) Start() error {
+func (s *Server) Start() error {
 	proto.RegisterCacheServer(s.srv, s)
 
 	s.log.Debug("registered gRPC cache service")
@@ -188,7 +188,7 @@ func (s *GrpcServer) Start() error {
 	return s.srv.Serve(lis)
 }
 
-func (s *GrpcServer) ShutDown() error {
+func (s *Server) ShutDown() error {
 	s.log.Debug("shutting down")
 
 	if err := s.backend.Close(); err != nil {

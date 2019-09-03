@@ -4,16 +4,22 @@ import (
 	"github.com/lucperkins/strato"
 	"github.com/lucperkins/strato/internal/data"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/dgraph-io/badger"
 	"github.com/stretchr/testify/assert"
 )
 
+func tmpDataDir() string {
+	here, _ := os.Getwd()
+	return filepath.Join(here, rootDataDir)
+}
+
 func TestGenericDiskFunctions(t *testing.T) {
 	is := assert.New(t)
 
-	is.NoError(os.MkdirAll(rootDataDir, os.ModePerm))
+	is.NoError(os.MkdirAll(tmpDataDir(), os.ModePerm))
 
 	db, err := badger.Open(badger.DefaultOptions(rootDataDir))
 	is.NoError(err)
@@ -178,5 +184,5 @@ func setup(is *assert.Assertions) *Disk {
 }
 
 func clean(is *assert.Assertions) {
-	is.NoError(os.RemoveAll(rootDataDir))
+	is.NoError(os.RemoveAll(tmpDataDir()))
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/lucperkins/strato"
 	"github.com/lucperkins/strato/internal/backend/disk"
 	"github.com/lucperkins/strato/internal/backend/memory"
+	"github.com/lucperkins/strato/internal/backend/redis"
 )
 
 type (
@@ -25,6 +26,7 @@ type (
 var (
 	_ Interface = (*disk.Disk)(nil)
 	_ Interface = (*memory.Memory)(nil)
+	_ Interface = (*redis.Redis)(nil)
 )
 
 func NewBackend(cfg *strato.ServerConfig) (*Backend, error) {
@@ -40,6 +42,14 @@ func NewBackend(cfg *strato.ServerConfig) (*Backend, error) {
 	case "memory":
 		backend := memory.NewMemoryBackend()
 
+		return &Backend{
+			backend,
+		}, nil
+	case "redis":
+		backend, err := redis.NewRedisBackend("localhost:6379")
+		if err != nil {
+			return nil, err
+		}
 		return &Backend{
 			backend,
 		}, nil

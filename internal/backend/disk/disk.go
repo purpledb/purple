@@ -14,10 +14,7 @@ import (
 const rootDataDir = "tmp/strato"
 
 type Disk struct {
-	cache    *badger.DB
-	counters *badger.DB
-	kv       *badger.DB
-	sets     *badger.DB
+	cache, counters, kv, sets *badger.DB
 }
 
 var (
@@ -49,10 +46,10 @@ func NewDiskBackend() (*Disk, error) {
 	}
 
 	return &Disk{
-		cache: cache,
+		cache:    cache,
 		counters: counters,
-		kv: kv,
-		sets: sets,
+		kv:       kv,
+		sets:     sets,
 	}, nil
 }
 
@@ -77,7 +74,7 @@ func createDb(dir string) (*badger.DB, error) {
 func (d *Disk) Close() error {
 	for _, bk := range []*badger.DB{
 		d.cache, d.counters, d.kv, d.sets,
-	}{
+	} {
 		if err := bk.Close(); err != nil {
 			return err
 		}
@@ -89,7 +86,7 @@ func (d *Disk) Close() error {
 func (d *Disk) Flush() error {
 	for _, bk := range []*badger.DB{
 		d.cache, d.counters, d.kv, d.sets,
-	}{
+	} {
 		if err := bk.DropAll(); err != nil {
 			return err
 		}

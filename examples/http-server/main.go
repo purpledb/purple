@@ -14,7 +14,7 @@ func main() {
 		Debug:   true,
 	}
 
-	restSrv, err := http.NewHttpServer(serverCfg)
+	restSrv, err := http.NewServer(serverCfg)
 	if err != nil {
 		log.Fatal(err)
 	}

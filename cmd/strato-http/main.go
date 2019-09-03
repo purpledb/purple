@@ -22,7 +22,7 @@ func command() *cobra.Command {
 			cmd.ExitOnError(v.Unmarshal(&cfg))
 		},
 		Run: func(_ *cobra.Command, _ []string) {
-			srv, err := http.NewHttpServer(&cfg)
+			srv, err := http.NewServer(&cfg)
 			cmd.ExitOnError(err)
 			cmd.ExitOnError(srv.Start())
 		},
@@ -31,7 +31,7 @@ func command() *cobra.Command {
 	flags := pflag.NewFlagSet("strato-http", pflag.ExitOnError)
 	flags.IntP("port", "p", 8081, "Strato HTTP server port")
 	flags.Bool("debug", false, "Debug mode")
-	flags.String("backend", "disk", `Data backend (options are "disk" and "memory")`)
+	flags.String("backend", "disk", `Data backend (options are disk, memory, and redis)`)
 
 	cmd.BindFlagsToCmd(command, flags, v)
 

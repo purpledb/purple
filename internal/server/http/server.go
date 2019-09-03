@@ -13,17 +13,17 @@ import (
 )
 
 // The core struct undergirding the Strato HTTP interface.
-type HttpServer struct {
+type Server struct {
 	address string
 	backend backend.Interface
 	log     *logrus.Entry
 }
 
 // Instantiates a new Strato HTTP server using the supplied ServerConfig object.
-func NewHttpServer(cfg *strato.ServerConfig) (*HttpServer, error) {
+func NewServer(cfg *strato.ServerConfig) (*Server, error) {
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
-	backend, err := backend.NewBackend(cfg)
+	bk, err := backend.NewBackend(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -39,15 +39,15 @@ func NewHttpServer(cfg *strato.ServerConfig) (*HttpServer, error) {
 
 	log := logger.WithField("server", "http")
 
-	return &HttpServer{
+	return &Server{
 		address: addr,
-		backend: backend,
+		backend: bk,
 		log:     log,
 	}, nil
 }
 
 // Starts the Strato HTTP server on the specified port.
-func (s *HttpServer) Start() error {
+func (s *Server) Start() error {
 	srv := &http.Server{
 		Addr:    s.address,
 		Handler: s.routes(),
@@ -58,52 +58,9 @@ func (s *HttpServer) Start() error {
 	return srv.ListenAndServe()
 }
 
-// HTTP routes
-func (s *HttpServer) routes() *gin.Engine {
-	r := gin.New()
-
-	cache := r.Group("/cache/:key")
-	{
-		cache.GET("", s.cacheGet)
-
-		withTtl := cache.Group("")
-		{
-			withTtl.Use(setTtl)
-			withTtl.PUT("", s.cachePut)
-		}
-	}
-
-	counters := r.Group("/counters/:counter")
-	{
-		counters.GET("", s.countersGet)
-		counters.PUT("", s.countersPut)
-	}
-
-	kv := r.Group("/kv/:key")
-	{
-		kv.GET("", s.kvGet)
-		kv.PUT("", s.kvPut)
-		kv.DELETE("", s.kvDelete)
-	}
-
-	sets := r.Group("/sets")
-	{
-		sets.GET("/:set", s.setsGet)
-
-		withItem := sets.Group("/:item")
-		{
-			withItem.Use(setItem)
-			withItem.PUT("", s.setsPut)
-			withItem.DELETE("", s.setsDelete)
-		}
-	}
-
-	return r
-}
-
 // Cache operations
 
-func (s *HttpServer) cacheGet(c *gin.Context) {
+func (s *Server) cacheGet(c *gin.Context) {
 	log := s.log.WithField("op", "cache/get")
 
 	key := c.Param("key")
@@ -132,7 +89,7 @@ func (s *HttpServer) cacheGet(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (s *HttpServer) cachePut(c *gin.Context) {
+func (s *Server) cachePut(c *gin.Context) {
 	log := s.log.WithField("op", "cache/put")
 
 	key, ttl := c.Param("key"), getTtl(c)
@@ -154,7 +111,7 @@ func (s *HttpServer) cachePut(c *gin.Context) {
 
 // Counter operations
 
-func (s *HttpServer) countersGet(c *gin.Context) {
+func (s *Server) countersGet(c *gin.Context) {
 	counter := c.Param("counter")
 
 	value, err := s.backend.CounterGet(counter)
@@ -179,7 +136,7 @@ func (s *HttpServer) countersGet(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (s *HttpServer) countersPut(c *gin.Context) {
+func (s *Server) countersPut(c *gin.Context) {
 	counter, incr := c.Param("counter"), c.Query("increment")
 
 	if incr == "" {
@@ -203,7 +160,7 @@ func (s *HttpServer) countersPut(c *gin.Context) {
 
 // KV operations
 
-func (s *HttpServer) kvGet(c *gin.Context) {
+func (s *Server) kvGet(c *gin.Context) {
 	log := s.log.WithField("op", "kv/get")
 
 	key := c.Param("key")
@@ -229,7 +186,7 @@ func (s *HttpServer) kvGet(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (s *HttpServer) kvPut(c *gin.Context) {
+func (s *Server) kvPut(c *gin.Context) {
 	log := s.log.WithField("op", "kv/put")
 
 	key, value := c.Param("key"), c.Query("value")
@@ -257,7 +214,7 @@ func (s *HttpServer) kvPut(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
-func (s *HttpServer) kvDelete(c *gin.Context) {
+func (s *Server) kvDelete(c *gin.Context) {
 	log := s.log.WithField("op", "kv/delete")
 
 	key := c.Param("key")
@@ -309,7 +266,7 @@ func getTtl(c *gin.Context) int {
 	return c.MustGet("ttl").(int)
 }
 
-func (s *HttpServer) setsGet(c *gin.Context) {
+func (s *Server) setsGet(c *gin.Context) {
 	set := c.Param("set")
 
 	items, err := s.backend.GetSet(set)
@@ -334,7 +291,7 @@ func (s *HttpServer) setsGet(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (s *HttpServer) setsPut(c *gin.Context) {
+func (s *Server) setsPut(c *gin.Context) {
 	set := c.Param("set")
 
 	item := getItem(c)
@@ -347,7 +304,7 @@ func (s *HttpServer) setsPut(c *gin.Context) {
 	c.Status(http.StatusAccepted)
 }
 
-func (s *HttpServer) setsDelete(c *gin.Context) {
+func (s *Server) setsDelete(c *gin.Context) {
 	set := c.Param("set")
 
 	item := getItem(c)
