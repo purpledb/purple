@@ -26,7 +26,7 @@ var (
 )
 
 func NewMemoryBackend() *Memory {
-	cache := make(map[string]*cache.Item)
+	ch := make(map[string]*cache.Item)
 
 	counters := make(map[string]int64)
 
@@ -35,7 +35,7 @@ func NewMemoryBackend() *Memory {
 	kv := make(map[string]*kv.Value)
 
 	return &Memory{
-		cache:    cache,
+		cache:    ch,
 		counters: counters,
 		kv:       kv,
 		sets:     sets,
