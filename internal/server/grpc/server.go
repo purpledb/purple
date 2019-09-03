@@ -3,8 +3,9 @@ package grpc
 import (
 	"context"
 	"fmt"
-	"github.com/lucperkins/strato/internal/services/kv"
 	"net"
+
+	"github.com/lucperkins/strato/internal/services/kv"
 
 	"github.com/lucperkins/strato"
 	"github.com/lucperkins/strato/internal/backend"

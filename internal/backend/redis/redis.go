@@ -1,11 +1,12 @@
 package redis
 
 import (
+	"time"
+
 	"github.com/lucperkins/strato/internal/services/cache"
 	"github.com/lucperkins/strato/internal/services/counter"
 	"github.com/lucperkins/strato/internal/services/kv"
 	"github.com/lucperkins/strato/internal/services/set"
-	"time"
 
 	"github.com/go-redis/redis"
 	"github.com/lucperkins/strato"

@@ -2,9 +2,10 @@ package http
 
 import (
 	"fmt"
-	"github.com/lucperkins/strato/internal/services/kv"
 	"net/http"
 	"strconv"
+
+	"github.com/lucperkins/strato/internal/services/kv"
 
 	"github.com/lucperkins/strato"
 	"github.com/lucperkins/strato/internal/backend"

@@ -44,11 +44,11 @@ func NewBackend(cfg *strato.ServerConfig) (*Backend, error) {
 			backend,
 		}, nil
 	case "memory":
-			backend := memory.NewMemoryBackend()
+		backend := memory.NewMemoryBackend()
 
-			return &Backend{
-				backend,
-			}, nil
+		return &Backend{
+			backend,
+		}, nil
 	case "redis":
 		backend, err := redis.NewRedisBackend(cfg.RedisUrl)
 		if err != nil {

@@ -9,7 +9,7 @@ import (
 	"io"
 	"net/http"
 
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
 type yamlBinding struct{}

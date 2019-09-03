@@ -1,11 +1,12 @@
 package disk
 
 import (
-	"github.com/lucperkins/strato"
-	"github.com/lucperkins/strato/internal/services/kv"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/lucperkins/strato"
+	"github.com/lucperkins/strato/internal/services/kv"
 
 	"github.com/lucperkins/strato/internal/data"
 
@@ -188,5 +189,5 @@ func setup(is *assert.Assertions) *Disk {
 }
 
 func clean(is *assert.Assertions) {
-	is.NoError(os.RemoveAll(tmpDataDir()))
+	is.NoError(os.RemoveAll("tmp"))
 }

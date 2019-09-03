@@ -1,9 +1,10 @@
 package memory
 
 import (
-	"github.com/lucperkins/strato/internal/services/kv"
 	"testing"
 	"time"
+
+	"github.com/lucperkins/strato/internal/services/kv"
 
 	"github.com/lucperkins/strato"
 
