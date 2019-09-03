@@ -13,24 +13,27 @@ import (
 func TestGenericDiskFunctions(t *testing.T) {
 	is := assert.New(t)
 
-	disk := setup(is)
+	is.NoError(os.MkdirAll(rootDataDir, os.ModePerm))
+
+	db, err := badger.Open(badger.DefaultOptions(rootDataDir))
+	is.NoError(err)
 
 	key := []byte("some-key")
 	value := []byte("some value")
 
-	val, err := disk.read(key)
+	val, err := dbRead(db, key)
 	is.Equal(err, badger.ErrKeyNotFound)
 	is.Nil(val)
 
-	is.NoError(disk.write(key, value))
+	is.NoError(dbWrite(db, key, value))
 
-	val, err = disk.read(key)
+	val, err = dbRead(db, key)
 	is.NoError(err)
 	is.Equal(val, value)
 
-	is.NoError(disk.delete(key))
+	is.NoError(dbDelete(db, key))
 
-	val, err = disk.read(key)
+	val, err = dbRead(db, key)
 	is.Equal(err, badger.ErrKeyNotFound)
 	is.Nil(val)
 
@@ -175,5 +178,5 @@ func setup(is *assert.Assertions) *Disk {
 }
 
 func clean(is *assert.Assertions) {
-	is.NoError(os.RemoveAll(dataDir))
+	is.NoError(os.RemoveAll(rootDataDir))
 }

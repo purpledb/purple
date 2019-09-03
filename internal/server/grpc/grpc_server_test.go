@@ -83,7 +83,7 @@ func TestGrpcServer(t *testing.T) {
 
 	t.Run("KV", func(_ *testing.T) {
 		locationReq := &proto.Location{
-			Key:    "key",
+			Key: "key",
 		}
 
 		val, err := srv.KVGet(ctx, locationReq)
@@ -95,7 +95,7 @@ func TestGrpcServer(t *testing.T) {
 
 		putReq := &proto.PutRequest{
 			Location: &proto.Location{
-				Key:    "key",
+				Key: "key",
 			},
 			Value: &proto.Value{
 				Content: []byte("some content"),

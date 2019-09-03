@@ -162,7 +162,6 @@ func (c *GrpcClient) KVDelete(key string) error {
 		Key: key,
 	}
 
-
 	if _, err := c.kvClient.KVDelete(c.ctx, loc); err != nil {
 		return err
 	}
