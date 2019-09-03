@@ -51,8 +51,8 @@ Operation | Domain | Explanation
 `CounterIncrement(key string, amount int64)` | Counter | Increments a counter by the designated amount.
 `CounterGet(key string)` | Counter | Fetches the current value of a counter.
 `GetSet(set string)` | Set | Fetch the items currently in the specified set.
-`AddToSet(set, item string)` | Set | Add an item to the specified set.
-`RemoveFromSet(set, item string)` | Set | Remove an item from the specified set.
+`AddToSet(set, item string)` | Set | Add an item to the specified set and returns the resulting set.
+`RemoveFromSet(set, item string)` | Set | Remove an item from the specified set and returns the resulting set.
 `KVGet(key string)` | KV | Gets the value associated with a key.
 `KVPut(key string, value *Value)` | KV | Sets the value associated with a key. The value is currently just a byte array payload but could be made more complex later (e.g. a payload plus a content type, metadata, etc.).
 `KVDelete(location *Location)` | KV | Deletes the value associated with a key.
