@@ -1,10 +1,9 @@
 package strato
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/lucperkins/strato/internal/data"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/dgraph-io/badger"
@@ -128,7 +127,7 @@ func (d *Disk) CounterGet(key string) (int64, error) {
 		}
 	}
 
-	return bytesToInt64(val), nil
+	return data.BytesToInt64(val), nil
 }
 
 func (d *Disk) CounterIncrement(key string, increment int64) error {
@@ -137,7 +136,7 @@ func (d *Disk) CounterIncrement(key string, increment int64) error {
 	val, err := d.read(k)
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
-			v := int64ToBytes(increment)
+			v := data.Int64ToBytes(increment)
 
 			return d.write(k, v)
 		} else {
@@ -145,11 +144,11 @@ func (d *Disk) CounterIncrement(key string, increment int64) error {
 		}
 	}
 
-	count := bytesToInt64(val)
+	count := data.BytesToInt64(val)
 
 	count += increment
 
-	newVal := int64ToBytes(count)
+	newVal := data.Int64ToBytes(count)
 
 	return d.write(k, newVal)
 }
@@ -191,7 +190,7 @@ func (d *Disk) GetSet(key string) ([]string, error) {
 		}
 	}
 
-	return bytesToSet(val)
+	return data.BytesToSet(val)
 }
 
 func (d *Disk) AddToSet(key, item string) error {
@@ -201,7 +200,7 @@ func (d *Disk) AddToSet(key, item string) error {
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
 			s := []string{item}
-			value, err := setToBytes(s)
+			value, err := data.SetToBytes(s)
 			if err != nil {
 				return err
 			}
@@ -211,14 +210,14 @@ func (d *Disk) AddToSet(key, item string) error {
 		}
 	}
 
-	s, err := bytesToSet(val)
+	s, err := data.BytesToSet(val)
 	if err != nil {
 		return err
 	}
 
 	s = append(s, item)
 
-	value, err := setToBytes(s)
+	value, err := data.SetToBytes(s)
 	if err != nil {
 		return err
 	}
@@ -238,7 +237,7 @@ func (d *Disk) RemoveFromSet(key, item string) error {
 		}
 	}
 
-	s, err := bytesToSet(val)
+	s, err := data.BytesToSet(val)
 	if err != nil {
 		return err
 	}
@@ -249,7 +248,7 @@ func (d *Disk) RemoveFromSet(key, item string) error {
 		}
 	}
 
-	value, err := setToBytes(s)
+	value, err := data.SetToBytes(s)
 	if err != nil {
 		return err
 	}
@@ -272,26 +271,4 @@ func kvKey(location *Location) []byte {
 
 func setKey(key string) []byte {
 	return []byte(fmt.Sprintf("set__%s", key))
-}
-
-func bytesToInt64(bs []byte) int64 {
-	return int64(bs[0])
-}
-
-func int64ToBytes(i int64) []byte {
-	return []byte(strconv.FormatInt(i, 10))
-}
-
-func bytesToSet(bs []byte) ([]string, error) {
-	var set []string
-
-	if err := json.Unmarshal(bs, &set); err != nil {
-		return nil, err
-	}
-
-	return set, nil
-}
-
-func setToBytes(set []string) ([]byte, error) {
-	return json.Marshal(set)
 }
