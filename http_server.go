@@ -56,23 +56,23 @@ func (s *HttpServer) Start() error {
 func (s *HttpServer) routes() *gin.Engine {
 	r := gin.New()
 
-	cache := r.Group("/cache")
+	cache := r.Group("/cache/:key")
 	{
 		cache.GET("", s.cacheGet)
 		cache.PUT("", s.cachePut)
 	}
 
-	counters := r.Group("/counters")
+	counters := r.Group("/counters/:counter")
 	{
-		counters.GET("/:counter", s.countersGet)
-		counters.PUT("/:counter", s.countersPut)
+		counters.GET("", s.countersGet)
+		counters.PUT("", s.countersPut)
 	}
 
-	kv := r.Group("/kv")
+	kv := r.Group("/kv/:bucket/:key")
 	{
-		kv.GET("/:bucket/:key", s.kvGet)
-		kv.PUT("/:bucket/:key/:value", s.kvPut)
-		kv.DELETE("/:bucket/:key", s.kvDelete)
+		kv.GET("", s.kvGet)
+		kv.PUT("", s.kvPut)
+		kv.DELETE("", s.kvDelete)
 	}
 
 	sets := r.Group("/sets")
@@ -88,11 +88,7 @@ func (s *HttpServer) routes() *gin.Engine {
 func (s *HttpServer) cacheGet(c *gin.Context) {
 	log := s.log.WithField("op", "cache/get")
 
-	key := c.Query("key")
-	if key == "" {
-		c.String(http.StatusBadRequest, "no key provided")
-		return
-	}
+	key := c.Param("key")
 
 	val, err := s.backend.CacheGet(key)
 	if err != nil {
@@ -121,11 +117,7 @@ func (s *HttpServer) cacheGet(c *gin.Context) {
 func (s *HttpServer) cachePut(c *gin.Context) {
 	log := s.log.WithField("op", "cache/put")
 
-	key := c.Query("key")
-	if key == "" {
-		c.String(http.StatusBadRequest, "no key provided")
-		return
-	}
+	key := c.Param("key")
 
 	value := c.Query("value")
 	if value == "" {
