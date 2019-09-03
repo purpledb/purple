@@ -17,9 +17,10 @@ spec:
     spec:
       containers:
       - name: strato-grpc
-        image: lucperkins/strato-grpc:latest
+        image: lucperkins/strato-grpc:v0.1.1
         ports:
-        - containerPort: 8081
+        - containerPort: 8080
+        args: ["--backend", "redis", "--redis-url", "redis:6379"]
 ---
 apiVersion: v1
 kind: Service
@@ -29,7 +30,42 @@ metadata:
     run: strato
 spec:
   ports:
-  - port: 8081
+  - port: 8080
     protocol: TCP
   selector:
     run: strato
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-master
+  labels:
+    app: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: master
+        image: redis
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: redis
