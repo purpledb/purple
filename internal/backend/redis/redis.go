@@ -118,17 +118,13 @@ func (r *Redis) CacheSet(key, value string, ttl int32) error {
 // Counter operations
 
 func (r *Redis) CounterGet(key string) (int64, error) {
-	s := r.counters.Get(key)
+	i, err := r.counters.Get(key).Int64()
 
-	if s.Err() != nil {
-		if s.Err() == redis.Nil {
-			return 0, nil
-		} else {
-			return 0, s.Err()
-		}
+	if err == redis.Nil {
+		return 0, nil
+	} else {
+		return i, err
 	}
-
-	return s.Int64()
 }
 
 func (r *Redis) CounterIncrement(key string, increment int64) error {
