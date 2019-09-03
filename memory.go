@@ -89,7 +89,7 @@ func (m *Memory) CacheSet(key, value string, ttl int32) error {
 	item := &CacheItem{
 		Value:      value,
 		Timestamp:  time.Now().Unix(),
-		TTLSeconds: getTtl(ttl),
+		TTLSeconds: parseTtl(ttl),
 	}
 
 	m.cache[key] = item
@@ -97,7 +97,7 @@ func (m *Memory) CacheSet(key, value string, ttl int32) error {
 	return nil
 }
 
-func getTtl(ttl int32) int32 {
+func parseTtl(ttl int32) int32 {
 	if ttl == 0 {
 		return defaultTtl
 	} else {
@@ -122,7 +122,7 @@ func (m *Memory) CounterGet(key string) (int64, error) {
 }
 
 func (m *Memory) KVGet(location *Location) (*Value, error) {
-	if err := location.validate(); err != nil {
+	if err := location.Validate(); err != nil {
 		return nil, err
 	}
 
@@ -152,7 +152,7 @@ func (m *Memory) KVGet(location *Location) (*Value, error) {
 }
 
 func (m *Memory) KVPut(location *Location, value *Value) error {
-	if err := location.validate(); err != nil {
+	if err := location.Validate(); err != nil {
 		return err
 	}
 
@@ -167,7 +167,7 @@ func (m *Memory) KVPut(location *Location, value *Value) error {
 }
 
 func (m *Memory) KVDelete(location *Location) error {
-	if err := location.validate(); err != nil {
+	if err := location.Validate(); err != nil {
 		return err
 	}
 

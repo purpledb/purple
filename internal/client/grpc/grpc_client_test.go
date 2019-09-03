@@ -1,12 +1,17 @@
-package strato
+package grpc
 
 import (
+	"github.com/lucperkins/strato"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+var goodClientCfg = &strato.ClientConfig{
+	Address: "localhost:2222",
+}
 
 func TestGrpcClient(t *testing.T) {
 	is := assert.New(t)
@@ -17,22 +22,22 @@ func TestGrpcClient(t *testing.T) {
 		is.NoError(err)
 		is.NotNil(cl)
 
-		noAddressCfg := &ClientConfig{
+		noAddressCfg := &strato.ClientConfig{
 			Address: "",
 		}
 
 		noClient, err := NewClient(noAddressCfg)
-		is.Error(err, ErrNoAddress)
+		is.Error(err, strato.ErrNoAddress)
 		is.Nil(noClient)
 
-		badAddressCfg := &ClientConfig{
+		badAddressCfg := &strato.ClientConfig{
 			Address: "1:2:3",
 		}
 		badCl, err := NewClient(badAddressCfg)
 		is.NoError(err)
 		is.NotNil(badCl)
 
-		err = badCl.KVDelete(&Location{Bucket: "does-not-exist", Key: "does-not-exist"})
+		err = badCl.KVDelete(&strato.Location{Bucket: "does-not-exist", Key: "does-not-exist"})
 		stat, ok := status.FromError(err)
 		is.True(ok)
 		is.Equal(stat.Code(), codes.Unavailable)

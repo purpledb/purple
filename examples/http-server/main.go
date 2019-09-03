@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/lucperkins/strato/internal/server/http"
 	"log"
 
 	"github.com/lucperkins/strato"
@@ -13,7 +14,7 @@ func main() {
 		Debug:   true,
 	}
 
-	restSrv, err := strato.NewHttpServer(serverCfg)
+	restSrv, err := http.NewHttpServer(serverCfg)
 	if err != nil {
 		log.Fatal(err)
 	}

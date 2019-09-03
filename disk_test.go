@@ -1,6 +1,7 @@
 package strato
 
 import (
+	"github.com/lucperkins/strato/internal/data"
 	"os"
 	"testing"
 
@@ -149,15 +150,20 @@ func TestDiskSet(t *testing.T) {
 func TestDiskHelperFunctions(t *testing.T) {
 	is := assert.New(t)
 
-	set := []string{"apple", "orange", "banana"}
+	testCases := [][]string{
+		{},
+		{"apple", "orange", "banana"},
+	}
 
-	bs, err := setToBytes(set)
-	is.NoError(err)
-	is.NotNil(bs)
+	for _, tc := range testCases {
+		bs, err := data.SetToBytes(tc)
+		is.NoError(err)
+		is.NotNil(bs)
 
-	s, err := bytesToSet(bs)
-	is.NoError(err)
-	is.Equal(s, set)
+		s, err := data.BytesToSet(bs)
+		is.NoError(err)
+		is.Equal(s, tc)
+	}
 }
 
 func setup(is *assert.Assertions) *Disk {

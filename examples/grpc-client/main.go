@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/lucperkins/strato/internal/client/grpc"
 	"log"
 	"time"
 
@@ -12,7 +13,7 @@ func main() {
 		Address: "localhost:8080",
 	}
 
-	client, err := strato.NewClient(clientCfg)
+	client, err := grpc.NewClient(clientCfg)
 	if err != nil {
 		log.Fatal(err)
 	}

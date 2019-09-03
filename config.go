@@ -12,7 +12,7 @@ type (
 	}
 )
 
-func (c *ClientConfig) validate() error {
+func (c *ClientConfig) Validate() error {
 	if c.Address == "" {
 		return ErrNoAddress
 	}
@@ -20,7 +20,7 @@ func (c *ClientConfig) validate() error {
 	return nil
 }
 
-func (c *ServerConfig) validate() error {
+func (c *ServerConfig) Validate() error {
 	if c.Port == 0 {
 		return ErrNoPort
 	}

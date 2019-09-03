@@ -23,7 +23,7 @@ type (
 	}
 )
 
-func (l *Location) validate() error {
+func (l *Location) Validate() error {
 	if l.Bucket == "" {
 		return ErrNoBucket
 	}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/lucperkins/strato/internal/server/grpc"
 	"log"
 
 	"github.com/lucperkins/strato"
@@ -15,7 +16,7 @@ func main() {
 		Debug:   true,
 	}
 
-	srv, err := strato.NewGrpcServer(srvCfg)
+	srv, err := grpc.NewGrpcServer(srvCfg)
 	if err != nil {
 		log.Fatal(err)
 	}

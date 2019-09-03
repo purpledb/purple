@@ -23,11 +23,11 @@ func TestConfigInstantiation(t *testing.T) {
 	t.Run("GrpcClient", func(t *testing.T) {
 		emptyCfg := &ClientConfig{}
 
-		err := emptyCfg.validate()
+		err := emptyCfg.Validate()
 		is.True(IsConfigError(err))
 		is.Equal(err, ErrNoAddress)
 
-		err = goodClientCfg.validate()
+		err = goodClientCfg.Validate()
 		is.NoError(err)
 	})
 
@@ -38,14 +38,14 @@ func TestConfigInstantiation(t *testing.T) {
 			Port: 10,
 		}
 
-		err := emptyCfg.validate()
+		err := emptyCfg.Validate()
 		is.True(IsConfigError(err))
 		is.Equal(err, ErrNoPort)
 
-		err = lowPortCfg.validate()
+		err = lowPortCfg.Validate()
 		is.True(IsConfigError(err))
 		is.Equal(err, ErrPortOutOfRange)
 
-		is.NoError(goodServerCfg.validate())
+		is.NoError(goodServerCfg.Validate())
 	})
 }

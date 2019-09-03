@@ -1,7 +1,8 @@
-package strato
+package grpc
 
 import (
 	"context"
+	"github.com/lucperkins/strato"
 
 	"github.com/lucperkins/strato/proto"
 
@@ -17,8 +18,8 @@ type GrpcClient struct {
 	ctx           context.Context
 }
 
-func NewClient(cfg *ClientConfig) (*GrpcClient, error) {
-	if err := cfg.validate(); err != nil {
+func NewClient(cfg *strato.ClientConfig) (*GrpcClient, error) {
+	if err := cfg.Validate(); err != nil {
 		return nil, err
 	}
 
@@ -106,12 +107,12 @@ func (c *GrpcClient) GetCounter(key string) (int64, error) {
 	return res.Value, nil
 }
 
-func (c *GrpcClient) KVGet(location *Location) (*Value, error) {
+func (c *GrpcClient) KVGet(location *strato.Location) (*strato.Value, error) {
 	if location == nil {
-		return nil, ErrNoLocation
+		return nil, strato.ErrNoLocation
 	}
 
-	if err := location.validate(); err != nil {
+	if err := location.Validate(); err != nil {
 		return nil, err
 	}
 
@@ -120,24 +121,24 @@ func (c *GrpcClient) KVGet(location *Location) (*Value, error) {
 		return nil, err
 	}
 
-	val := &Value{
+	val := &strato.Value{
 		Content: res.Value.Content,
 	}
 
 	return val, nil
 }
 
-func (c *GrpcClient) KVPut(location *Location, value *Value) error {
+func (c *GrpcClient) KVPut(location *strato.Location, value *strato.Value) error {
 	if location == nil {
-		return ErrNoLocation
+		return strato.ErrNoLocation
 	}
 
-	if err := location.validate(); err != nil {
+	if err := location.Validate(); err != nil {
 		return err
 	}
 
 	if value == nil {
-		return ErrNoValue
+		return strato.ErrNoValue
 	}
 
 	req := &proto.PutRequest{
@@ -152,12 +153,12 @@ func (c *GrpcClient) KVPut(location *Location, value *Value) error {
 	return nil
 }
 
-func (c *GrpcClient) KVDelete(location *Location) error {
+func (c *GrpcClient) KVDelete(location *strato.Location) error {
 	if location == nil {
-		return ErrNoLocation
+		return strato.ErrNoLocation
 	}
 
-	if err := location.validate(); err != nil {
+	if err := location.Validate(); err != nil {
 		return err
 	}
 

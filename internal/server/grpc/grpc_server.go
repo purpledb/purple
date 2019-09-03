@@ -1,8 +1,9 @@
-package strato
+package grpc
 
 import (
 	"context"
 	"fmt"
+	"github.com/lucperkins/strato"
 	"net"
 
 	"github.com/lucperkins/strato/proto"
@@ -15,7 +16,7 @@ import (
 type GrpcServer struct {
 	address string
 	srv     *grpc.Server
-	backend Backend
+	backend strato.Backend
 	log     *logrus.Entry
 }
 
@@ -26,12 +27,12 @@ var (
 	_ proto.SetServer     = (*GrpcServer)(nil)
 )
 
-func NewGrpcServer(cfg *ServerConfig) (*GrpcServer, error) {
+func NewGrpcServer(cfg *strato.ServerConfig) (*GrpcServer, error) {
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
 	srv := grpc.NewServer()
 
-	backend, err := NewBackend(cfg)
+	backend, err := strato.NewBackend(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -95,14 +96,14 @@ func (s *GrpcServer) GetCounter(_ context.Context, req *proto.GetCounterRequest)
 }
 
 func (s *GrpcServer) KVGet(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
-	loc := &Location{
+	loc := &strato.Location{
 		Bucket: location.Bucket,
 		Key:    location.Key,
 	}
 
 	val, err := s.backend.KVGet(loc)
 	if err != nil {
-		return nil, NotFound(loc).AsProtoStatus()
+		return nil, strato.NotFound(loc).AsProtoStatus()
 	}
 
 	res := &proto.GetResponse{
@@ -115,12 +116,12 @@ func (s *GrpcServer) KVGet(_ context.Context, location *proto.Location) (*proto.
 }
 
 func (s *GrpcServer) KVPut(_ context.Context, req *proto.PutRequest) (*proto.Empty, error) {
-	loc := &Location{
+	loc := &strato.Location{
 		Bucket: req.Location.Bucket,
 		Key:    req.Location.Key,
 	}
 
-	val := &Value{
+	val := &strato.Value{
 		Content: req.Value.Content,
 	}
 
@@ -132,7 +133,7 @@ func (s *GrpcServer) KVPut(_ context.Context, req *proto.PutRequest) (*proto.Emp
 }
 
 func (s *GrpcServer) KVDelete(_ context.Context, location *proto.Location) (*proto.Empty, error) {
-	loc := &Location{
+	loc := &strato.Location{
 		Bucket: location.Bucket,
 		Key:    location.Key,
 	}

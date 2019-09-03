@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/lucperkins/strato"
 	"github.com/lucperkins/strato/cmd"
+	"github.com/lucperkins/strato/internal/server/http"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -21,7 +22,7 @@ func command() *cobra.Command {
 			cmd.ExitOnError(v.Unmarshal(&cfg))
 		},
 		Run: func(_ *cobra.Command, _ []string) {
-			srv, err := strato.NewHttpServer(&cfg)
+			srv, err := http.NewHttpServer(&cfg)
 			cmd.ExitOnError(err)
 			cmd.ExitOnError(srv.Start())
 		},

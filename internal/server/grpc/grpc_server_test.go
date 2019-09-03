@@ -1,7 +1,8 @@
-package strato
+package grpc
 
 import (
 	"context"
+	"github.com/lucperkins/strato"
 	"testing"
 
 	"github.com/lucperkins/strato/proto"
@@ -9,6 +10,11 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+var goodServerCfg = &strato.ServerConfig{
+	Port:    2222,
+	Backend: "disk",
+}
 
 func TestGrpcServer(t *testing.T) {
 	is := assert.New(t)

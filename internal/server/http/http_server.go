@@ -1,7 +1,8 @@
-package strato
+package http
 
 import (
 	"fmt"
+	"github.com/lucperkins/strato"
 	"net/http"
 	"strconv"
 
@@ -10,16 +11,18 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// The core struct undergirding the Strato HTTP interface.
 type HttpServer struct {
 	address string
-	backend Backend
+	backend strato.Backend
 	log     *logrus.Entry
 }
 
-func NewHttpServer(cfg *ServerConfig) (*HttpServer, error) {
+// Instantiates a new Strato HTTP server using the supplied ServerConfig object.
+func NewHttpServer(cfg *strato.ServerConfig) (*HttpServer, error) {
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
-	backend, err := NewBackend(cfg)
+	backend, err := strato.NewBackend(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -42,6 +45,7 @@ func NewHttpServer(cfg *ServerConfig) (*HttpServer, error) {
 	}, nil
 }
 
+// Starts the Strato HTTP server on the specified port.
 func (s *HttpServer) Start() error {
 	srv := &http.Server{
 		Addr:    s.address,
@@ -53,13 +57,19 @@ func (s *HttpServer) Start() error {
 	return srv.ListenAndServe()
 }
 
+// HTTP routes
 func (s *HttpServer) routes() *gin.Engine {
 	r := gin.New()
 
 	cache := r.Group("/cache/:key")
 	{
 		cache.GET("", s.cacheGet)
-		cache.PUT("", s.cachePut)
+
+		withTtl := cache.Group("")
+		{
+			withTtl.Use(setTtl)
+			withTtl.PUT("", s.cachePut)
+		}
 	}
 
 	counters := r.Group("/counters/:counter")
@@ -78,12 +88,19 @@ func (s *HttpServer) routes() *gin.Engine {
 	sets := r.Group("/sets")
 	{
 		sets.GET("/:set", s.setsGet)
-		sets.PUT("/:set/:item", s.setsPut)
-		sets.DELETE("/:set/:item", s.setsDelete)
+
+		withItem := sets.Group("/:item")
+		{
+			withItem.Use(setItem)
+			withItem.PUT("", s.setsPut)
+			withItem.DELETE("", s.setsDelete)
+		}
 	}
 
 	return r
 }
+
+// Cache operations
 
 func (s *HttpServer) cacheGet(c *gin.Context) {
 	log := s.log.WithField("op", "cache/get")
@@ -92,10 +109,10 @@ func (s *HttpServer) cacheGet(c *gin.Context) {
 
 	val, err := s.backend.CacheGet(key)
 	if err != nil {
-		if IsNoItemFound(err) {
+		if strato.IsNoItemFound(err) {
 			c.Status(http.StatusNotFound)
 			return
-		} else if IsExpired(err) {
+		} else if strato.IsExpired(err) {
 			c.Status(http.StatusGone)
 			return
 		} else {
@@ -117,7 +134,7 @@ func (s *HttpServer) cacheGet(c *gin.Context) {
 func (s *HttpServer) cachePut(c *gin.Context) {
 	log := s.log.WithField("op", "cache/put")
 
-	key := c.Param("key")
+	key, ttl := c.Param("key"), getTtl(c)
 
 	value := c.Query("value")
 	if value == "" {
@@ -125,21 +142,7 @@ func (s *HttpServer) cachePut(c *gin.Context) {
 		return
 	}
 
-	ttlStr := c.Query("ttl")
-	if ttlStr == "" {
-		c.String(http.StatusBadRequest, "no TTL provided")
-		return
-	}
-
-	ttlInt, err := strconv.Atoi(ttlStr)
-	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("could not convert %s to TTL integer", ttlStr))
-		return
-	}
-
-	ttl := int32(ttlInt)
-
-	if err := s.backend.CacheSet(key, value, ttl); err != nil {
+	if err := s.backend.CacheSet(key, value, int32(ttl)); err != nil {
 		log.Error(err)
 		c.Status(http.StatusInternalServerError)
 		return
@@ -147,6 +150,8 @@ func (s *HttpServer) cachePut(c *gin.Context) {
 
 	c.Status(http.StatusCreated)
 }
+
+// Counter operations
 
 func (s *HttpServer) countersGet(c *gin.Context) {
 	counter := c.Param("counter")
@@ -195,13 +200,7 @@ func (s *HttpServer) countersPut(c *gin.Context) {
 	c.Status(http.StatusAccepted)
 }
 
-// KV
-func getLocation(c *gin.Context) *Location {
-	return &Location{
-		Bucket: c.Param("bucket"),
-		Key:    c.Param("key"),
-	}
-}
+// KV operations
 
 func (s *HttpServer) kvGet(c *gin.Context) {
 	log := s.log.WithField("op", "kv/get")
@@ -210,7 +209,7 @@ func (s *HttpServer) kvGet(c *gin.Context) {
 
 	val, err := s.backend.KVGet(loc)
 	if err != nil {
-		if IsNotFound(err) {
+		if strato.IsNotFound(err) {
 			c.Status(http.StatusNotFound)
 			return
 		} else {
@@ -236,7 +235,7 @@ func (s *HttpServer) kvPut(c *gin.Context) {
 
 	value := c.Param("value")
 
-	val := &Value{
+	val := &strato.Value{
 		Content: []byte(value),
 	}
 
@@ -264,12 +263,57 @@ func (s *HttpServer) kvDelete(c *gin.Context) {
 	c.Status(http.StatusAccepted)
 }
 
+func getLocation(c *gin.Context) *strato.Location {
+	return &strato.Location{
+		Bucket: c.Param("bucket"),
+		Key:    c.Param("key"),
+	}
+}
+
+// Sets
+func setItem(c *gin.Context) {
+	item := c.Query("item")
+	if item == "" {
+		c.String(http.StatusBadRequest, "no item provided")
+		c.Abort()
+		return
+	}
+
+	c.Set("item", item)
+}
+
+func getItem(c *gin.Context) string {
+	return c.MustGet("item").(string)
+}
+
+func setTtl(c *gin.Context) {
+	ttlRaw := c.Query("ttl")
+	if ttlRaw == "" {
+		c.String(http.StatusBadRequest, "no TTL provided")
+		c.Abort()
+		return
+	}
+
+	ttl, err := strconv.Atoi(ttlRaw)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		c.Abort()
+		return
+	}
+
+	c.Set("ttl", ttl)
+}
+
+func getTtl(c *gin.Context) int {
+	return c.MustGet("ttl").(int)
+}
+
 func (s *HttpServer) setsGet(c *gin.Context) {
 	set := c.Param("set")
 
 	items, err := s.backend.GetSet(set)
 	if err != nil {
-		if err == ErrNoSet {
+		if err == strato.ErrNoSet {
 			c.Status(http.StatusNotFound)
 			return
 		} else {
@@ -290,7 +334,9 @@ func (s *HttpServer) setsGet(c *gin.Context) {
 }
 
 func (s *HttpServer) setsPut(c *gin.Context) {
-	set, item := c.Param("set"), c.Param("item")
+	set := c.Param("set")
+
+	item := getItem(c)
 
 	if err := s.backend.AddToSet(set, item); err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
@@ -301,7 +347,9 @@ func (s *HttpServer) setsPut(c *gin.Context) {
 }
 
 func (s *HttpServer) setsDelete(c *gin.Context) {
-	set, item := c.Param("set"), c.Param("item")
+	set := c.Param("set")
+
+	item := getItem(c)
 
 	if err := s.backend.RemoveFromSet(set, item); err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
