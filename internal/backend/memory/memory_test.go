@@ -1,6 +1,7 @@
 package memory
 
 import (
+	"github.com/lucperkins/strato/internal/oops"
 	"testing"
 	"time"
 
@@ -32,17 +33,18 @@ func TestMemoryImpl(t *testing.T) {
 		is.NoError(mem.CacheSet(key, value, 1))
 		time.Sleep(2 * time.Second)
 		val, err = mem.CacheGet(key)
-		is.True(strato.IsExpired(err))
+		is.True(oops.IsNotFound(err))
 		is.Empty(val)
 
 		val, err = mem.CacheGet("does-not-exist")
-		is.True(strato.IsNoItemFound(err))
+		is.True(oops.IsNotFound(err))
 		is.Empty(val)
 
 		err = mem.CacheSet("", "something", 5)
-		is.True(strato.IsNoCacheKey(err))
+		is.Equal(err, oops.ErrNoKey)
+
 		err = mem.CacheSet("some-key", "", 5)
-		is.True(strato.IsNoCacheValue(err))
+		is.Equal(err, oops.ErrNoValue)
 	})
 
 	t.Run("Counter", func(t *testing.T) {
@@ -94,28 +96,32 @@ func TestMemoryImpl(t *testing.T) {
 		set, item1, item2 := "example-set", "example-item-1", "example-item-2"
 
 		is.Empty(mem.GetSet(set))
-		is.NoError(mem.AddToSet(set, item1))
-		is.NotEmpty(mem.GetSet(set))
 
-		s, err := mem.GetSet(set)
+		s, err := mem.AddToSet(set, item1)
 		is.NoError(err)
 		is.Len(s, 1)
 		is.Equal(s[0], item1)
 
-		is.NoError(mem.AddToSet(set, item2))
+		is.NotEmpty(mem.GetSet(set))
+
+		s, err = mem.AddToSet(set, item2)
+		is.NoError(err)
+		is.Len(s, 2)
 
 		s, err = mem.GetSet(set)
 		is.Len(s, 2)
 
-		is.NoError(mem.RemoveFromSet(set, item1))
+		s, err = mem.RemoveFromSet(set, item1)
+		is.NoError(err)
+		is.Len(s, 1)
+		is.Equal(s[0], item2)
 
 		s, err = mem.GetSet(set)
 		is.NoError(err)
 		is.Len(s, 1)
 		is.Equal(s[0], item2)
 
-		is.NoError(mem.RemoveFromSet(set, item2))
-		s, err = mem.GetSet(set)
+		s, err = mem.RemoveFromSet(set, item2)
 		is.NoError(err)
 		is.Empty(s)
 	})

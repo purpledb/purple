@@ -154,7 +154,7 @@ func (d *Disk) CacheGet(key string) (string, error) {
 
 	val, err := dbRead(d.cache, k)
 	if err != nil {
-		if err == badger.ErrKeyNotFound {
+		if oops.IsNotFound(err) {
 			return "", oops.NotFound(key)
 		} else {
 			return "", err
@@ -178,7 +178,7 @@ func (d *Disk) CounterGet(key string) (int64, error) {
 
 	val, err := dbRead(d.counter, k)
 	if err != nil {
-		if err == badger.ErrKeyNotFound {
+		if oops.IsNotFound(err) {
 			return 0, nil
 		} else {
 			return 0, err
@@ -246,7 +246,7 @@ func (d *Disk) GetSet(key string) ([]string, error) {
 
 	val, err := dbRead(d.set, k)
 	if err != nil {
-		if err == badger.ErrKeyNotFound {
+		if oops.IsNotFound(err) {
 			return []string{}, nil
 		} else {
 			return nil, err
@@ -302,7 +302,7 @@ func (d *Disk) RemoveFromSet(key, item string) ([]string, error) {
 
 	val, err := dbRead(d.set, k)
 	if err != nil {
-		if err == badger.ErrKeyNotFound {
+		if oops.IsNotFound(err) {
 			return []string{}, nil
 		} else {
 			return nil, err

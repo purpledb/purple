@@ -120,7 +120,7 @@ func TestDiskKV(t *testing.T) {
 
 	fetched, err = disk.KVGet(key)
 	is.Error(err)
-	is.Equal(err.Error(), badger.ErrKeyNotFound.Error())
+	is.True(oops.IsNotFound(err))
 	is.Nil(fetched)
 
 	clean(is)
@@ -140,12 +140,10 @@ func TestDiskSet(t *testing.T) {
 	set, err = disk.AddToSet(key, item)
 	is.NoError(err)
 	is.Len(set, 1)
-	is.Equal(set[0], item)
 
 	set, err = disk.GetSet(key)
 	is.NoError(err)
 	is.Len(set, 1)
-	is.Equal(set[0], item)
 
 	set, err = disk.RemoveFromSet(key, item)
 	is.NoError(err)
