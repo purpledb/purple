@@ -1,6 +1,7 @@
-package strato
+package config
 
 import (
+	"github.com/lucperkins/strato"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,8 +25,8 @@ func TestConfigInstantiation(t *testing.T) {
 		emptyCfg := &ClientConfig{}
 
 		err := emptyCfg.Validate()
-		is.True(IsConfigError(err))
-		is.Equal(err, ErrNoAddress)
+		is.True(strato.IsConfigError(err))
+		is.Equal(err, strato.ErrNoAddress)
 
 		err = goodClientCfg.Validate()
 		is.NoError(err)
@@ -39,12 +40,12 @@ func TestConfigInstantiation(t *testing.T) {
 		}
 
 		err := emptyCfg.Validate()
-		is.True(IsConfigError(err))
-		is.Equal(err, ErrNoPort)
+		is.True(strato.IsConfigError(err))
+		is.Equal(err, strato.ErrNoPort)
 
 		err = lowPortCfg.Validate()
-		is.True(IsConfigError(err))
-		is.Equal(err, ErrPortOutOfRange)
+		is.True(strato.IsConfigError(err))
+		is.Equal(err, strato.ErrPortOutOfRange)
 
 		is.NoError(goodServerCfg.Validate())
 	})

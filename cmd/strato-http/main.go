@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/lucperkins/strato"
 	"github.com/lucperkins/strato/cmd"
+	"github.com/lucperkins/strato/internal/config"
 	"github.com/lucperkins/strato/internal/server/http"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -10,7 +10,7 @@ import (
 )
 
 func command() *cobra.Command {
-	var cfg strato.ServerConfig
+	var cfg config.ServerConfig
 
 	v := viper.New()
 	v.AutomaticEnv()

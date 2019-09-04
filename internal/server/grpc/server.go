@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"github.com/lucperkins/strato/internal/config"
 	"net"
 
 	"github.com/lucperkins/strato/internal/services/kv"
@@ -31,7 +32,7 @@ var (
 	_ proto.SetServer     = (*Server)(nil)
 )
 
-func NewGrpcServer(cfg *strato.ServerConfig) (*Server, error) {
+func NewGrpcServer(cfg *config.ServerConfig) (*Server, error) {
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
 	srv := grpc.NewServer()

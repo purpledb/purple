@@ -1,4 +1,6 @@
-package strato
+package config
+
+import "github.com/lucperkins/strato"
 
 type (
 	ClientConfig struct {
@@ -15,7 +17,7 @@ type (
 
 func (c *ClientConfig) Validate() error {
 	if c.Address == "" {
-		return ErrNoAddress
+		return strato.ErrNoAddress
 	}
 
 	return nil
@@ -23,15 +25,15 @@ func (c *ClientConfig) Validate() error {
 
 func (c *ServerConfig) Validate() error {
 	if c.Port == 0 {
-		return ErrNoPort
+		return strato.ErrNoPort
 	}
 
 	if c.Port < 1024 || c.Port > 49151 {
-		return ErrPortOutOfRange
+		return strato.ErrPortOutOfRange
 	}
 
 	if c.Backend == "" {
-		return ErrNoBackend
+		return strato.ErrNoBackend
 	}
 
 	return nil

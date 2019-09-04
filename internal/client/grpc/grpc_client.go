@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"github.com/lucperkins/strato/internal/config"
 
 	"github.com/lucperkins/strato/internal/services/kv"
 
@@ -21,7 +22,7 @@ type GrpcClient struct {
 	ctx           context.Context
 }
 
-func NewClient(cfg *strato.ClientConfig) (*GrpcClient, error) {
+func NewClient(cfg *config.ClientConfig) (*GrpcClient, error) {
 	if err := cfg.Validate(); err != nil {
 		return nil, err
 	}

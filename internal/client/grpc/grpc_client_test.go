@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"github.com/lucperkins/strato/internal/config"
 	"testing"
 
 	"github.com/lucperkins/strato"
@@ -10,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var goodClientCfg = &strato.ClientConfig{
+var goodClientCfg = &config.ClientConfig{
 	Address: "localhost:2222",
 }
 
@@ -23,7 +24,7 @@ func TestGrpcClient(t *testing.T) {
 		is.NoError(err)
 		is.NotNil(cl)
 
-		noAddressCfg := &strato.ClientConfig{
+		noAddressCfg := &config.ClientConfig{
 			Address: "",
 		}
 
@@ -31,7 +32,7 @@ func TestGrpcClient(t *testing.T) {
 		is.Error(err, strato.ErrNoAddress)
 		is.Nil(noClient)
 
-		badAddressCfg := &strato.ClientConfig{
+		badAddressCfg := &config.ClientConfig{
 			Address: "1:2:3",
 		}
 		badCl, err := NewClient(badAddressCfg)

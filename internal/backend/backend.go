@@ -5,6 +5,7 @@ import (
 	"github.com/lucperkins/strato/internal/backend/disk"
 	"github.com/lucperkins/strato/internal/backend/memory"
 	"github.com/lucperkins/strato/internal/backend/redis"
+	"github.com/lucperkins/strato/internal/config"
 	"github.com/lucperkins/strato/internal/services/cache"
 	"github.com/lucperkins/strato/internal/services/counter"
 	"github.com/lucperkins/strato/internal/services/kv"
@@ -33,7 +34,7 @@ var (
 	_ Interface = (*redis.Redis)(nil)
 )
 
-func NewBackend(cfg *strato.ServerConfig) (*Backend, error) {
+func NewBackend(cfg *config.ServerConfig) (*Backend, error) {
 	switch cfg.Backend {
 	case "disk":
 		backend, err := disk.NewDiskBackend()

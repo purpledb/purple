@@ -30,31 +30,31 @@ func NewRedisBackend(addr string) (*Redis, error) {
 		addr = defaultUrl
 	}
 
-	cache, err := newRedisClient(addr, 0)
+	cacheCl, err := newRedisClient(addr, 0)
 	if err != nil {
 		return nil, err
 	}
 
-	counters, err := newRedisClient(addr, 1)
+	counterCl, err := newRedisClient(addr, 1)
 	if err != nil {
 		return nil, err
 	}
 
-	kv, err := newRedisClient(addr, 2)
+	kvCl, err := newRedisClient(addr, 2)
 	if err != nil {
 		return nil, err
 	}
 
-	sets, err := newRedisClient(addr, 3)
+	setCl, err := newRedisClient(addr, 3)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Redis{
-		cache:    cache,
-		counters: counters,
-		kv:       kv,
-		sets:     sets,
+		cache:    cacheCl,
+		counters: counterCl,
+		kv:       kvCl,
+		sets:     setCl,
 	}, nil
 }
 

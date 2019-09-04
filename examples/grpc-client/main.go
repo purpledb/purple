@@ -1,18 +1,17 @@
 package main
 
 import (
+	"github.com/lucperkins/strato/internal/config"
 	"log"
 	"time"
 
 	"github.com/lucperkins/strato/internal/services/kv"
 
 	"github.com/lucperkins/strato/internal/client/grpc"
-
-	"github.com/lucperkins/strato"
 )
 
 func main() {
-	clientCfg := &strato.ClientConfig{
+	clientCfg := &config.ClientConfig{
 		Address: "localhost:8080",
 	}
 

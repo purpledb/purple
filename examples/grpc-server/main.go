@@ -1,17 +1,16 @@
 package main
 
 import (
+	"github.com/lucperkins/strato/internal/config"
 	"log"
 
 	"github.com/lucperkins/strato/internal/server/grpc"
-
-	"github.com/lucperkins/strato"
 )
 
 func main() {
 	port := 8080
 
-	srvCfg := &strato.ServerConfig{
+	srvCfg := &config.ServerConfig{
 		Port:    port,
 		Backend: "disk",
 		Debug:   true,

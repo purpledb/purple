@@ -12,7 +12,6 @@ var (
 	ErrNoCacheItem          = CacheError{"no item found"}
 	ErrNoCacheKey           = CacheError{"no cache key specified"}
 	ErrNoCacheValue         = CacheError{"no cache value specified"}
-	ErrNoBucket             = KVError{"no bucket specified"}
 	ErrNoKey                = KVError{"no key specified"}
 	ErrNoValue              = KVError{"no value specified"}
 	ErrNoSet                = SetError{"set does not exist"}

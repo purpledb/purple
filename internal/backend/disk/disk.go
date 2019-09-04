@@ -1,6 +1,8 @@
 package disk
 
 import (
+	"github.com/lucperkins/strato/internal/fs"
+	"github.com/lucperkins/strato/internal/oops"
 	"os"
 	"path/filepath"
 	"time"
@@ -10,8 +12,6 @@ import (
 	"github.com/lucperkins/strato/internal/services/kv"
 	"github.com/lucperkins/strato/internal/services/set"
 
-	"github.com/lucperkins/strato"
-
 	"github.com/lucperkins/strato/internal/data"
 
 	"github.com/dgraph-io/badger"
@@ -20,7 +20,7 @@ import (
 const rootDataDir = "tmp/strato"
 
 type Disk struct {
-	cache, counters, kv, sets *badger.DB
+	cache, counter, kv, set *badger.DB
 }
 
 var (
@@ -31,46 +31,44 @@ var (
 )
 
 func NewDiskBackend() (*Disk, error) {
-	cache, err := createDb("cache")
+	cacheDb, err := createDb("cache")
 	if err != nil {
 		return nil, err
 	}
 
-	counters, err := createDb("counters")
+	counterDb, err := createDb("counter")
 	if err != nil {
 		return nil, err
 	}
 
-	kv, err := createDb("kv")
+	kvDb, err := createDb("kv")
 	if err != nil {
 		return nil, err
 	}
 
-	sets, err := createDb("sets")
+	setDb, err := createDb("set")
 	if err != nil {
 		return nil, err
 	}
 
 	return &Disk{
-		cache:    cache,
-		counters: counters,
-		kv:       kv,
-		sets:     sets,
+		cache:   cacheDb,
+		counter: counterDb,
+		kv:      kvDb,
+		set:     setDb,
 	}, nil
 }
 
-func createDb(dir string) (*badger.DB, error) {
+func createDb(subDir string) (*badger.DB, error) {
 	here, err := os.Getwd()
 	if err != nil {
 		return nil, err
 	}
 
-	path := filepath.Join(here, rootDataDir, dir)
+	path := filepath.Join(here, rootDataDir, subDir)
 
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		if err := os.MkdirAll(path, os.ModePerm); err != nil {
-			return nil, err
-		}
+	if err := fs.MkDirIfNotExists(path); err != nil {
+		return nil, err
 	}
 
 	return badger.Open(badger.DefaultOptions(path))
@@ -79,7 +77,7 @@ func createDb(dir string) (*badger.DB, error) {
 // Interface methods
 func (d *Disk) Close() error {
 	for _, bk := range []*badger.DB{
-		d.cache, d.counters, d.kv, d.sets,
+		d.cache, d.counter, d.kv, d.set,
 	} {
 		if err := bk.Close(); err != nil {
 			return err
@@ -91,7 +89,7 @@ func (d *Disk) Close() error {
 
 func (d *Disk) Flush() error {
 	for _, bk := range []*badger.DB{
-		d.cache, d.counters, d.kv, d.sets,
+		d.cache, d.counter, d.kv, d.set,
 	} {
 		if err := bk.DropAll(); err != nil {
 			return err
@@ -108,7 +106,11 @@ func dbRead(db *badger.DB, key []byte) ([]byte, error) {
 	if err := db.View(func(tx *badger.Txn) error {
 		it, err := tx.Get(key)
 		if err != nil {
-			return err
+			if err == badger.ErrKeyNotFound {
+				return oops.NotFound(string(key))
+			} else {
+				return err
+			}
 		}
 
 		val, err := it.ValueCopy(nil)
@@ -153,7 +155,7 @@ func (d *Disk) CacheGet(key string) (string, error) {
 	val, err := dbRead(d.cache, k)
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
-			return "", strato.NotFound(key)
+			return "", oops.NotFound(key)
 		} else {
 			return "", err
 		}
@@ -174,7 +176,7 @@ func (d *Disk) CacheSet(key string, value string, ttl int32) error {
 func (d *Disk) CounterGet(key string) (int64, error) {
 	k := []byte(key)
 
-	val, err := dbRead(d.counters, k)
+	val, err := dbRead(d.counter, k)
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
 			return 0, nil
@@ -189,12 +191,12 @@ func (d *Disk) CounterGet(key string) (int64, error) {
 func (d *Disk) CounterIncrement(key string, increment int64) error {
 	k := []byte(key)
 
-	val, err := dbRead(d.counters, k)
+	val, err := dbRead(d.counter, k)
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
 			v := data.Int64ToBytes(increment)
 
-			return dbWrite(d.counters, k, v)
+			return dbWrite(d.counter, k, v)
 		} else {
 			return err
 		}
@@ -206,7 +208,7 @@ func (d *Disk) CounterIncrement(key string, increment int64) error {
 
 	newVal := data.Int64ToBytes(count)
 
-	return dbWrite(d.counters, k, newVal)
+	return dbWrite(d.counter, k, newVal)
 }
 
 // KV
@@ -215,7 +217,11 @@ func (d *Disk) KVGet(key string) (*kv.Value, error) {
 
 	val, err := dbRead(d.kv, k)
 	if err != nil {
-		return nil, err
+		if err == badger.ErrKeyNotFound {
+			return nil, oops.NotFound(key)
+		} else {
+			return nil, err
+		}
 	}
 
 	return &kv.Value{
@@ -238,7 +244,7 @@ func (d *Disk) KVDelete(key string) error {
 func (d *Disk) GetSet(key string) ([]string, error) {
 	k := []byte(key)
 
-	val, err := dbRead(d.sets, k)
+	val, err := dbRead(d.set, k)
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
 			return []string{}, nil
@@ -253,7 +259,7 @@ func (d *Disk) GetSet(key string) ([]string, error) {
 func (d *Disk) AddToSet(key, item string) ([]string, error) {
 	k := []byte(key)
 
-	val, err := dbRead(d.sets, k)
+	val, err := dbRead(d.set, k)
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
 			s := []string{item}
@@ -262,7 +268,7 @@ func (d *Disk) AddToSet(key, item string) ([]string, error) {
 				return nil, err
 			}
 
-			if err := dbWrite(d.sets, k, value); err != nil {
+			if err := dbWrite(d.set, k, value); err != nil {
 				return nil, err
 			}
 
@@ -284,7 +290,7 @@ func (d *Disk) AddToSet(key, item string) ([]string, error) {
 		return nil, err
 	}
 
-	if err := dbWrite(d.sets, k, value); err != nil {
+	if err := dbWrite(d.set, k, value); err != nil {
 		return nil, err
 	}
 
@@ -294,7 +300,7 @@ func (d *Disk) AddToSet(key, item string) ([]string, error) {
 func (d *Disk) RemoveFromSet(key, item string) ([]string, error) {
 	k := []byte(key)
 
-	val, err := dbRead(d.sets, k)
+	val, err := dbRead(d.set, k)
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
 			return []string{}, nil
@@ -319,7 +325,7 @@ func (d *Disk) RemoveFromSet(key, item string) ([]string, error) {
 		return nil, err
 	}
 
-	if err := dbWrite(d.sets, k, value); err != nil {
+	if err := dbWrite(d.set, k, value); err != nil {
 		return nil, err
 	}
 
