@@ -13,7 +13,7 @@ import (
 
 var goodServerCfg = &config.ServerConfig{
 	Port:    2222,
-	Backend: "disk",
+	Backend: "memory",
 }
 
 func TestGrpcServer(t *testing.T) {

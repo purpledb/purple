@@ -1,6 +1,7 @@
 package disk
 
 import (
+	"github.com/lucperkins/strato/internal/oops"
 	"os"
 	"path/filepath"
 	"testing"
@@ -31,7 +32,7 @@ func TestGenericDiskFunctions(t *testing.T) {
 	value := []byte("some value")
 
 	val, err := dbRead(db, key)
-	is.Equal(err, badger.ErrKeyNotFound)
+	is.True(oops.IsNotFound(err))
 	is.Nil(val)
 
 	is.NoError(dbWrite(db, key, value))
@@ -43,7 +44,7 @@ func TestGenericDiskFunctions(t *testing.T) {
 	is.NoError(dbDelete(db, key))
 
 	val, err = dbRead(db, key)
-	is.Equal(err, badger.ErrKeyNotFound)
+	is.True(oops.IsNotFound(err))
 	is.Nil(val)
 
 	clean(is)
@@ -130,22 +131,30 @@ func TestDiskSet(t *testing.T) {
 
 	disk := setup(is)
 
-	key := "some-set"
+	key, item := "some-set", "some-item"
 
 	set, err := disk.GetSet(key)
 	is.NoError(err)
 	is.Empty(set)
 
-	is.NoError(disk.AddToSet(key, "some-item"))
+	set, err = disk.AddToSet(key, item)
+	is.NoError(err)
+	is.Len(set, 1)
+	is.Equal(set[0], item)
 
 	set, err = disk.GetSet(key)
 	is.NoError(err)
 	is.Len(set, 1)
-	is.Equal(set[0], "some-item")
+	is.Equal(set[0], item)
 
-	is.NoError(disk.RemoveFromSet(key, "never-existed-anyway"))
+	set, err = disk.RemoveFromSet(key, item)
+	is.NoError(err)
+	is.Len(set, 1)
 
-	is.NoError(disk.RemoveFromSet(key, "some-item"))
+	set, err = disk.RemoveFromSet(key, item)
+	is.NoError(err)
+	is.Empty(set)
+
 	set, err = disk.GetSet(key)
 	is.NoError(err)
 	is.Empty(set)
@@ -179,6 +188,8 @@ func TestDiskHelperFunctions(t *testing.T) {
 }
 
 func setup(is *assert.Assertions) *Disk {
+	clean(is)
+
 	disk, err := NewDiskBackend()
 	is.NoError(err)
 	is.NotNil(disk)
