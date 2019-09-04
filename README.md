@@ -10,7 +10,18 @@ An all-in-one data service with support for:
 
 Strato is meant to abstract away complex database interfaces (Redis, DynamoDB, Mongo, memory, disk, etc.) in favor of a unified set of dead-simple operations (see the full [list of operations](#operations) below).
 
-You can run Strato as a [gRPC server](#grpc-server) or an [HTTP server](#http-server) (both expose the same interfaces). There's currently a [gRPC client](#grpc-client) for Go only but in principle gRPC clients could be added for other languages.
+You can run Strato as a [gRPC server](#grpc-server) or an [HTTP server](#http-server) (both expose the same interfaces). There's currently a [gRPC client](#grpc-client) for Go only but in principle gRPC clients could be added for other languages. There are also three [backends](#backends) available: memory, disk, and [Redis](https://redis.io).
+
+Since any server type can work with any backend, the following server/backend combinations are currently supported:
+
+Server | Backend
+:------|:-------
+gRPC | Memory
+gRPC | Disk
+gRPC | Redis
+HTTP | Memory
+HTTP | Disk
+HTTP | Redis
 
 ## The project
 
