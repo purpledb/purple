@@ -132,31 +132,31 @@ func TestDiskSet(t *testing.T) {
 
 	key, item := "some-set", "some-item"
 
-	set, err := disk.GetSet(key)
+	set, err := disk.SetGet(key)
 	is.NoError(err)
 	is.Empty(set)
 
-	set, err = disk.AddToSet(key, item)
+	set, err = disk.SetAdd(key, item)
 	is.NoError(err)
 	is.Len(set, 1)
 
-	set, err = disk.GetSet(key)
+	set, err = disk.SetGet(key)
 	is.NoError(err)
 	is.Len(set, 1)
 
-	set, err = disk.RemoveFromSet(key, item)
+	set, err = disk.SetRemove(key, item)
 	is.NoError(err)
 	is.Empty(set)
 
-	set, err = disk.RemoveFromSet(key, item)
+	set, err = disk.SetRemove(key, item)
 	is.NoError(err)
 	is.Empty(set)
 
-	set, err = disk.GetSet(key)
+	set, err = disk.SetGet(key)
 	is.NoError(err)
 	is.Empty(set)
 
-	set, err = disk.GetSet("no-set-here")
+	set, err = disk.SetGet("no-set-here")
 	is.NoError(err)
 	is.Empty(set)
 

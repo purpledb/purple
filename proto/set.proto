@@ -16,7 +16,7 @@ message SetResponse {
 }
 
 service Set {
-    rpc GetSet (GetSetRequest) returns (SetResponse);
-    rpc AddToSet (ModifySetRequest) returns (SetResponse);
-    rpc RemoveFromSet (ModifySetRequest) returns (SetResponse);
+    rpc SetGet (GetSetRequest) returns (SetResponse);
+    rpc SetAdd (ModifySetRequest) returns (SetResponse);
+    rpc SetRemove (ModifySetRequest) returns (SetResponse);
 }

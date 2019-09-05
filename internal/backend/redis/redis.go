@@ -164,11 +164,11 @@ func (r *Redis) KVDelete(key string) error {
 
 // Set operations
 
-func (r *Redis) GetSet(set string) ([]string, error) {
+func (r *Redis) SetGet(set string) ([]string, error) {
 	return r.sets.SMembers(set).Result()
 }
 
-func (r *Redis) AddToSet(set, item string) ([]string, error) {
+func (r *Redis) SetAdd(set, item string) ([]string, error) {
 	if err := r.sets.SAdd(set, item).Err(); err != nil {
 		return nil, err
 	}
@@ -176,7 +176,7 @@ func (r *Redis) AddToSet(set, item string) ([]string, error) {
 	return r.sets.SMembers(set).Result()
 }
 
-func (r *Redis) RemoveFromSet(set, item string) ([]string, error) {
+func (r *Redis) SetRemove(set, item string) ([]string, error) {
 	if err := r.sets.SRem(set, item).Err(); err != nil {
 		return nil, err
 	}

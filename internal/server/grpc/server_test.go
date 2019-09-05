@@ -126,7 +126,7 @@ func TestGrpcServer(t *testing.T) {
 			Set: "set1",
 		}
 
-		set, err := srv.GetSet(ctx, getReq)
+		set, err := srv.SetGet(ctx, getReq)
 		is.NoError(err)
 		is.NotNil(set)
 		is.Equal(set.Items, []string{})
@@ -136,19 +136,19 @@ func TestGrpcServer(t *testing.T) {
 			Item: "item1",
 		}
 
-		empty, err := srv.AddToSet(ctx, modifyReq)
+		empty, err := srv.SetAdd(ctx, modifyReq)
 		is.NoError(err)
 		is.NotNil(empty)
 
-		set, err = srv.GetSet(ctx, getReq)
+		set, err = srv.SetGet(ctx, getReq)
 		is.NoError(err)
 		is.Equal(set.Items, []string{"item1"})
 
-		empty, err = srv.RemoveFromSet(ctx, modifyReq)
+		empty, err = srv.SetRemove(ctx, modifyReq)
 		is.NoError(err)
 		is.NotNil(empty)
 
-		set, err = srv.GetSet(ctx, getReq)
+		set, err = srv.SetGet(ctx, getReq)
 		is.NoError(err)
 		is.Equal(set.Items, []string{})
 	})

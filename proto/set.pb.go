@@ -156,7 +156,7 @@ func init() {
 func init() { proto.RegisterFile("set.proto", fileDescriptor_2d650fd95c5da449) }
 
 var fileDescriptor_2d650fd95c5da449 = []byte{
-	// 191 bytes of a gzipped FileDescriptorProto
+	// 187 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2c, 0x4e, 0x2d, 0xd1,
 	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x05, 0x53, 0x4a, 0x8a, 0x5c, 0xbc, 0xee, 0xa9, 0x25,
 	0xc1, 0xa9, 0x25, 0x41, 0xa9, 0x85, 0xa5, 0xa9, 0xc5, 0x25, 0x42, 0x02, 0x5c, 0xcc, 0xc5, 0xa9,
@@ -164,11 +164,11 @@ var fileDescriptor_2d650fd95c5da449 = []byte{
 	0x4a, 0x66, 0x5a, 0x25, 0x3e, 0x55, 0x42, 0x42, 0x5c, 0x2c, 0x99, 0x25, 0xa9, 0xb9, 0x12, 0x4c,
 	0x60, 0x21, 0x30, 0x5b, 0x49, 0x99, 0x8b, 0x1b, 0xac, 0xa7, 0xb8, 0x20, 0x3f, 0xaf, 0x38, 0x55,
 	0x48, 0x84, 0x8b, 0x15, 0x24, 0x5c, 0x2c, 0xc1, 0xa8, 0xc0, 0xac, 0xc1, 0x19, 0x04, 0xe1, 0x18,
-	0x6d, 0x60, 0xe4, 0x62, 0x0e, 0x4e, 0x2d, 0x11, 0x32, 0xe2, 0x62, 0x83, 0xb8, 0x44, 0x48, 0x04,
-	0xe2, 0x44, 0x3d, 0x14, 0x87, 0x49, 0x09, 0x41, 0x45, 0x91, 0x4d, 0x34, 0xe7, 0xe2, 0x70, 0x4c,
-	0x49, 0x09, 0xc9, 0x07, 0xe9, 0x12, 0x87, 0xca, 0xa3, 0xbb, 0x15, 0xab, 0x46, 0x1b, 0x2e, 0xde,
-	0xa0, 0xd4, 0xdc, 0xfc, 0xb2, 0x54, 0xb7, 0xa2, 0xfc, 0x5c, 0x52, 0x75, 0x27, 0xb1, 0x81, 0x85,
-	0x8c, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0x0e, 0x2f, 0x7c, 0x63, 0x4f, 0x01, 0x00, 0x00,
+	0xad, 0x62, 0xe4, 0x62, 0x0e, 0x4e, 0x2d, 0x11, 0x32, 0xe2, 0x62, 0x0b, 0x4e, 0x2d, 0x71, 0x4f,
+	0x2d, 0x11, 0x12, 0x81, 0x38, 0x51, 0x0f, 0xc5, 0x61, 0x52, 0x42, 0x50, 0x51, 0x64, 0x13, 0x4d,
+	0xc1, 0x7a, 0x1c, 0x53, 0x52, 0x84, 0xc4, 0xa1, 0xb2, 0xe8, 0x2e, 0xc5, 0xaa, 0xcd, 0x82, 0x8b,
+	0x13, 0xcc, 0xcd, 0xcd, 0x2f, 0x4b, 0x25, 0x49, 0x67, 0x12, 0x1b, 0x58, 0xc8, 0x18, 0x10, 0x00,
+	0x00, 0xff, 0xff, 0xbc, 0x2a, 0xb9, 0x2f, 0x49, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -183,9 +183,9 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type SetClient interface {
-	GetSet(ctx context.Context, in *GetSetRequest, opts ...grpc.CallOption) (*SetResponse, error)
-	AddToSet(ctx context.Context, in *ModifySetRequest, opts ...grpc.CallOption) (*SetResponse, error)
-	RemoveFromSet(ctx context.Context, in *ModifySetRequest, opts ...grpc.CallOption) (*SetResponse, error)
+	SetGet(ctx context.Context, in *GetSetRequest, opts ...grpc.CallOption) (*SetResponse, error)
+	SetAdd(ctx context.Context, in *ModifySetRequest, opts ...grpc.CallOption) (*SetResponse, error)
+	SetRemove(ctx context.Context, in *ModifySetRequest, opts ...grpc.CallOption) (*SetResponse, error)
 }
 
 type setClient struct {
@@ -196,27 +196,27 @@ func NewSetClient(cc *grpc.ClientConn) SetClient {
 	return &setClient{cc}
 }
 
-func (c *setClient) GetSet(ctx context.Context, in *GetSetRequest, opts ...grpc.CallOption) (*SetResponse, error) {
+func (c *setClient) SetGet(ctx context.Context, in *GetSetRequest, opts ...grpc.CallOption) (*SetResponse, error) {
 	out := new(SetResponse)
-	err := c.cc.Invoke(ctx, "/proto.Set/GetSet", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.Set/SetGet", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *setClient) AddToSet(ctx context.Context, in *ModifySetRequest, opts ...grpc.CallOption) (*SetResponse, error) {
+func (c *setClient) SetAdd(ctx context.Context, in *ModifySetRequest, opts ...grpc.CallOption) (*SetResponse, error) {
 	out := new(SetResponse)
-	err := c.cc.Invoke(ctx, "/proto.Set/AddToSet", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.Set/SetAdd", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *setClient) RemoveFromSet(ctx context.Context, in *ModifySetRequest, opts ...grpc.CallOption) (*SetResponse, error) {
+func (c *setClient) SetRemove(ctx context.Context, in *ModifySetRequest, opts ...grpc.CallOption) (*SetResponse, error) {
 	out := new(SetResponse)
-	err := c.cc.Invoke(ctx, "/proto.Set/RemoveFromSet", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.Set/SetRemove", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -225,65 +225,65 @@ func (c *setClient) RemoveFromSet(ctx context.Context, in *ModifySetRequest, opt
 
 // SetServer is the server API for Set service.
 type SetServer interface {
-	GetSet(context.Context, *GetSetRequest) (*SetResponse, error)
-	AddToSet(context.Context, *ModifySetRequest) (*SetResponse, error)
-	RemoveFromSet(context.Context, *ModifySetRequest) (*SetResponse, error)
+	SetGet(context.Context, *GetSetRequest) (*SetResponse, error)
+	SetAdd(context.Context, *ModifySetRequest) (*SetResponse, error)
+	SetRemove(context.Context, *ModifySetRequest) (*SetResponse, error)
 }
 
 func RegisterSetServer(s *grpc.Server, srv SetServer) {
 	s.RegisterService(&_Set_serviceDesc, srv)
 }
 
-func _Set_GetSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Set_SetGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SetServer).GetSet(ctx, in)
+		return srv.(SetServer).SetGet(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.Set/GetSet",
+		FullMethod: "/proto.Set/SetGet",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SetServer).GetSet(ctx, req.(*GetSetRequest))
+		return srv.(SetServer).SetGet(ctx, req.(*GetSetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Set_AddToSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Set_SetAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ModifySetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SetServer).AddToSet(ctx, in)
+		return srv.(SetServer).SetAdd(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.Set/AddToSet",
+		FullMethod: "/proto.Set/SetAdd",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SetServer).AddToSet(ctx, req.(*ModifySetRequest))
+		return srv.(SetServer).SetAdd(ctx, req.(*ModifySetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Set_RemoveFromSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Set_SetRemove_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ModifySetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SetServer).RemoveFromSet(ctx, in)
+		return srv.(SetServer).SetRemove(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.Set/RemoveFromSet",
+		FullMethod: "/proto.Set/SetRemove",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SetServer).RemoveFromSet(ctx, req.(*ModifySetRequest))
+		return srv.(SetServer).SetRemove(ctx, req.(*ModifySetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -293,16 +293,16 @@ var _Set_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*SetServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetSet",
-			Handler:    _Set_GetSet_Handler,
+			MethodName: "SetGet",
+			Handler:    _Set_SetGet_Handler,
 		},
 		{
-			MethodName: "AddToSet",
-			Handler:    _Set_AddToSet_Handler,
+			MethodName: "SetAdd",
+			Handler:    _Set_SetAdd_Handler,
 		},
 		{
-			MethodName: "RemoveFromSet",
-			Handler:    _Set_RemoveFromSet_Handler,
+			MethodName: "SetRemove",
+			Handler:    _Set_SetRemove_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

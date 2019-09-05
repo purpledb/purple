@@ -141,8 +141,8 @@ func (s *Server) KVDelete(_ context.Context, location *proto.Location) (*proto.E
 	return &proto.Empty{}, nil
 }
 
-func (s *Server) GetSet(_ context.Context, req *proto.GetSetRequest) (*proto.SetResponse, error) {
-	items, err := s.backend.GetSet(req.Set)
+func (s *Server) SetGet(_ context.Context, req *proto.GetSetRequest) (*proto.SetResponse, error) {
+	items, err := s.backend.SetGet(req.Set)
 	if err != nil {
 		return nil, err
 	}
@@ -152,8 +152,8 @@ func (s *Server) GetSet(_ context.Context, req *proto.GetSetRequest) (*proto.Set
 	}, nil
 }
 
-func (s *Server) AddToSet(_ context.Context, req *proto.ModifySetRequest) (*proto.SetResponse, error) {
-	items, err := s.backend.AddToSet(req.Set, req.Item)
+func (s *Server) SetAdd(_ context.Context, req *proto.ModifySetRequest) (*proto.SetResponse, error) {
+	items, err := s.backend.SetAdd(req.Set, req.Item)
 	if err != nil {
 		return nil, err
 	}
@@ -163,8 +163,8 @@ func (s *Server) AddToSet(_ context.Context, req *proto.ModifySetRequest) (*prot
 	}, nil
 }
 
-func (s *Server) RemoveFromSet(_ context.Context, req *proto.ModifySetRequest) (*proto.SetResponse, error) {
-	items, err := s.backend.RemoveFromSet(req.Set, req.Item)
+func (s *Server) SetRemove(_ context.Context, req *proto.ModifySetRequest) (*proto.SetResponse, error) {
+	items, err := s.backend.SetRemove(req.Set, req.Item)
 	if err != nil {
 		return nil, err
 	}

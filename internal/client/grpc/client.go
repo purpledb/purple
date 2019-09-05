@@ -178,7 +178,7 @@ func (c *GrpcClient) GetSet(set string) ([]string, error) {
 		Set: set,
 	}
 
-	res, err := c.setClient.GetSet(c.ctx, req)
+	res, err := c.setClient.SetGet(c.ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -192,7 +192,7 @@ func (c *GrpcClient) AddToSet(set, item string) error {
 		Item: item,
 	}
 
-	if _, err := c.setClient.AddToSet(c.ctx, req); err != nil {
+	if _, err := c.setClient.SetAdd(c.ctx, req); err != nil {
 		return err
 	}
 
@@ -205,7 +205,7 @@ func (c *GrpcClient) RemoveFromSet(set, item string) error {
 		Item: item,
 	}
 
-	if _, err := c.setClient.RemoveFromSet(c.ctx, req); err != nil {
+	if _, err := c.setClient.SetRemove(c.ctx, req); err != nil {
 		return err
 	}
 

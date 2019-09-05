@@ -95,33 +95,33 @@ func TestMemoryImpl(t *testing.T) {
 	t.Run("Set", func(t *testing.T) {
 		set, item1, item2 := "example-set", "example-item-1", "example-item-2"
 
-		is.Empty(mem.GetSet(set))
+		is.Empty(mem.SetGet(set))
 
-		s, err := mem.AddToSet(set, item1)
+		s, err := mem.SetAdd(set, item1)
 		is.NoError(err)
 		is.Len(s, 1)
 		is.Equal(s[0], item1)
 
-		is.NotEmpty(mem.GetSet(set))
+		is.NotEmpty(mem.SetGet(set))
 
-		s, err = mem.AddToSet(set, item2)
+		s, err = mem.SetAdd(set, item2)
 		is.NoError(err)
 		is.Len(s, 2)
 
-		s, err = mem.GetSet(set)
+		s, err = mem.SetGet(set)
 		is.Len(s, 2)
 
-		s, err = mem.RemoveFromSet(set, item1)
+		s, err = mem.SetRemove(set, item1)
 		is.NoError(err)
 		is.Len(s, 1)
 		is.Equal(s[0], item2)
 
-		s, err = mem.GetSet(set)
+		s, err = mem.SetGet(set)
 		is.NoError(err)
 		is.Len(s, 1)
 		is.Equal(s[0], item2)
 
-		s, err = mem.RemoveFromSet(set, item2)
+		s, err = mem.SetRemove(set, item2)
 		is.NoError(err)
 		is.Empty(s)
 	})

@@ -1,7 +1,7 @@
 package set
 
 type Set interface {
-	GetSet(set string) ([]string, error)
-	AddToSet(set, item string) ([]string, error)
-	RemoveFromSet(set, item string) ([]string, error)
+	SetGet(set string) ([]string, error)
+	SetAdd(set, item string) ([]string, error)
+	SetRemove(set, item string) ([]string, error)
 }

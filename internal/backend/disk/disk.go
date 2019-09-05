@@ -241,7 +241,7 @@ func (d *Disk) KVDelete(key string) error {
 }
 
 // Set
-func (d *Disk) GetSet(key string) ([]string, error) {
+func (d *Disk) SetGet(key string) ([]string, error) {
 	k := []byte(key)
 
 	val, err := dbRead(d.set, k)
@@ -256,7 +256,7 @@ func (d *Disk) GetSet(key string) ([]string, error) {
 	return data.BytesToSet(val)
 }
 
-func (d *Disk) AddToSet(key, item string) ([]string, error) {
+func (d *Disk) SetAdd(key, item string) ([]string, error) {
 	k := []byte(key)
 
 	val, err := dbRead(d.set, k)
@@ -297,7 +297,7 @@ func (d *Disk) AddToSet(key, item string) ([]string, error) {
 	return s, nil
 }
 
-func (d *Disk) RemoveFromSet(key, item string) ([]string, error) {
+func (d *Disk) SetRemove(key, item string) ([]string, error) {
 	k := []byte(key)
 
 	val, err := dbRead(d.set, k)
