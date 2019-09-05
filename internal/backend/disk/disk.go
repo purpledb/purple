@@ -140,7 +140,7 @@ func dbDelete(db *badger.DB, key []byte) error {
 	})
 }
 
-func dbSetEntry(db *badger.DB, key, value []byte, ttl time.Duration) error {
+func dbSetCacheEntry(db *badger.DB, key, value []byte, ttl time.Duration) error {
 	entry := badger.NewEntry(key, value).WithTTL(ttl)
 
 	return db.Update(func(tx *badger.Txn) error {
@@ -169,7 +169,7 @@ func (d *Disk) CacheSet(key string, value string, ttl int32) error {
 
 	t := time.Duration(ttl) * time.Second
 
-	return dbSetEntry(d.cache, k, v, t)
+	return dbSetCacheEntry(d.cache, k, v, t)
 }
 
 // Counter

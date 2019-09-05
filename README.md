@@ -55,20 +55,18 @@ See the [contributors guide](./CONTRIBUTING.md) for details.
 
 The table below lists the available [client operations](./client.go) for the Go client:
 
-Operation | Domain | Explanation
-:---------|:-------|:-----------
-`CacheGet(key string)` | Cache | Fetches the value of a key from the cache. Returns an error if the TTL has been exceeded.
-`CacheSet(key, value string, ttl int32)` | Cache | Sets the value associated with a key and assigns a TTL (the default is 5 seconds).
-`CounterIncrement(key string, amount int64)` | Counter | Increments a counter by the designated amount.
-`CounterGet(key string)` | Counter | Fetches the current value of a counter.
-`SetGet(set string)` | Set | Fetch the items currently in the specified set.
-`SetAdd(set, item string)` | Set | Add an item to the specified set and returns the resulting set.
-`SetRemove(set, item string)` | Set | Remove an item from the specified set and returns the resulting set.
-`KVGet(key string)` | KV | Gets the value associated with a key.
-`KVPut(key string, value *Value)` | KV | Sets the value associated with a key. The value is currently just a byte array payload but could be made more complex later (e.g. a payload plus a content type, metadata, etc.).
-`KVDelete(location *Location)` | KV | Deletes the value associated with a key.
-
-> The Go client is currently only for the gRPC interface.
+Operation | Service | Semantics
+:---------|:--------|:---------
+`CacheGet(key string)` | Cache | Fetches the value of a key from the cache or returns a not found error if the key doesn't exist or has expired.
+`CacheSet(key, value string, ttl int32)` | Cache | Sets the value associated with a key and assigns a TTL (the default is 5 seconds). Overwrites the value and TTL if the key already exists.
+`CounterIncrement(key string, amount int64)` | Counter | Increments a counter by the designated amount. Returns the new value of the counter or an error.
+`CounterGet(key string)` | Counter | Fetches the current value of a counter. Returns zero if the counter isn't found.
+`SetGet(set string)` | Set | Fetch the items currently in the specified set. Returns an empty string set (`[]string`) if the set isn't found.
+`SetAdd(set, item string)` | Set | Adds an item to the specified set and returns the resulting set.
+`SetRemove(set, item string)` | Set | Removes an item from the specified set and returns the resulting set. Returns an empty set isn't found or is already empty.
+`KVGet(key string)` | KV | Gets the value associated with a key or returns a not found error. The value is currently just a byte array payload but could be made more complex later (e.g. a payload plus a content type, metadata, etc.).
+`KVPut(key string, value *Value)` | KV | Sets the value associated with a key, overwriting any existing value.
+`KVDelete(key string)` | KV | Deletes the value associated with a key or returns a not found error.
 
 ## Backends
 
