@@ -3,9 +3,15 @@ services:
   strato:
     build:
       context: .
+      dockerfile: Dockerfile.grpc
       cache_from:
       - znly/protoc:0.4.0
       - golang:1.12.7
       - alpine:3.9.4
     ports:
     - 8080:8080
+    command: ["--backend", "redis", "--redis-url" , "redis:6379"]
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
