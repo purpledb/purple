@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/lucperkins/strato"
 	"github.com/lucperkins/strato/internal/services/kv"
 
 	"github.com/lucperkins/strato/internal/data"
@@ -59,7 +58,7 @@ func TestDiskCache(t *testing.T) {
 	ttl := int32(3600)
 
 	val, err := disk.CacheGet(key)
-	is.True(strato.IsNotFound(err))
+	is.True(oops.IsNotFound(err))
 	is.Empty(val)
 
 	is.NoError(disk.CacheSet(key, value, ttl))
@@ -147,7 +146,7 @@ func TestDiskSet(t *testing.T) {
 
 	set, err = disk.RemoveFromSet(key, item)
 	is.NoError(err)
-	is.Len(set, 1)
+	is.Empty(set)
 
 	set, err = disk.RemoveFromSet(key, item)
 	is.NoError(err)

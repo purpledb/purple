@@ -193,7 +193,7 @@ func (d *Disk) CounterIncrement(key string, increment int64) error {
 
 	val, err := dbRead(d.counter, k)
 	if err != nil {
-		if err == badger.ErrKeyNotFound {
+		if oops.IsNotFound(err) {
 			v := data.Int64ToBytes(increment)
 
 			return dbWrite(d.counter, k, v)
@@ -261,7 +261,7 @@ func (d *Disk) AddToSet(key, item string) ([]string, error) {
 
 	val, err := dbRead(d.set, k)
 	if err != nil {
-		if err == badger.ErrKeyNotFound {
+		if oops.IsNotFound(err) {
 			s := []string{item}
 			value, err := data.SetToBytes(s)
 			if err != nil {
@@ -326,6 +326,7 @@ func (d *Disk) RemoveFromSet(key, item string) ([]string, error) {
 	}
 
 	if err := dbWrite(d.set, k, value); err != nil {
+
 		return nil, err
 	}
 
