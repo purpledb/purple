@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/lucperkins/strato/internal/services/kv"
 	"log"
 
 	"github.com/lucperkins/strato"
@@ -41,4 +42,20 @@ func main() {
 	}
 
 	fmt.Println("Fetched counter:", fetchedValue)
+
+	// KV
+	kvKey, kvValue := "some-kv-key", &kv.Value{
+		Content: []byte("here is some content"),
+	}
+
+	if err := client.KVPut(kvKey, kvValue); err != nil {
+		log.Fatal(err)
+	}
+
+	fetched, err := client.KVGet(kvKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Fetched KV:", string(fetched.Content))
 }

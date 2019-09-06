@@ -3,6 +3,8 @@ package strato
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/lucperkins/strato/internal/services/counter"
+	"github.com/lucperkins/strato/internal/services/kv"
 	"net/http"
 	"strconv"
 
@@ -15,7 +17,11 @@ type HttpClient struct {
 	cl      *resty.Client
 }
 
-var _ cache.Cache = (*HttpClient)(nil)
+var (
+	_ cache.Cache     = (*HttpClient)(nil)
+	_ counter.Counter = (*HttpClient)(nil)
+	//_ kv.KV           = (*HttpClient)(nil)
+)
 
 func NewHttpClient(cfg *ClientConfig) *HttpClient {
 	cl := resty.New()
@@ -115,6 +121,59 @@ func (c *HttpClient) CounterIncrement(key string, increment int64) error {
 	return nil
 }
 
+// KV
+func (c *HttpClient) KVGet(key string) (*kv.Value, error) {
+	type value struct {
+		Value []byte `json:"value"`
+	}
+
+	var val value
+
+	url := c.kvKeyUrl(key)
+
+	res, err := c.cl.R().
+		Get(url)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode() != http.StatusOK {
+		return nil, fmt.Errorf("expected status code 200, got %d", res.StatusCode())
+	}
+
+	if err := json.Unmarshal(res.Body(), &val); err != nil {
+		return nil, err
+	}
+
+	return &kv.Value{
+		Content: val.Value,
+	}, nil
+}
+
+func (c *HttpClient) KVPut(key string, value *kv.Value) error {
+	js := map[string][]byte{
+		"content": value.Content,
+	}
+
+	url := c.kvKeyUrl(key)
+
+	res, err := c.cl.R().
+		SetBody(js).
+		Put(url)
+
+	if err != nil {
+		return err
+	}
+
+	if res.StatusCode() != http.StatusNoContent {
+		fmt.Println(res.String())
+		return fmt.Errorf("expected status code 204, got %d", res.StatusCode())
+	}
+
+	return nil
+}
+
 // Helpers
 func keyUrl(root, service, key string) string {
 	return fmt.Sprintf("%s/%s/%s", root, service, key)
@@ -126,6 +185,10 @@ func (c *HttpClient) cacheKeyUrl(key string) string {
 
 func (c *HttpClient) counterKeyUrl(key string) string {
 	return keyUrl(c.rootUrl, "counters", key)
+}
+
+func (c *HttpClient) kvKeyUrl(key string) string {
+	return keyUrl(c.rootUrl, "kv", key)
 }
 
 func int32ToString(i int32) string {

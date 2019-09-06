@@ -60,23 +60,34 @@ func getIncr(c *gin.Context) int64 {
 	return c.MustGet("increment").(int64)
 }
 
+type valJs struct {
+	Content string `json:"content"`
+}
+
 func SetValue(c *gin.Context) {
-	valRaw := c.Query("value")
-	if valRaw == "" {
+	var js valJs
+
+	if err := c.ShouldBind(&js); err != nil {
 		res := gin.H{
-			"error": "no value supplied",
+			"error": err.Error(),
 		}
 		c.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 
-	val := []byte(valRaw)
+	if js.Content == "" {
+		res := gin.H{
+			"error": "content cannot be empty",
+		}
+		c.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
 
-	c.Set("value", val)
+	c.Set("value", &js)
 }
 
-func getValue(c *gin.Context) []byte {
-	return c.MustGet("value").([]byte)
+func getValue(c *gin.Context) *valJs {
+	return c.MustGet("value").(*valJs)
 }
 
 func SetItem(c *gin.Context) {
