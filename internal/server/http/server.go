@@ -2,8 +2,9 @@ package http
 
 import (
 	"fmt"
-	"github.com/lucperkins/strato"
 	"net/http"
+
+	"github.com/lucperkins/strato"
 
 	"github.com/lucperkins/strato/internal/server/http/handler"
 

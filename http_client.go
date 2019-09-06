@@ -3,10 +3,11 @@ package strato
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/go-resty/resty/v2"
-	"github.com/lucperkins/strato/internal/services/cache"
 	"net/http"
 	"strconv"
+
+	"github.com/go-resty/resty/v2"
+	"github.com/lucperkins/strato/internal/services/cache"
 )
 
 type HttpClient struct {
@@ -25,10 +26,7 @@ func NewHttpClient(cfg *ClientConfig) *HttpClient {
 	}
 }
 
-func (c *HttpClient) cacheKeyUrl(key string) string {
-	return fmt.Sprintf("%s/cache/%s", c.rootUrl, key)
-}
-
+// Cache operations
 func (c *HttpClient) CacheGet(key string) (string, error) {
 	type value struct {
 		Value string `json:"value"`
@@ -71,7 +69,69 @@ func (c *HttpClient) CacheSet(key, value string, ttl int32) error {
 	return nil
 }
 
+// Counter operations
+func (c *HttpClient) CounterGet(key string) (int64, error) {
+	type value struct {
+		Value int64 `json:"value"`
+	}
+
+	var val value
+
+	url := c.counterKeyUrl(key)
+
+	res, err := c.cl.R().
+		Get(url)
+
+	if err != nil {
+		return 0, err
+	}
+
+	if res.StatusCode() != http.StatusOK {
+		return 0, fmt.Errorf("expected status code 200, got %d", res.StatusCode())
+	}
+
+	if err := json.Unmarshal(res.Body(), &val); err != nil {
+		return 0, err
+	}
+
+	return val.Value, nil
+}
+
+func (c *HttpClient) CounterIncrement(key string, increment int64) error {
+	url := c.counterKeyUrl(key)
+
+	res, err := c.cl.R().
+		SetQueryParam("increment", int64ToString(increment)).
+		Put(url)
+
+	if err != nil {
+		return err
+	}
+
+	if res.StatusCode() != http.StatusNoContent {
+		return fmt.Errorf("expected status code 204, got %d", res.StatusCode())
+	}
+
+	return nil
+}
+
 // Helpers
+func keyUrl(root, service, key string) string {
+	return fmt.Sprintf("%s/%s/%s", root, service, key)
+}
+
+func (c *HttpClient) cacheKeyUrl(key string) string {
+	return keyUrl(c.rootUrl, "cache", key)
+}
+
+func (c *HttpClient) counterKeyUrl(key string) string {
+	return keyUrl(c.rootUrl, "counters", key)
+}
+
 func int32ToString(i int32) string {
 	return strconv.FormatInt(int64(i), 10)
+}
+
+func int64ToString(i int64) string {
+	return strconv.FormatInt(i, 10)
 }

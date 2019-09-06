@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -36,12 +37,27 @@ func getTtl(c *gin.Context) int32 {
 func SetIncr(c *gin.Context) {
 	incrRaw := c.Query("increment")
 	if incrRaw == "" {
-
+		res := gin.H{
+			"error": "no increment specified",
+		}
+		c.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
 	}
+
+	incr, err := strconv.ParseInt(incrRaw, 10, 64)
+	if err != nil {
+		res := gin.H{
+			"error": fmt.Sprintf("could not parse %s into an integer", incrRaw),
+		}
+		c.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	c.Set("increment", incr)
 }
 
 func getIncr(c *gin.Context) int64 {
-	return c.MustGet("incr").(int64)
+	return c.MustGet("increment").(int64)
 }
 
 func SetValue(c *gin.Context) {

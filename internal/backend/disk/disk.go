@@ -1,12 +1,12 @@
 package disk
 
 import (
-	"github.com/lucperkins/strato"
-	"github.com/lucperkins/strato/internal/fs"
+	"github.com/lucperkins/strato/internal/util"
 	"os"
 	"path/filepath"
 	"time"
 
+	"github.com/lucperkins/strato"
 	"github.com/lucperkins/strato/internal/services/cache"
 	"github.com/lucperkins/strato/internal/services/counter"
 	"github.com/lucperkins/strato/internal/services/kv"
@@ -67,7 +67,7 @@ func createDb(subDir string) (*badger.DB, error) {
 
 	path := filepath.Join(here, rootDataDir, subDir)
 
-	if err := fs.MkDirIfNotExists(path); err != nil {
+	if err := util.MkDirIfNotExists(path); err != nil {
 		return nil, err
 	}
 

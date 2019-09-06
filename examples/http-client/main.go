@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/lucperkins/strato"
 	"log"
+
+	"github.com/lucperkins/strato"
 )
 
 func main() {
@@ -11,9 +12,10 @@ func main() {
 		Address: "http://localhost:8081",
 	}
 
-	cacheKey, cacheValue := "cache-key", "here-is-a-cache-value"
-
 	client := strato.NewHttpClient(clientCfg)
+
+	// Cache
+	cacheKey, cacheValue := "cache-key", "here-is-a-cache-value"
 
 	if err := client.CacheSet(cacheKey, cacheValue, 3600); err != nil {
 		log.Fatal(err)
@@ -24,5 +26,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Print("Value:", val)
+	fmt.Println("Value:", val)
+
+	// Counter
+	counter, increment := "player1-score", int64(2500)
+
+	if err := client.CounterIncrement(counter, increment); err != nil {
+		log.Fatal(err)
+	}
+
+	fetchedValue, err := client.CounterGet(counter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Fetched counter:", fetchedValue)
 }

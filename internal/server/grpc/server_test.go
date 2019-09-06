@@ -2,8 +2,9 @@ package grpc
 
 import (
 	"context"
-	"github.com/lucperkins/strato"
 	"testing"
+
+	"github.com/lucperkins/strato"
 
 	"github.com/lucperkins/strato/proto"
 	"github.com/stretchr/testify/assert"

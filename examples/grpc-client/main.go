@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/lucperkins/strato"
 	"log"
 	"time"
+
+	"github.com/lucperkins/strato"
 
 	"github.com/lucperkins/strato/internal/services/kv"
 )
