@@ -62,4 +62,28 @@ func main() {
 	if err := client.KVDelete(kvKey); err != nil {
 		log.Fatalf("Failed to delete KV key: %v", err)
 	}
+
+	// Set
+	set := "fruits"
+
+	s, err := client.SetGet(set)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Initial set:", s)
+
+	s, err = client.SetAdd(set, "apple")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("New set:", s)
+
+	s, err = client.SetRemove(set, "apple")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("New set:", s)
 }

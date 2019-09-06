@@ -20,7 +20,8 @@ type HttpClient struct {
 var (
 	_ cache.Cache     = (*HttpClient)(nil)
 	_ counter.Counter = (*HttpClient)(nil)
-	//_ kv.KV           = (*HttpClient)(nil)
+	_ kv.KV           = (*HttpClient)(nil)
+	//_ set.Set         = (*HttpClient)(nil)
 )
 
 func NewHttpClient(cfg *ClientConfig) *HttpClient {
@@ -190,6 +191,83 @@ func (c *HttpClient) KVDelete(key string) error {
 	return nil
 }
 
+type setResponse struct {
+	Items []string `json:"items"`
+	Set   string   `json:"set"`
+}
+
+// Set
+func (c *HttpClient) SetGet(key string) ([]string, error) {
+	var js setResponse
+
+	url := c.setKeyUrl(key)
+
+	res, err := c.cl.R().
+		Get(url)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode() != http.StatusOK {
+		return nil, fmt.Errorf("expected status code 200, got %d", res.StatusCode())
+	}
+
+	if err := json.Unmarshal(res.Body(), &js); err != nil {
+		return nil, err
+	}
+
+	return js.Items, nil
+}
+
+func (c *HttpClient) SetAdd(key, item string) ([]string, error) {
+	url := c.setKeyUrl(key)
+
+	var js setResponse
+
+	res, err := c.cl.R().
+		SetQueryParam("item", item).
+		Put(url)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode() != http.StatusOK {
+		return nil, fmt.Errorf("expected status code 200, got %d", res.StatusCode())
+	}
+
+	if err := json.Unmarshal(res.Body(), &js); err != nil {
+		return nil, err
+	}
+
+	return js.Items, nil
+}
+
+func (c *HttpClient) SetRemove(key, item string) ([]string, error) {
+	url := c.setKeyUrl(key)
+
+	var js setResponse
+
+	res, err := c.cl.R().
+		SetQueryParam("item", item).
+		Delete(url)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode() != http.StatusOK {
+		return nil, fmt.Errorf("expected status code 200, got %d", res.StatusCode())
+	}
+
+	if err := json.Unmarshal(res.Body(), &js); err != nil {
+		return nil, err
+	}
+
+	return js.Items, nil
+}
+
 // Helpers
 func keyUrl(root, service, key string) string {
 	return fmt.Sprintf("%s/%s/%s", root, service, key)
@@ -205,6 +283,10 @@ func (c *HttpClient) counterKeyUrl(key string) string {
 
 func (c *HttpClient) kvKeyUrl(key string) string {
 	return keyUrl(c.rootUrl, "kv", key)
+}
+
+func (c *HttpClient) setKeyUrl(key string) string {
+	return keyUrl(c.rootUrl, "sets", key)
 }
 
 func int32ToString(i int32) string {
