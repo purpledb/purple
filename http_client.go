@@ -6,6 +6,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/lucperkins/strato/internal/services/cache"
 	"net/http"
+	"strconv"
 )
 
 type HttpClient struct {
@@ -55,7 +56,7 @@ func (c *HttpClient) CacheSet(key, value string, ttl int32) error {
 	res, err := c.cl.R().
 		SetQueryParams(map[string]string{
 			"value": value,
-			"ttl":   string(ttl),
+			"ttl":   int32ToString(ttl),
 		}).
 		Put(url)
 
@@ -68,4 +69,9 @@ func (c *HttpClient) CacheSet(key, value string, ttl int32) error {
 	}
 
 	return nil
+}
+
+// Helpers
+func int32ToString(i int32) string {
+	return strconv.FormatInt(int64(i), 10)
 }

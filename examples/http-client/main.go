@@ -11,13 +11,15 @@ func main() {
 		Address: "http://localhost:8081",
 	}
 
+	cacheKey, cacheValue := "cache-key", "here-is-a-cache-value"
+
 	client := strato.NewHttpClient(clientCfg)
 
-	if err := client.CacheSet("some-new-key", "some-new-value", 3600); err != nil {
+	if err := client.CacheSet(cacheKey, cacheValue, 3600); err != nil {
 		log.Fatal(err)
 	}
 
-	val, err := client.CacheGet("some-new-key")
+	val, err := client.CacheGet(cacheKey)
 	if err != nil {
 		log.Fatal(err)
 	}
