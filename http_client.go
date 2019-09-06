@@ -167,7 +167,23 @@ func (c *HttpClient) KVPut(key string, value *kv.Value) error {
 	}
 
 	if res.StatusCode() != http.StatusNoContent {
-		fmt.Println(res.String())
+		return fmt.Errorf("expected status code 204, got %d", res.StatusCode())
+	}
+
+	return nil
+}
+
+func (c *HttpClient) KVDelete(key string) error {
+	url := c.kvKeyUrl(key)
+
+	res, err := c.cl.R().
+		Delete(url)
+
+	if err != nil {
+		return err
+	}
+
+	if res.StatusCode() != http.StatusNoContent {
 		return fmt.Errorf("expected status code 204, got %d", res.StatusCode())
 	}
 

@@ -58,4 +58,8 @@ func main() {
 	}
 
 	fmt.Println("Fetched KV:", string(fetched.Content))
+
+	if err := client.KVDelete(kvKey); err != nil {
+		log.Fatalf("Failed to delete KV key: %v", err)
+	}
 }
