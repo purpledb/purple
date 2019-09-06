@@ -1,7 +1,6 @@
 package memory
 
 import (
-	"github.com/lucperkins/strato/internal/oops"
 	"testing"
 	"time"
 
@@ -33,18 +32,18 @@ func TestMemoryImpl(t *testing.T) {
 		is.NoError(mem.CacheSet(key, value, 1))
 		time.Sleep(2 * time.Second)
 		val, err = mem.CacheGet(key)
-		is.True(oops.IsNotFound(err))
+		is.True(strato.IsNotFound(err))
 		is.Empty(val)
 
 		val, err = mem.CacheGet("does-not-exist")
-		is.True(oops.IsNotFound(err))
+		is.True(strato.IsNotFound(err))
 		is.Empty(val)
 
 		err = mem.CacheSet("", "something", 5)
-		is.Equal(err, oops.ErrNoKey)
+		is.Equal(err, strato.ErrNoKey)
 
 		err = mem.CacheSet("some-key", "", 5)
-		is.Equal(err, oops.ErrNoValue)
+		is.Equal(err, strato.ErrNoValue)
 	})
 
 	t.Run("Counter", func(t *testing.T) {

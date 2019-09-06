@@ -2,7 +2,7 @@ package grpc
 
 import (
 	"context"
-	"github.com/lucperkins/strato/internal/config"
+	"github.com/lucperkins/strato"
 	"testing"
 
 	"github.com/lucperkins/strato/proto"
@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var goodServerCfg = &config.ServerConfig{
+var goodServerCfg = &strato.ServerConfig{
 	Port:    2222,
 	Backend: "memory",
 }

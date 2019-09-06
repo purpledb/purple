@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/lucperkins/strato/internal/config"
+	"github.com/lucperkins/strato"
 	"log"
 
 	"github.com/lucperkins/strato/internal/server/http"
 )
 
 func main() {
-	serverCfg := &config.ServerConfig{
+	serverCfg := &strato.ServerConfig{
 		Port:    8081,
 		Backend: "disk",
 		Debug:   true,

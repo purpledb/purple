@@ -14,7 +14,7 @@ func (h *Handler) SetGet(c *gin.Context) {
 
 	items, err := h.b.SetGet(key)
 	if err != nil {
-		if err == strato.ErrNoSet {
+		if strato.IsNotFound(err) {
 			c.Status(http.StatusNotFound)
 			return
 		} else {
@@ -39,7 +39,7 @@ func (h *Handler) SetPut(c *gin.Context) {
 
 	items, err := h.b.SetAdd(key, item)
 	if err != nil {
-		if err == strato.ErrNoSet {
+		if strato.IsNotFound(err) {
 			c.Status(http.StatusNotFound)
 			return
 		} else {
@@ -64,7 +64,7 @@ func (h *Handler) SetDelete(c *gin.Context) {
 
 	items, err := h.b.SetRemove(key, item)
 	if err != nil {
-		if err == strato.ErrNoSet {
+		if strato.IsNotFound(err) {
 			c.Status(http.StatusNotFound)
 			return
 		} else {

@@ -1,7 +1,7 @@
 package disk
 
 import (
-	"github.com/lucperkins/strato/internal/oops"
+	"github.com/lucperkins/strato"
 	"os"
 	"path/filepath"
 	"testing"
@@ -31,7 +31,7 @@ func TestGenericDiskFunctions(t *testing.T) {
 	value := []byte("some value")
 
 	val, err := dbRead(db, key)
-	is.True(oops.IsNotFound(err))
+	is.True(strato.IsNotFound(err))
 	is.Nil(val)
 
 	is.NoError(dbWrite(db, key, value))
@@ -43,7 +43,7 @@ func TestGenericDiskFunctions(t *testing.T) {
 	is.NoError(dbDelete(db, key))
 
 	val, err = dbRead(db, key)
-	is.True(oops.IsNotFound(err))
+	is.True(strato.IsNotFound(err))
 	is.Nil(val)
 
 	clean(is)
@@ -58,7 +58,7 @@ func TestDiskCache(t *testing.T) {
 	ttl := int32(3600)
 
 	val, err := disk.CacheGet(key)
-	is.True(oops.IsNotFound(err))
+	is.True(strato.IsNotFound(err))
 	is.Empty(val)
 
 	is.NoError(disk.CacheSet(key, value, ttl))
@@ -119,7 +119,7 @@ func TestDiskKV(t *testing.T) {
 
 	fetched, err = disk.KVGet(key)
 	is.Error(err)
-	is.True(oops.IsNotFound(err))
+	is.True(strato.IsNotFound(err))
 	is.Nil(fetched)
 
 	clean(is)

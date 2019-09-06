@@ -1,6 +1,7 @@
 package strato
 
 import (
+	"errors"
 	"fmt"
 
 	"google.golang.org/grpc/codes"
@@ -8,29 +9,16 @@ import (
 )
 
 var (
-	ErrExpired              = CacheError{"item has expired"}
-	ErrNoCacheItem          = CacheError{"no item found"}
-	ErrNoCacheKey           = CacheError{"no cache key specified"}
-	ErrNoCacheValue         = CacheError{"no cache value specified"}
-	ErrNoKey                = KVError{"no key specified"}
-	ErrNoValue              = KVError{"no value specified"}
-	ErrNoSet                = SetError{"set does not exist"}
+	ErrNoKey                = errors.New("no resource key provided")
+	ErrNoValue              = errors.New("no value provided")
 	ErrNoAddress            = ConfigError{"no server address provided"}
-	ErrNoPort               = ConfigError{"no server port supplied"}
+	ErrNoPort               = ConfigError{"no server port provided"}
 	ErrPortOutOfRange       = ConfigError{"port must be between 1024 and 49151"}
 	ErrBackendNotRecognized = ConfigError{"backend key not recognized"}
 	ErrNoBackend            = ConfigError{"no backend specified"}
 )
 
 type (
-	CacheError struct {
-		string
-	}
-
-	KVError struct {
-		string
-	}
-
 	ConfigError struct {
 		string
 	}
@@ -43,35 +31,6 @@ type (
 		string
 	}
 )
-
-func (e CacheError) Error() string {
-	return fmt.Sprintf("cache error: %s", e.string)
-}
-
-func IsNoCacheKey(err error) bool {
-	return err == ErrNoCacheKey
-}
-
-func IsNoCacheValue(err error) bool {
-	return err == ErrNoCacheValue
-}
-
-func IsExpired(err error) bool {
-	return err == ErrExpired
-}
-
-func IsNoItemFound(err error) bool {
-	return err == ErrNoCacheItem
-}
-
-func (e KVError) Error() string {
-	return fmt.Sprintf("KV error: %s", e.string)
-}
-
-func IsKVError(err error) bool {
-	_, ok := err.(KVError)
-	return ok
-}
 
 func (e ConfigError) Error() string {
 	return fmt.Sprintf("config error: %s", e.string)

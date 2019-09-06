@@ -1,7 +1,6 @@
 package memory
 
 import (
-	"github.com/lucperkins/strato/internal/oops"
 	"time"
 
 	"github.com/lucperkins/strato/internal/services/cache"
@@ -57,7 +56,7 @@ func (m *Memory) CacheGet(key string) (string, error) {
 	val, ok := m.cache[key]
 
 	if !ok {
-		return "", oops.NotFound(key)
+		return "", strato.NotFound(key)
 	}
 
 	now := time.Now().Unix()
@@ -67,7 +66,7 @@ func (m *Memory) CacheGet(key string) (string, error) {
 	if expired {
 		delete(m.cache, key)
 
-		return "", oops.NotFound(key)
+		return "", strato.NotFound(key)
 	}
 
 	return val.Value, nil
@@ -75,11 +74,11 @@ func (m *Memory) CacheGet(key string) (string, error) {
 
 func (m *Memory) CacheSet(key, value string, ttl int32) error {
 	if key == "" {
-		return oops.ErrNoKey
+		return strato.ErrNoKey
 	}
 
 	if value == "" {
-		return oops.ErrNoValue
+		return strato.ErrNoValue
 	}
 
 	item := &cache.Item{
