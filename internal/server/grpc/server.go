@@ -36,7 +36,7 @@ func NewGrpcServer(cfg *strato.ServerConfig) (*Server, error) {
 
 	srv := grpc.NewServer()
 
-	backend, err := backend.NewBackend(cfg)
+	bk, err := backend.NewBackend(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func NewGrpcServer(cfg *strato.ServerConfig) (*Server, error) {
 	return &Server{
 		address: addr,
 		srv:     srv,
-		backend: backend,
+		backend: bk,
 		log:     log,
 	}, nil
 }
@@ -196,7 +196,11 @@ func (s *Server) Start() error {
 
 	s.log.Debug("registered gRPC set service")
 
-	lis, _ := net.Listen("tcp", s.address)
+	lis, err := net.Listen("tcp", s.address)
+
+	if err != nil {
+		return err
+	}
 
 	s.log.Infof("starting the Strato gRPC server on %s", s.address)
 

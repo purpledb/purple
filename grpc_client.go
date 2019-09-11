@@ -2,6 +2,7 @@ package strato
 
 import (
 	"context"
+	"github.com/lucperkins/strato/internal/data"
 	"github.com/lucperkins/strato/internal/services/cache"
 	"github.com/lucperkins/strato/internal/services/counter"
 	"github.com/lucperkins/strato/internal/services/set"
@@ -194,7 +195,11 @@ func (c *GrpcClient) SetGet(set string) ([]string, error) {
 		return nil, err
 	}
 
-	return res.Items, nil
+	if res.Items == nil {
+		return data.EmptySet(), nil
+	} else {
+		return res.Items, nil
+	}
 }
 
 func (c *GrpcClient) SetAdd(set, item string) ([]string, error) {
@@ -220,6 +225,10 @@ func (c *GrpcClient) SetRemove(set, item string) ([]string, error) {
 	s, err := c.setClient.SetRemove(c.ctx, req)
 	if err != nil {
 		return nil, err
+	}
+
+	if s.Items == nil {
+		s.Items = []string{}
 	}
 
 	return s.Items, nil

@@ -7,13 +7,20 @@ import (
 	"net/http"
 )
 
+const todosSet = "todos"
+
 func getTodos(client *strato.GrpcClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		todos, err := client.SetGet("todos")
+		todos, err := client.SetGet(todosSet)
 		if err != nil {
-			log.Println(err)
-			c.Status(http.StatusInternalServerError)
-			return
+			if strato.IsNotFound(err) {
+				c.JSON(http.StatusOK, gin.H{"todos": []string{}})
+				return
+			} else {
+				log.Println(err)
+				c.Status(http.StatusInternalServerError)
+				return
+			}
 		}
 
 		c.JSON(http.StatusOK, gin.H{
@@ -24,15 +31,9 @@ func getTodos(client *strato.GrpcClient) gin.HandlerFunc {
 
 func createTodo(client *strato.GrpcClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		todo := c.Query("todo")
-		if todo == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "no todo provided",
-			})
-			return
-		}
+		todo := getTodo(c)
 
-		todos, err := client.SetAdd("todos", todo)
+		todos, err := client.SetAdd(todosSet, todo)
 		if err != nil {
 			log.Println(err)
 			c.Status(http.StatusInternalServerError)
@@ -47,15 +48,9 @@ func createTodo(client *strato.GrpcClient) gin.HandlerFunc {
 
 func deleteTodo(client *strato.GrpcClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		todo := c.Query("todo")
-		if todo == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "no todo provided",
-			})
-			return
-		}
+		todo := getTodo(c)
 
-		todos, err := client.SetRemove("todos", todo)
+		todos, err := client.SetRemove(todosSet, todo)
 		if err != nil {
 			log.Println(err)
 			c.Status(http.StatusInternalServerError)
@@ -66,6 +61,22 @@ func deleteTodo(client *strato.GrpcClient) gin.HandlerFunc {
 			"todos": todos,
 		})
 	}
+}
+
+func setTodo(c *gin.Context) {
+	todo := c.Query("todo")
+	if todo == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "no todo provided",
+		})
+		return
+	}
+
+	c.Set("todo", todo)
+}
+
+func getTodo(c *gin.Context) string {
+	return c.MustGet("todo").(string)
 }
 
 func main() {
@@ -81,9 +92,16 @@ func main() {
 
 	todos := r.Group("/todos")
 	{
-		todos.POST("", createTodo(client))
 		todos.GET("", getTodos(client))
-		todos.DELETE("", deleteTodo(client))
+
+
+		withTodo := todos.Group("")
+		{
+			withTodo.Use(setTodo)
+
+			withTodo.POST("", createTodo(client))
+			withTodo.DELETE("", deleteTodo(client))
+		}
 	}
 
 	if err := r.Run(":3000"); err != nil {

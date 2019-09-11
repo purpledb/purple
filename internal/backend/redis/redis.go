@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"github.com/lucperkins/strato/internal/data"
 	"time"
 
 	"github.com/lucperkins/strato/internal/services/cache"
@@ -171,7 +172,7 @@ func (r *Redis) SetGet(set string) ([]string, error) {
 	}
 
 	if s == nil {
-		return []string{}, nil
+		return data.EmptySet(), nil
 	}
 
 	return s, nil

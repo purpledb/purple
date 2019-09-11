@@ -9,6 +9,8 @@ services:
       - alpine:3.9.4
     ports:
       - 3000:3000
+    depends_on:
+    - strato
   strato:
     build:
       context: .
@@ -20,6 +22,8 @@ services:
     ports:
     - 8080:8080
     command: ["--backend", "redis", "--redis-url" , "redis:6379"]
+    depends_on:
+    - redis
   redis:
     image: redis
     ports:

@@ -6,15 +6,12 @@ import (
 	"github.com/lucperkins/strato/internal/server/http"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 )
 
 func command() *cobra.Command {
 	var cfg strato.ServerConfig
 
-	v := viper.New()
-	v.AutomaticEnv()
-	v.SetEnvPrefix("strato_http")
+	v := cmd.NewConfig("strato_http")
 
 	command := &cobra.Command{
 		Use: "strato-http",

@@ -20,3 +20,10 @@ func ExitOnError(err error) {
 		os.Exit(1)
 	}
 }
+
+func NewConfig(envPrefix string) *viper.Viper {
+	v := viper.New()
+	v.AutomaticEnv()
+	v.SetEnvPrefix(envPrefix)
+	return v
+}
