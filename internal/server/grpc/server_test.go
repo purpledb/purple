@@ -128,8 +128,8 @@ func TestGrpcServer(t *testing.T) {
 		}
 
 		set, err := srv.SetGet(ctx, getReq)
-		is.True(strato.IsNotFound(err))
-		is.Nil(set)
+		is.Nil(err)
+		is.Empty(set.Items)
 
 		modifyReq := &proto.ModifySetRequest{
 			Set:  "set1",
