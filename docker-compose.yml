@@ -1,5 +1,14 @@
 version: '3.7'
 services:
+  todos:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+      cache_from:
+      - golang:1.12.7
+      - alpine:3.9.4
+    ports:
+      - 3000:3000
   strato:
     build:
       context: .
@@ -14,4 +23,4 @@ services:
   redis:
     image: redis
     ports:
-      - 6379:6379
+    - 6379:6379

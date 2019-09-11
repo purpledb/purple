@@ -165,7 +165,16 @@ func (r *Redis) KVDelete(key string) error {
 // Set operations
 
 func (r *Redis) SetGet(set string) ([]string, error) {
-	return r.sets.SMembers(set).Result()
+	s, err := r.sets.SMembers(set).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	if s == nil {
+		return []string{}, nil
+	}
+
+	return s, nil
 }
 
 func (r *Redis) SetAdd(set, item string) ([]string, error) {

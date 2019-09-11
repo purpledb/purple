@@ -63,6 +63,9 @@ run-local-grpc:
 run-local-http:
 	go run cmd/strato-http/main.go
 
+run-example-app:
+	go run examples/app/main.go
+
 run-example-http-client:
 	go run examples/http-client/main.go
 
