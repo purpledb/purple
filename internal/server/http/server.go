@@ -2,8 +2,9 @@ package http
 
 import (
 	"fmt"
-	"github.com/lucperkins/strato/internal/config"
 	"net/http"
+
+	"github.com/lucperkins/strato"
 
 	"github.com/lucperkins/strato/internal/server/http/handler"
 
@@ -21,7 +22,7 @@ type Server struct {
 }
 
 // Instantiates a new Strato HTTP server using the supplied ServerConfig object.
-func NewServer(cfg *config.ServerConfig) (*Server, error) {
+func NewServer(cfg *strato.ServerConfig) (*Server, error) {
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
 	bk, err := backend.NewBackend(cfg)
@@ -40,7 +41,7 @@ func NewServer(cfg *config.ServerConfig) (*Server, error) {
 	}, nil
 }
 
-func getLogger(cfg *config.ServerConfig) *logrus.Entry {
+func getLogger(cfg *strato.ServerConfig) *logrus.Entry {
 	log := logrus.New()
 
 	if cfg.Debug {

@@ -1,41 +1,34 @@
-package grpc
+package strato
 
 import (
-	"github.com/lucperkins/strato/internal/config"
 	"testing"
-
-	"github.com/lucperkins/strato"
 
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-var goodClientCfg = &config.ClientConfig{
-	Address: "localhost:2222",
-}
-
 func TestGrpcClient(t *testing.T) {
 	is := assert.New(t)
 
-	cl, err := NewClient(goodClientCfg)
+	cl, err := NewGrpcClient(goodClientCfg)
 
 	t.Run("Instantiation", func(t *testing.T) {
 		is.NoError(err)
 		is.NotNil(cl)
 
-		noAddressCfg := &config.ClientConfig{
+		noAddressCfg := &ClientConfig{
 			Address: "",
 		}
 
-		noClient, err := NewClient(noAddressCfg)
-		is.Error(err, strato.ErrNoAddress)
+		noClient, err := NewGrpcClient(noAddressCfg)
+		is.Error(err, ErrNoAddress)
 		is.Nil(noClient)
 
-		badAddressCfg := &config.ClientConfig{
+		badAddressCfg := &ClientConfig{
 			Address: "1:2:3",
 		}
-		badCl, err := NewClient(badAddressCfg)
+		badCl, err := NewGrpcClient(badAddressCfg)
 		is.NoError(err)
 		is.NotNil(badCl)
 

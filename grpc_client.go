@@ -1,12 +1,9 @@
-package grpc
+package strato
 
 import (
 	"context"
-	"github.com/lucperkins/strato/internal/config"
 
 	"github.com/lucperkins/strato/internal/services/kv"
-
-	"github.com/lucperkins/strato"
 
 	"github.com/lucperkins/strato/proto"
 
@@ -22,7 +19,7 @@ type GrpcClient struct {
 	ctx           context.Context
 }
 
-func NewClient(cfg *config.ClientConfig) (*GrpcClient, error) {
+func NewGrpcClient(cfg *ClientConfig) (*GrpcClient, error) {
 	if err := cfg.Validate(); err != nil {
 		return nil, err
 	}
@@ -113,7 +110,7 @@ func (c *GrpcClient) GetCounter(key string) (int64, error) {
 
 func (c *GrpcClient) KVGet(key string) (*kv.Value, error) {
 	if key == "" {
-		return nil, strato.ErrNoKey
+		return nil, ErrNoKey
 	}
 
 	loc := &proto.Location{
@@ -134,11 +131,11 @@ func (c *GrpcClient) KVGet(key string) (*kv.Value, error) {
 
 func (c *GrpcClient) KVPut(key string, value *kv.Value) error {
 	if key == "" {
-		return strato.ErrNoKey
+		return ErrNoKey
 	}
 
 	if value == nil {
-		return strato.ErrNoValue
+		return ErrNoValue
 	}
 
 	loc := &proto.Location{
@@ -159,7 +156,7 @@ func (c *GrpcClient) KVPut(key string, value *kv.Value) error {
 
 func (c *GrpcClient) KVDelete(key string) error {
 	if key == "" {
-		return strato.ErrNoKey
+		return ErrNoKey
 	}
 
 	loc := &proto.Location{

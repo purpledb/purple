@@ -1,12 +1,12 @@
 package disk
 
 import (
-	"github.com/lucperkins/strato/internal/fs"
-	"github.com/lucperkins/strato/internal/oops"
+	"github.com/lucperkins/strato/internal/util"
 	"os"
 	"path/filepath"
 	"time"
 
+	"github.com/lucperkins/strato"
 	"github.com/lucperkins/strato/internal/services/cache"
 	"github.com/lucperkins/strato/internal/services/counter"
 	"github.com/lucperkins/strato/internal/services/kv"
@@ -67,7 +67,7 @@ func createDb(subDir string) (*badger.DB, error) {
 
 	path := filepath.Join(here, rootDataDir, subDir)
 
-	if err := fs.MkDirIfNotExists(path); err != nil {
+	if err := util.MkDirIfNotExists(path); err != nil {
 		return nil, err
 	}
 
@@ -107,7 +107,7 @@ func dbRead(db *badger.DB, key []byte) ([]byte, error) {
 		it, err := tx.Get(key)
 		if err != nil {
 			if err == badger.ErrKeyNotFound {
-				return oops.NotFound(string(key))
+				return strato.NotFound(string(key))
 			} else {
 				return err
 			}
@@ -154,8 +154,8 @@ func (d *Disk) CacheGet(key string) (string, error) {
 
 	val, err := dbRead(d.cache, k)
 	if err != nil {
-		if oops.IsNotFound(err) {
-			return "", oops.NotFound(key)
+		if strato.IsNotFound(err) {
+			return "", strato.NotFound(key)
 		} else {
 			return "", err
 		}
@@ -178,7 +178,7 @@ func (d *Disk) CounterGet(key string) (int64, error) {
 
 	val, err := dbRead(d.counter, k)
 	if err != nil {
-		if oops.IsNotFound(err) {
+		if strato.IsNotFound(err) {
 			return 0, nil
 		} else {
 			return 0, err
@@ -193,7 +193,7 @@ func (d *Disk) CounterIncrement(key string, increment int64) error {
 
 	val, err := dbRead(d.counter, k)
 	if err != nil {
-		if oops.IsNotFound(err) {
+		if strato.IsNotFound(err) {
 			v := data.Int64ToBytes(increment)
 
 			return dbWrite(d.counter, k, v)
@@ -218,7 +218,7 @@ func (d *Disk) KVGet(key string) (*kv.Value, error) {
 	val, err := dbRead(d.kv, k)
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
-			return nil, oops.NotFound(key)
+			return nil, strato.NotFound(key)
 		} else {
 			return nil, err
 		}
@@ -246,7 +246,7 @@ func (d *Disk) SetGet(key string) ([]string, error) {
 
 	val, err := dbRead(d.set, k)
 	if err != nil {
-		if oops.IsNotFound(err) {
+		if strato.IsNotFound(err) {
 			return []string{}, nil
 		} else {
 			return nil, err
@@ -261,7 +261,7 @@ func (d *Disk) SetAdd(key, item string) ([]string, error) {
 
 	val, err := dbRead(d.set, k)
 	if err != nil {
-		if oops.IsNotFound(err) {
+		if strato.IsNotFound(err) {
 			s := []string{item}
 			value, err := data.SetToBytes(s)
 			if err != nil {
@@ -302,7 +302,7 @@ func (d *Disk) SetRemove(key, item string) ([]string, error) {
 
 	val, err := dbRead(d.set, k)
 	if err != nil {
-		if oops.IsNotFound(err) {
+		if strato.IsNotFound(err) {
 			return []string{}, nil
 		} else {
 			return nil, err

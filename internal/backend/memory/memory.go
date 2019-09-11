@@ -1,7 +1,7 @@
 package memory
 
 import (
-	"github.com/lucperkins/strato/internal/oops"
+	"github.com/lucperkins/strato/internal/data"
 	"time"
 
 	"github.com/lucperkins/strato/internal/services/cache"
@@ -16,7 +16,7 @@ type Memory struct {
 	cache    map[string]*cache.Item
 	counters map[string]int64
 	kv       map[string]*kv.Value
-	sets     map[string][]string
+	sets     map[string]*data.Set
 }
 
 var (
@@ -31,7 +31,7 @@ func NewMemoryBackend() *Memory {
 
 	counterMem := make(map[string]int64)
 
-	setMem := make(map[string][]string)
+	setMem := make(map[string]*data.Set)
 
 	kvMem := make(map[string]*kv.Value)
 
@@ -57,7 +57,7 @@ func (m *Memory) CacheGet(key string) (string, error) {
 	val, ok := m.cache[key]
 
 	if !ok {
-		return "", oops.NotFound(key)
+		return "", strato.NotFound(key)
 	}
 
 	now := time.Now().Unix()
@@ -67,7 +67,7 @@ func (m *Memory) CacheGet(key string) (string, error) {
 	if expired {
 		delete(m.cache, key)
 
-		return "", oops.NotFound(key)
+		return "", strato.NotFound(key)
 	}
 
 	return val.Value, nil
@@ -75,11 +75,11 @@ func (m *Memory) CacheGet(key string) (string, error) {
 
 func (m *Memory) CacheSet(key, value string, ttl int32) error {
 	if key == "" {
-		return oops.ErrNoKey
+		return strato.ErrNoKey
 	}
 
 	if value == "" {
-		return oops.ErrNoValue
+		return strato.ErrNoValue
 	}
 
 	item := &cache.Item{
@@ -140,33 +140,37 @@ func (m *Memory) SetGet(set string) ([]string, error) {
 	s, ok := m.sets[set]
 
 	if !ok {
-		return []string{}, nil
+		return data.EmptySet(), nil
 	}
 
-	return s, nil
+	return s.Get(), nil
 }
 
 func (m *Memory) SetAdd(set, item string) ([]string, error) {
-	if _, ok := m.sets[set]; ok {
-		m.sets[set] = append(m.sets[set], item)
+	var result []string
+
+	s, ok := m.sets[set]
+
+	if ok {
+		s.Add(item)
+		result = s.Get()
 	} else {
-		m.sets[set] = []string{item}
+		newSet := data.NewSet(item)
+
+		m.sets[set] = newSet
+		result = newSet.Get()
 	}
 
-	return m.sets[set], nil
+	return result, nil
 }
 
 func (m *Memory) SetRemove(set, item string) ([]string, error) {
-	_, ok := m.sets[set]
-	if ok {
-		for idx, it := range m.sets[set] {
-			if it == item {
-				m.sets[set] = append(m.sets[set][:idx], m.sets[set][idx+1:]...)
-			}
-		}
+	s, ok := m.sets[set]
 
-		return m.sets[set], nil
+	if ok {
+		s.Remove(item)
+		return s.Get(), nil
 	} else {
-		return []string{}, nil
+		return data.EmptySet(), nil
 	}
 }

@@ -38,7 +38,7 @@ func (h *Handler) KvPut(c *gin.Context) {
 	key, val := c.Param("key"), getValue(c)
 
 	value := &kv.Value{
-		Content: val,
+		Content: []byte(val.Content),
 	}
 
 	if err := h.b.KVPut(key, value); err != nil {

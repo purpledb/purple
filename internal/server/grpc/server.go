@@ -3,7 +3,6 @@ package grpc
 import (
 	"context"
 	"fmt"
-	"github.com/lucperkins/strato/internal/config"
 	"net"
 
 	"github.com/lucperkins/strato/internal/services/kv"
@@ -32,7 +31,7 @@ var (
 	_ proto.SetServer     = (*Server)(nil)
 )
 
-func NewGrpcServer(cfg *config.ServerConfig) (*Server, error) {
+func NewGrpcServer(cfg *strato.ServerConfig) (*Server, error) {
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
 	srv := grpc.NewServer()
@@ -61,7 +60,9 @@ func NewGrpcServer(cfg *config.ServerConfig) (*Server, error) {
 func (s *Server) CacheGet(_ context.Context, req *proto.CacheGetRequest) (*proto.CacheGetResponse, error) {
 	val, err := s.backend.CacheGet(req.Key)
 	if err != nil {
-		return nil, err
+		if strato.IsNotFound(err) {
+			err = strato.NotFound(req.Key).AsProtoStatus()
+		}
 	}
 
 	res := &proto.CacheGetResponse{
@@ -105,7 +106,11 @@ func (s *Server) KVGet(_ context.Context, location *proto.Location) (*proto.GetR
 
 	val, err := s.backend.KVGet(key)
 	if err != nil {
-		return nil, strato.NotFound(key).AsProtoStatus()
+		if strato.IsNotFound(err) {
+			err = strato.NotFound(key).AsProtoStatus()
+		}
+
+		return nil, err
 	}
 
 	res := &proto.GetResponse{
