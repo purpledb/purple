@@ -32,7 +32,7 @@ func TestDataHelpers(t *testing.T) {
 		for _, tc := range testCases {
 			s := NewSet(tc...)
 
-			bs, err := s.ToBytes()
+			bs, err := s.AsBytes()
 			is.NoError(err)
 			is.NotNil(bs)
 

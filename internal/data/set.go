@@ -6,10 +6,6 @@ type Set struct {
 	items []string
 }
 
-func EmptySet() []string {
-	return []string{}
-}
-
 func NewSet(items ...string) *Set {
 	is := make([]string, 0)
 
@@ -39,10 +35,6 @@ func (s *Set) Add(item string) {
 }
 
 func (s *Set) Remove(item string) {
-	if len(s.items) == 0 {
-		return
-	}
-
 	if s.contains(item) {
 		for idx, i := range s.items {
 			if i == item {
@@ -56,6 +48,6 @@ func (s *Set) Get() []string {
 	return s.items
 }
 
-func (s *Set) ToBytes() ([]byte, error) {
+func (s *Set) AsBytes() ([]byte, error) {
 	return json.Marshal(s.items)
 }

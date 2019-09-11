@@ -7,6 +7,13 @@ import (
 	"github.com/lucperkins/strato"
 )
 
+func emptySetRes(set string) gin.H {
+	return gin.H{
+		"set":   set,
+		"items": []string{},
+	}
+}
+
 func (h *Handler) SetGet(c *gin.Context) {
 	log := h.logger("set/get")
 
@@ -15,7 +22,7 @@ func (h *Handler) SetGet(c *gin.Context) {
 	items, err := h.b.SetGet(key)
 	if err != nil {
 		if strato.IsNotFound(err) {
-			c.Status(http.StatusNotFound)
+			c.JSON(http.StatusOK, emptySetRes(key))
 			return
 		} else {
 			log.Error(err)
@@ -40,7 +47,7 @@ func (h *Handler) SetPut(c *gin.Context) {
 	items, err := h.b.SetAdd(key, item)
 	if err != nil {
 		if strato.IsNotFound(err) {
-			c.Status(http.StatusNotFound)
+			c.JSON(http.StatusOK, emptySetRes(key))
 			return
 		} else {
 			log.Error(err)
@@ -65,7 +72,7 @@ func (h *Handler) SetDelete(c *gin.Context) {
 	items, err := h.b.SetRemove(key, item)
 	if err != nil {
 		if strato.IsNotFound(err) {
-			c.Status(http.StatusNotFound)
+			c.JSON(http.StatusOK, emptySetRes(key))
 			return
 		} else {
 			log.Error(err)

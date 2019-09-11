@@ -246,11 +246,7 @@ func (d *Disk) SetGet(key string) ([]string, error) {
 
 	val, err := dbRead(d.set, k)
 	if err != nil {
-		if strato.IsNotFound(err) {
-			return data.EmptySet(), nil
-		} else {
-			return nil, err
-		}
+		return nil, err
 	}
 
 	s, err := data.BytesToSet(val)
@@ -268,7 +264,7 @@ func (d *Disk) SetAdd(key, item string) ([]string, error) {
 	if err != nil {
 		if strato.IsNotFound(err) {
 			s := data.NewSet(item)
-			value, err := s.ToBytes()
+			value, err := s.AsBytes()
 			if err != nil {
 				return nil, err
 			}
@@ -290,7 +286,7 @@ func (d *Disk) SetAdd(key, item string) ([]string, error) {
 
 	s.Add(item)
 
-	value, err := s.ToBytes()
+	value, err := s.AsBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -307,11 +303,7 @@ func (d *Disk) SetRemove(key, item string) ([]string, error) {
 
 	val, err := dbRead(d.set, k)
 	if err != nil {
-		if strato.IsNotFound(err) {
-			return []string{}, nil
-		} else {
-			return nil, err
-		}
+		return nil, err
 	}
 
 	s, err := data.BytesToSet(val)
@@ -321,7 +313,7 @@ func (d *Disk) SetRemove(key, item string) ([]string, error) {
 
 	s.Remove(item)
 
-	value, err := s.ToBytes()
+	value, err := s.AsBytes()
 	if err != nil {
 		return nil, err
 	}

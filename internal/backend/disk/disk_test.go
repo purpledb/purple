@@ -134,8 +134,8 @@ func TestDiskSet(t *testing.T) {
 	key, item := "some-set", "some-item"
 
 	set, err := disk.SetGet(key)
-	is.NoError(err)
-	is.Empty(set)
+	is.True(strato.IsNotFound(err))
+	is.Nil(set)
 
 	set, err = disk.SetAdd(key, item)
 	is.NoError(err)
@@ -158,8 +158,8 @@ func TestDiskSet(t *testing.T) {
 	is.Empty(set)
 
 	set, err = disk.SetGet("no-set-here")
-	is.NoError(err)
-	is.Empty(set)
+	is.True(strato.IsNotFound(err))
+	is.Nil(set)
 
 	clean(is)
 }
@@ -175,7 +175,7 @@ func TestDiskHelperFunctions(t *testing.T) {
 	for _, tc := range testCases {
 		s := data.NewSet(tc...)
 
-		bs, err := s.ToBytes()
+		bs, err := s.AsBytes()
 		is.NoError(err)
 		is.NotNil(bs)
 

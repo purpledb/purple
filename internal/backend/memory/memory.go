@@ -140,7 +140,7 @@ func (m *Memory) SetGet(set string) ([]string, error) {
 	s, ok := m.sets[set]
 
 	if !ok {
-		return data.EmptySet(), nil
+		return nil, strato.NotFound(set)
 	}
 
 	return s.Get(), nil
@@ -171,6 +171,6 @@ func (m *Memory) SetRemove(set, item string) ([]string, error) {
 		s.Remove(item)
 		return s.Get(), nil
 	} else {
-		return data.EmptySet(), nil
+		return nil, strato.NotFound(set)
 	}
 }

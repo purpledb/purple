@@ -94,7 +94,6 @@ func main() {
 	{
 		todos.GET("", getTodos(client))
 
-
 		withTodo := todos.Group("")
 		{
 			withTodo.Use(setTodo)

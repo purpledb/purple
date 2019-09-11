@@ -146,10 +146,15 @@ func (s *Server) KVDelete(_ context.Context, location *proto.Location) (*proto.E
 	return &proto.Empty{}, nil
 }
 
+// Sets
 func (s *Server) SetGet(_ context.Context, req *proto.GetSetRequest) (*proto.SetResponse, error) {
 	items, err := s.backend.SetGet(req.Set)
 	if err != nil {
-		return nil, err
+		if strato.IsNotFound(err) {
+			return emptySetRes, nil
+		} else {
+			return nil, err
+		}
 	}
 
 	return &proto.SetResponse{
@@ -160,7 +165,11 @@ func (s *Server) SetGet(_ context.Context, req *proto.GetSetRequest) (*proto.Set
 func (s *Server) SetAdd(_ context.Context, req *proto.ModifySetRequest) (*proto.SetResponse, error) {
 	items, err := s.backend.SetAdd(req.Set, req.Item)
 	if err != nil {
-		return nil, err
+		if strato.IsNotFound(err) {
+			return emptySetRes, nil
+		} else {
+			return nil, err
+		}
 	}
 
 	return &proto.SetResponse{
@@ -171,12 +180,20 @@ func (s *Server) SetAdd(_ context.Context, req *proto.ModifySetRequest) (*proto.
 func (s *Server) SetRemove(_ context.Context, req *proto.ModifySetRequest) (*proto.SetResponse, error) {
 	items, err := s.backend.SetRemove(req.Set, req.Item)
 	if err != nil {
-		return nil, err
+		if strato.IsNotFound(err) {
+			return emptySetRes, nil
+		} else {
+			return nil, err
+		}
 	}
 
 	return &proto.SetResponse{
 		Items: items,
 	}, nil
+}
+
+var emptySetRes = &proto.SetResponse{
+	Items: []string{},
 }
 
 func (s *Server) Start() error {

@@ -1,7 +1,6 @@
 package redis
 
 import (
-	"github.com/lucperkins/strato/internal/data"
 	"time"
 
 	"github.com/lucperkins/strato/internal/services/cache"
@@ -101,7 +100,6 @@ func (r *Redis) Flush() error {
 }
 
 // Cache operations
-
 func (r *Redis) CacheGet(key string) (string, error) {
 	s, err := r.cache.Get(key).Result()
 
@@ -123,7 +121,6 @@ func (r *Redis) CacheSet(key, value string, ttl int32) error {
 }
 
 // Counter operations
-
 func (r *Redis) CounterGet(key string) (int64, error) {
 	i, err := r.counters.Get(key).Int64()
 
@@ -139,7 +136,6 @@ func (r *Redis) CounterIncrement(key string, increment int64) error {
 }
 
 // KV operations
-
 func (r *Redis) KVGet(key string) (*kv.Value, error) {
 	s, err := r.kv.Get(key).Result()
 	if err != nil {
@@ -164,15 +160,10 @@ func (r *Redis) KVDelete(key string) error {
 }
 
 // Set operations
-
 func (r *Redis) SetGet(set string) ([]string, error) {
 	s, err := r.sets.SMembers(set).Result()
 	if err != nil {
 		return nil, err
-	}
-
-	if s == nil {
-		return data.EmptySet(), nil
 	}
 
 	return s, nil
