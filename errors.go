@@ -11,6 +11,7 @@ import (
 var (
 	ErrNoKey                = errors.New("no resource key provided")
 	ErrNoValue              = errors.New("no value provided")
+	ErrHttpUnavailable      = errors.New("could not connect to Strato HTTP server")
 	ErrNoAddress            = ConfigError{"no server address provided"}
 	ErrNoPort               = ConfigError{"no server port provided"}
 	ErrPortOutOfRange       = ConfigError{"port must be between 1024 and 49151"}

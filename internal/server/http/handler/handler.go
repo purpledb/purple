@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/lucperkins/strato/internal/backend"
 	"github.com/sirupsen/logrus"
+	"net/http"
 )
 
 type Handler struct {
@@ -19,4 +21,8 @@ func NewHandler(backend backend.Interface, log *logrus.Entry) *Handler {
 
 func (h *Handler) logger(op string) *logrus.Entry {
 	return h.log.WithField("op", op)
+}
+
+func (h *Handler) Ping(c *gin.Context) {
+	c.Status(http.StatusOK)
 }

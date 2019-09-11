@@ -24,13 +24,36 @@ var (
 	//_ set.Set         = (*HttpClient)(nil)
 )
 
-func NewHttpClient(cfg *ClientConfig) *HttpClient {
+func NewHttpClient(cfg *ClientConfig) (*HttpClient, error) {
 	cl := resty.New()
 
-	return &HttpClient{
+	client := &HttpClient{
 		rootUrl: cfg.Address,
 		cl:      cl,
 	}
+
+	if err := client.ping(); err != nil {
+		return nil, err
+	}
+
+	return client, nil
+}
+
+func (c *HttpClient) ping() error {
+	url := c.pingUrl()
+
+	res, err := c.cl.R().
+		Get(url)
+
+	if err != nil {
+		return err
+	}
+
+	if res.StatusCode() != http.StatusOK {
+		return ErrHttpUnavailable
+	}
+
+	return nil
 }
 
 // Cache operations
@@ -269,6 +292,10 @@ func (c *HttpClient) SetRemove(key, item string) ([]string, error) {
 }
 
 // Helpers
+func (c *HttpClient) pingUrl() string {
+	return fmt.Sprintf("%s/ping", c.rootUrl)
+}
+
 func keyUrl(root, service, key string) string {
 	return fmt.Sprintf("%s/%s/%s", root, service, key)
 }

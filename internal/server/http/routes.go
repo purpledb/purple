@@ -8,6 +8,8 @@ import (
 func (s *Server) routes() *gin.Engine {
 	r := gin.New()
 
+	r.GET("/ping", s.h.Ping)
+
 	cache := r.Group("/cache/:key")
 	{
 		cache.GET("", s.h.CacheGet)
