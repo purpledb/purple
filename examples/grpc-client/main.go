@@ -36,7 +36,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Println("Successful GET:", val.String())
+	log.Println("Successful GET:", string(val.Content))
 
 	if err := client.CacheSet("foo", "bar", 5); err != nil {
 		log.Fatal(err)

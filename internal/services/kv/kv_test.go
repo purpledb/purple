@@ -18,7 +18,6 @@ func TestKVTypes(t *testing.T) {
 			Content: content,
 		}
 
-		is.Equal(val.String(), `Value<content: "some test content">`)
 		is.Equal(val.Proto(), &proto.Value{Content: content})
 		is.Equal(val.Content, content)
 	})
