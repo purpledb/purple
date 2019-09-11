@@ -2,6 +2,9 @@ package strato
 
 import (
 	"context"
+	"github.com/lucperkins/strato/internal/services/cache"
+	"github.com/lucperkins/strato/internal/services/counter"
+	"github.com/lucperkins/strato/internal/services/set"
 
 	"github.com/lucperkins/strato/internal/services/kv"
 
@@ -18,6 +21,13 @@ type GrpcClient struct {
 	conn          *grpc.ClientConn
 	ctx           context.Context
 }
+
+var (
+	_ cache.Cache     = (*GrpcClient)(nil)
+	_ counter.Counter = (*GrpcClient)(nil)
+	_ kv.KV           = (*GrpcClient)(nil)
+	_ set.Set         = (*GrpcClient)(nil)
+)
 
 func NewGrpcClient(cfg *ClientConfig) (*GrpcClient, error) {
 	if err := cfg.Validate(); err != nil {
@@ -53,6 +63,7 @@ func connect(addr string) (*grpc.ClientConn, error) {
 	return grpc.Dial(addr, grpc.WithInsecure())
 }
 
+// Cache
 func (c *GrpcClient) CacheGet(key string) (string, error) {
 	req := &proto.CacheGetRequest{
 		Key: key,
@@ -82,20 +93,8 @@ func (c *GrpcClient) CacheSet(key, value string, ttl int32) error {
 	return nil
 }
 
-func (c *GrpcClient) IncrementCounter(key string, amount int64) error {
-	req := &proto.IncrementCounterRequest{
-		Key:    key,
-		Amount: amount,
-	}
-
-	if _, err := c.counterClient.IncrementCounter(c.ctx, req); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (c *GrpcClient) GetCounter(key string) (int64, error) {
+// Counter
+func (c *GrpcClient) CounterGet(key string) (int64, error) {
 	req := &proto.GetCounterRequest{
 		Key: key,
 	}
@@ -108,6 +107,20 @@ func (c *GrpcClient) GetCounter(key string) (int64, error) {
 	return res.Value, nil
 }
 
+func (c *GrpcClient) CounterIncrement(key string, amount int64) error {
+	req := &proto.IncrementCounterRequest{
+		Key:    key,
+		Amount: amount,
+	}
+
+	if _, err := c.counterClient.IncrementCounter(c.ctx, req); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// KV
 func (c *GrpcClient) KVGet(key string) (*kv.Value, error) {
 	if key == "" {
 		return nil, ErrNoKey
@@ -170,7 +183,8 @@ func (c *GrpcClient) KVDelete(key string) error {
 	return nil
 }
 
-func (c *GrpcClient) GetSet(set string) ([]string, error) {
+// Set
+func (c *GrpcClient) SetGet(set string) ([]string, error) {
 	req := &proto.GetSetRequest{
 		Set: set,
 	}
@@ -183,28 +197,30 @@ func (c *GrpcClient) GetSet(set string) ([]string, error) {
 	return res.Items, nil
 }
 
-func (c *GrpcClient) AddToSet(set, item string) error {
+func (c *GrpcClient) SetAdd(set, item string) ([]string, error) {
 	req := &proto.ModifySetRequest{
 		Set:  set,
 		Item: item,
 	}
 
-	if _, err := c.setClient.SetAdd(c.ctx, req); err != nil {
-		return err
+	s, err := c.setClient.SetAdd(c.ctx, req)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	return s.Items, nil
 }
 
-func (c *GrpcClient) RemoveFromSet(set, item string) error {
+func (c *GrpcClient) SetRemove(set, item string) ([]string, error) {
 	req := &proto.ModifySetRequest{
 		Set:  set,
 		Item: item,
 	}
 
-	if _, err := c.setClient.SetRemove(c.ctx, req); err != nil {
-		return err
+	s, err := c.setClient.SetRemove(c.ctx, req)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	return s.Items, nil
 }
