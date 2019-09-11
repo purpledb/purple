@@ -1,5 +1,7 @@
 package data
 
+import "encoding/json"
+
 type Set struct {
 	items []string
 }
@@ -52,4 +54,8 @@ func (s *Set) Remove(item string) {
 
 func (s *Set) Get() []string {
 	return s.items
+}
+
+func (s *Set) ToBytes() ([]byte, error) {
+	return json.Marshal(s.items)
 }

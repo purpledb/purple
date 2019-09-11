@@ -17,16 +17,14 @@ func Int64ToBytes(i int64) []byte {
 	return bs
 }
 
-func BytesToSet(bs []byte) ([]string, error) {
-	var set []string
+func BytesToSet(bs []byte) (*Set, error) {
+	var items []string
 
-	if err := json.Unmarshal(bs, &set); err != nil {
+	if err := json.Unmarshal(bs, &items); err != nil {
 		return nil, err
 	}
 
-	return set, nil
-}
-
-func SetToBytes(set []string) ([]byte, error) {
-	return json.Marshal(set)
+	return &Set{
+		items: items,
+	}, nil
 }

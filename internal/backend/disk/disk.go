@@ -247,32 +247,7 @@ func (d *Disk) SetGet(key string) ([]string, error) {
 	val, err := dbRead(d.set, k)
 	if err != nil {
 		if strato.IsNotFound(err) {
-			return []string{}, nil
-		} else {
-			return nil, err
-		}
-	}
-
-	return data.BytesToSet(val)
-}
-
-func (d *Disk) SetAdd(key, item string) ([]string, error) {
-	k := []byte(key)
-
-	val, err := dbRead(d.set, k)
-	if err != nil {
-		if strato.IsNotFound(err) {
-			s := []string{item}
-			value, err := data.SetToBytes(s)
-			if err != nil {
-				return nil, err
-			}
-
-			if err := dbWrite(d.set, k, value); err != nil {
-				return nil, err
-			}
-
-			return s, nil
+			return data.EmptySet(), nil
 		} else {
 			return nil, err
 		}
@@ -283,9 +258,39 @@ func (d *Disk) SetAdd(key, item string) ([]string, error) {
 		return nil, err
 	}
 
-	s = append(s, item)
+	return s.Get(), nil
+}
 
-	value, err := data.SetToBytes(s)
+func (d *Disk) SetAdd(key, item string) ([]string, error) {
+	k := []byte(key)
+
+	val, err := dbRead(d.set, k)
+	if err != nil {
+		if strato.IsNotFound(err) {
+			s := data.NewSet(item)
+			value, err := s.ToBytes()
+			if err != nil {
+				return nil, err
+			}
+
+			if err := dbWrite(d.set, k, value); err != nil {
+				return nil, err
+			}
+
+			return s.Get(), nil
+		} else {
+			return nil, err
+		}
+	}
+
+	s, err := data.BytesToSet(val)
+	if err != nil {
+		return nil, err
+	}
+
+	s.Add(item)
+
+	value, err := s.ToBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -294,7 +299,7 @@ func (d *Disk) SetAdd(key, item string) ([]string, error) {
 		return nil, err
 	}
 
-	return s, nil
+	return s.Get(), nil
 }
 
 func (d *Disk) SetRemove(key, item string) ([]string, error) {
@@ -314,13 +319,9 @@ func (d *Disk) SetRemove(key, item string) ([]string, error) {
 		return nil, err
 	}
 
-	for idx, i := range s {
-		if i == item {
-			s = append(s[:idx], s[idx+1:]...)
-		}
-	}
+	s.Remove(item)
 
-	value, err := data.SetToBytes(s)
+	value, err := s.ToBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -330,5 +331,5 @@ func (d *Disk) SetRemove(key, item string) ([]string, error) {
 		return nil, err
 	}
 
-	return s, nil
+	return s.Get(), nil
 }
