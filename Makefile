@@ -73,7 +73,7 @@ run-example-grpc-server:
 	go run examples/grpc-server/main.go
 
 run-example-grpc-client:
-	go run examples/http-client/main.go
+	go run examples/grpc-client/main.go
 
 run-example-http-server:
 	go run examples/http-server/main.go
