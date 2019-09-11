@@ -173,13 +173,15 @@ func TestDiskHelperFunctions(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		bs, err := data.SetToBytes(tc)
+		s := data.NewSet(tc...)
+
+		bs, err := s.ToBytes()
 		is.NoError(err)
 		is.NotNil(bs)
 
-		s, err := data.BytesToSet(bs)
+		s, err = data.BytesToSet(bs)
 		is.NoError(err)
-		is.Equal(s, tc)
+		is.Equal(s.Get(), tc)
 	}
 
 	clean(is)

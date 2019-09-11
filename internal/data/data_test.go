@@ -27,17 +27,18 @@ func TestDataHelpers(t *testing.T) {
 			{"apple", "orange", "banana"},
 			{"just-one"},
 			{"longer string", "1234567"},
-			nil,
 		}
 
 		for _, tc := range testCases {
-			bs, err := SetToBytes(tc)
+			s := NewSet(tc...)
+
+			bs, err := s.ToBytes()
 			is.NoError(err)
 			is.NotNil(bs)
 
 			res, err := BytesToSet(bs)
 			is.NoError(err)
-			is.Equal(tc, res)
+			is.Equal(tc, res.items)
 		}
 	})
 }
