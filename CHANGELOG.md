@@ -1,5 +1,14 @@
 # Strato Changelog
 
+## v0.1.2
+
+Added:
+
+* An HTTP client supporting all operations
+* A `Set` type used internally to manage sets (rather than using raw `[]string`s)
+* Support for metadata for KV value structs
+* An example "todo" HTTP service that uses the Strato gRPC client to interact with a server (this example service has also been added to the Docker Compose config)
+
 ## v0.1.1
 
 Added:
