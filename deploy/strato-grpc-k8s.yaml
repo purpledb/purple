@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: strato-grpc
-        image: lucperkins/strato-grpc:v0.1.1
+        image: lucperkins/strato-grpc:v0.1.2
         ports:
         - containerPort: 8080
         args: ["--port", "8080", "--backend", "redis", "--redis-url", "redis:6379"]
