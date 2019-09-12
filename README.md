@@ -158,7 +158,7 @@ To instantiate a client:
 import "github.com/lucperkins/strato"
 
 // Supply the address of the Strato gRPC server
-client, err := strato.NewClient("localhost:8080")
+client, err := strato.NewGrpcClient("localhost:8080")
 if err != nil { 
     // Handle error
 }
@@ -167,6 +167,19 @@ if err != nil {
 if err := client.CacheSet("player1-session", "a1b2c3d4e5f6", 120); err != nil {
     // Handle error
 }
+```
+
+### HTTP Go client
+
+```go
+import "github.com/lucperkins/strato"
+
+client, err := strato.NewHttpClient("http://localhost:8081")
+if err != nil {
+    // Handle error
+}
+
+count, err := client.CounterIncrement("player1-points", 100)
 ```
 
 ## Deployment
