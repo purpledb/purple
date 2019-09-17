@@ -20,29 +20,33 @@ var (
 func TestConfigInstantiation(t *testing.T) {
 	is := assert.New(t)
 
-	t.Run("GrpcClient", func(t *testing.T) {
-		emptyCfg := &ClientConfig{}
-
-		err := emptyCfg.Validate()
-		is.Equal(err, ErrNoAddress)
-
-		err = goodClientCfg.Validate()
-		is.NoError(err)
-	})
-
-	t.Run("GrpcServer", func(t *testing.T) {
-		emptyCfg := &ServerConfig{}
-
-		lowPortCfg := &ServerConfig{
-			Port: 10,
+	t.Run("Client", func(t *testing.T) {
+		testCases := []struct{
+			config *ClientConfig
+			err    error
+		}{
+			{&ClientConfig{}, ErrNoAddress},
+			{&ClientConfig{Address: "example.com:2222"}, nil},
 		}
 
-		err := emptyCfg.Validate()
-		is.Equal(err, ErrNoPort)
+		for _, tc := range testCases {
+			is.Equal(tc.config.Validate(), tc.err)
+		}
+	})
 
-		err = lowPortCfg.Validate()
-		is.Equal(err, ErrPortOutOfRange)
+	t.Run("Server", func(t *testing.T) {
+		testCases := []struct{
+			config *ServerConfig
+			err    error
+		}{
+			{&ServerConfig{}, ErrNoPort},
+			{&ServerConfig{Port: 1234}, ErrNoBackend},
+			{&ServerConfig{Port: 10}, ErrPortOutOfRange},
+			{&ServerConfig{Port: 1234, Backend: "disk"}, nil},
+		}
 
-		is.NoError(goodServerCfg.Validate())
+		for _, tc := range testCases {
+			is.Equal(tc.config.Validate(), tc.err)
+		}
 	})
 }
