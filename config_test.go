@@ -24,7 +24,6 @@ func TestConfigInstantiation(t *testing.T) {
 		emptyCfg := &ClientConfig{}
 
 		err := emptyCfg.Validate()
-		is.True(IsConfigError(err))
 		is.Equal(err, ErrNoAddress)
 
 		err = goodClientCfg.Validate()
@@ -39,11 +38,9 @@ func TestConfigInstantiation(t *testing.T) {
 		}
 
 		err := emptyCfg.Validate()
-		is.True(IsConfigError(err))
 		is.Equal(err, ErrNoPort)
 
 		err = lowPortCfg.Validate()
-		is.True(IsConfigError(err))
 		is.Equal(err, ErrPortOutOfRange)
 
 		is.NoError(goodServerCfg.Validate())
