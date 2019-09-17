@@ -12,7 +12,7 @@ import (
 )
 
 type (
-	Interface interface {
+	Service interface {
 		cache.Cache
 		counter.Counter
 		kv.KV
@@ -20,17 +20,19 @@ type (
 
 		Close() error
 		Flush() error
+		Name()  string
 	}
 
+	// Backend wraps a Service and thereby provides specific instantiations access to the Close() and Flush() methods
 	Backend struct {
-		Interface
+		Service
 	}
 )
 
 var (
-	_ Interface = (*disk.Disk)(nil)
-	_ Interface = (*memory.Memory)(nil)
-	_ Interface = (*redis.Redis)(nil)
+	_ Service = (*disk.Disk)(nil)
+	_ Service = (*memory.Memory)(nil)
+	_ Service = (*redis.Redis)(nil)
 )
 
 func NewBackend(cfg *strato.ServerConfig) (*Backend, error) {
@@ -63,5 +65,5 @@ func NewBackend(cfg *strato.ServerConfig) (*Backend, error) {
 }
 
 func (b *Backend) Close() error {
-	return b.Interface.Close()
+	return b.Service.Close()
 }

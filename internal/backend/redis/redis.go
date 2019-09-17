@@ -18,6 +18,10 @@ type Redis struct {
 	cache, counters, kv, sets *redis.Client
 }
 
+func (r *Redis) Name() string {
+	return "redis"
+}
+
 var (
 	_ cache.Cache     = (*Redis)(nil)
 	_ counter.Counter = (*Redis)(nil)
@@ -74,7 +78,7 @@ func newRedisClient(addr string, i int) (*redis.Client, error) {
 	return cl, nil
 }
 
-// Interface methods
+// Service methods
 func (r *Redis) Close() error {
 	for _, db := range []*redis.Client{
 		r.cache,

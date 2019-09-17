@@ -21,7 +21,7 @@ func TestConfigInstantiation(t *testing.T) {
 	is := assert.New(t)
 
 	t.Run("Client", func(t *testing.T) {
-		testCases := []struct{
+		testCases := []struct {
 			config *ClientConfig
 			err    error
 		}{
@@ -35,7 +35,7 @@ func TestConfigInstantiation(t *testing.T) {
 	})
 
 	t.Run("Server", func(t *testing.T) {
-		testCases := []struct{
+		testCases := []struct {
 			config *ServerConfig
 			err    error
 		}{

@@ -19,6 +19,10 @@ type Memory struct {
 	sets     map[string]*data.Set
 }
 
+func (m *Memory) Name() string {
+	return "memory"
+}
+
 var (
 	_ cache.Cache     = (*Memory)(nil)
 	_ counter.Counter = (*Memory)(nil)
@@ -43,7 +47,7 @@ func NewMemoryBackend() *Memory {
 	}
 }
 
-// Interface methods
+// Service methods
 func (m *Memory) Close() error {
 	return nil
 }

@@ -8,11 +8,11 @@ import (
 )
 
 type Handler struct {
-	b   backend.Interface
+	b   backend.Service
 	log *logrus.Entry
 }
 
-func NewHandler(backend backend.Interface, log *logrus.Entry) *Handler {
+func NewHandler(backend backend.Service, log *logrus.Entry) *Handler {
 	return &Handler{
 		b:   backend,
 		log: log,

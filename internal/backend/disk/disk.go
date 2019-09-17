@@ -23,6 +23,10 @@ type Disk struct {
 	cache, counter, kv, set *badger.DB
 }
 
+func (d *Disk) Name() string {
+	return "disk"
+}
+
 var (
 	_ cache.Cache     = (*Disk)(nil)
 	_ counter.Counter = (*Disk)(nil)
@@ -74,7 +78,7 @@ func createDb(subDir string) (*badger.DB, error) {
 	return badger.Open(badger.DefaultOptions(path))
 }
 
-// Interface methods
+// Service methods
 func (d *Disk) Close() error {
 	for _, bk := range []*badger.DB{
 		d.cache, d.counter, d.kv, d.set,
@@ -165,6 +169,14 @@ func (d *Disk) CacheGet(key string) (string, error) {
 }
 
 func (d *Disk) CacheSet(key string, value string, ttl int32) error {
+	if key == "" {
+		return strato.ErrNoKey
+	}
+
+	if value == "" {
+		return strato.ErrNoValue
+	}
+
 	k, v := []byte(key), []byte(value)
 
 	t := time.Duration(ttl) * time.Second

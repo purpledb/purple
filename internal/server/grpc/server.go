@@ -20,7 +20,7 @@ import (
 type Server struct {
 	address string
 	srv     *grpc.Server
-	backend backend.Interface
+	backend backend.Service
 	log     *logrus.Entry
 }
 
