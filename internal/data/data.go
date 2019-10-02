@@ -18,6 +18,10 @@ func Int64ToBytes(i int64) []byte {
 	return bs
 }
 
+func Int64ToString(i int64) string {
+	return strconv.FormatInt(i, 10)
+}
+
 func BoolAsBytes(b bool) []byte {
 	return []byte(strconv.FormatBool(b))
 }

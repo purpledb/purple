@@ -35,7 +35,7 @@ func (h *Handler) KvGet(c *gin.Context) {
 func (h *Handler) KvPut(c *gin.Context) {
 	log := h.logger("kv/put")
 
-	key, val := c.Param("key"), getValue(c)
+	key, val := c.Param("key"), getKvValue(c)
 
 	value := &kv.Value{
 		Content: []byte(val.Content),

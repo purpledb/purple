@@ -46,6 +46,27 @@ func main() {
 
 	fmt.Println("Fetched counter:", fetchedValue)
 
+	// Flag
+	key := "user1-logged-in"
+
+	flagVal, err := client.FlagGet(key)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("user1 logged in?", flagVal)
+
+	if err := client.FlagSet(key, true); err != nil {
+		log.Fatal(err)
+	}
+
+	flagVal, err = client.FlagGet(key)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("user1 logged in?", flagVal)
+
 	// KV
 	kvKey, kvValue := "some-kv-key", &kv.Value{
 		Content: []byte("here is some content"),

@@ -64,7 +64,7 @@ type valJs struct {
 	Content string `json:"content"`
 }
 
-func SetValue(c *gin.Context) {
+func SetKVValue(c *gin.Context) {
 	var js valJs
 
 	if err := c.ShouldBind(&js); err != nil {
@@ -86,8 +86,27 @@ func SetValue(c *gin.Context) {
 	c.Set("value", &js)
 }
 
-func getValue(c *gin.Context) *valJs {
+func getKvValue(c *gin.Context) *valJs {
 	return c.MustGet("value").(*valJs)
+}
+
+func SetFlagValue(c *gin.Context) {
+	s := c.Query("value")
+	if s == "" {
+		res := gin.H{
+			"error": "no flag value specified",
+		}
+		c.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	val, _ := strconv.ParseBool(s)
+
+	c.Set("value", val)
+}
+
+func getFlagValue(c *gin.Context) bool {
+	return c.MustGet("value").(bool)
 }
 
 func SetItem(c *gin.Context) {

@@ -3,6 +3,7 @@ package strato
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/lucperkins/strato/internal/data"
 	"github.com/lucperkins/strato/internal/services/counter"
 	"github.com/lucperkins/strato/internal/services/flag"
 	"github.com/lucperkins/strato/internal/services/kv"
@@ -133,8 +134,10 @@ func (c *HttpClient) CounterGet(key string) (int64, error) {
 func (c *HttpClient) CounterIncrement(key string, increment int64) error {
 	url := c.counterKeyUrl(key)
 
+	s := data.Int64ToString(increment)
+
 	res, err := c.cl.R().
-		SetQueryParam("increment", int64ToString(increment)).
+		SetQueryParam("increment", s).
 		Put(url)
 
 	if err != nil {
@@ -152,11 +155,6 @@ func (c *HttpClient) CounterIncrement(key string, increment int64) error {
 type flagValue struct {
 	Value bool `json:"value"`
 }
-
-var (
-	trueStr  = strconv.FormatBool(true)
-	falseStr = strconv.FormatBool(false)
-)
 
 func (c *HttpClient) FlagGet(key string) (bool, error) {
 	var val flagValue
@@ -177,29 +175,11 @@ func (c *HttpClient) FlagGet(key string) (bool, error) {
 	return val.Value, nil
 }
 
-func (c *HttpClient) FlagSet(key string) error {
+func (c *HttpClient) FlagSet(key string, value bool) error {
 	url := c.flagKeyUrl(key)
 
 	res, err := c.cl.R().
-		SetQueryParam("value", trueStr).
-		Put(url)
-
-	if err != nil {
-		return err
-	}
-
-	if res.StatusCode() != http.StatusNoContent {
-		return fmt.Errorf("expected status code 204, got %d", res.StatusCode())
-	}
-
-	return nil
-}
-
-func (c *HttpClient) FlagUnset(key string) error {
-	url := c.flagKeyUrl(key)
-
-	res, err := c.cl.R().
-		SetQueryParam("value", falseStr).
+		SetQueryParam("value", strconv.FormatBool(value)).
 		Put(url)
 
 	if err != nil {
@@ -390,8 +370,4 @@ func (c *HttpClient) setKeyUrl(key string) string {
 
 func int32ToString(i int32) string {
 	return strconv.FormatInt(int64(i), 10)
-}
-
-func int64ToString(i int64) string {
-	return strconv.FormatInt(i, 10)
 }

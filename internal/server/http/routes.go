@@ -35,7 +35,12 @@ func (s *Server) routes() *gin.Engine {
 	flags := r.Group("/flags/:key")
 	{
 		flags.GET("", s.h.FlagGet)
-		flags.PUT("", s.h.FlagUpdate)
+
+		withVal := flags.Group("")
+		{
+			withVal.Use(handler.SetFlagValue)
+			withVal.PUT("", s.h.FlagSet)
+		}
 	}
 
 	kv := r.Group("/kv/:key")
@@ -45,7 +50,7 @@ func (s *Server) routes() *gin.Engine {
 
 		withVal := kv.Group("")
 		{
-			withVal.Use(handler.SetValue)
+			withVal.Use(handler.SetKVValue)
 			withVal.PUT("", s.h.KvPut)
 		}
 	}
