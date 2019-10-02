@@ -137,14 +137,8 @@ func (m *Memory) FlagGet(key string) (bool, error) {
 	return val, nil
 }
 
-func (m *Memory) FlagSet(key string) error {
-	m.flags[key] = true
-
-	return nil
-}
-
-func (m *Memory) FlagUnset(key string) error {
-	m.flags[key] = false
+func (m *Memory) FlagSet(key string, value bool) error {
+	m.flags[key] = value
 
 	return nil
 }

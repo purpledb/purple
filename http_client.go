@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/lucperkins/strato/internal/services/counter"
+	"github.com/lucperkins/strato/internal/services/flag"
 	"github.com/lucperkins/strato/internal/services/kv"
+	"github.com/lucperkins/strato/internal/services/set"
 	"net/http"
 	"strconv"
 
@@ -20,8 +22,9 @@ type HttpClient struct {
 var (
 	_ cache.Cache     = (*HttpClient)(nil)
 	_ counter.Counter = (*HttpClient)(nil)
+	_ flag.Flag       = (*HttpClient)(nil)
 	_ kv.KV           = (*HttpClient)(nil)
-	//_ set.Set         = (*HttpClient)(nil)
+	_ set.Set         = (*HttpClient)(nil)
 )
 
 func NewHttpClient(cfg *ClientConfig) (*HttpClient, error) {
@@ -145,7 +148,72 @@ func (c *HttpClient) CounterIncrement(key string, increment int64) error {
 	return nil
 }
 
-// KV
+// Flag operations
+type flagValue struct {
+	Value bool `json:"value"`
+}
+
+var (
+	trueStr  = strconv.FormatBool(true)
+	falseStr = strconv.FormatBool(false)
+)
+
+func (c *HttpClient) FlagGet(key string) (bool, error) {
+	var val flagValue
+
+	url := c.flagKeyUrl(key)
+
+	res, err := c.cl.R().
+		Get(url)
+
+	if err != nil {
+		return false, err
+	}
+
+	if err := json.Unmarshal(res.Body(), &val); err != nil {
+		return false, err
+	}
+
+	return val.Value, nil
+}
+
+func (c *HttpClient) FlagSet(key string) error {
+	url := c.flagKeyUrl(key)
+
+	res, err := c.cl.R().
+		SetQueryParam("value", trueStr).
+		Put(url)
+
+	if err != nil {
+		return err
+	}
+
+	if res.StatusCode() != http.StatusNoContent {
+		return fmt.Errorf("expected status code 204, got %d", res.StatusCode())
+	}
+
+	return nil
+}
+
+func (c *HttpClient) FlagUnset(key string) error {
+	url := c.flagKeyUrl(key)
+
+	res, err := c.cl.R().
+		SetQueryParam("value", falseStr).
+		Put(url)
+
+	if err != nil {
+		return err
+	}
+
+	if res.StatusCode() != http.StatusNoContent {
+		return fmt.Errorf("expected status code 204, got %d", res.StatusCode())
+	}
+
+	return nil
+}
+
+// KV operations
 func (c *HttpClient) KVGet(key string) (*kv.Value, error) {
 	type value struct {
 		Value []byte `json:"value"`
@@ -306,6 +374,10 @@ func (c *HttpClient) cacheKeyUrl(key string) string {
 
 func (c *HttpClient) counterKeyUrl(key string) string {
 	return keyUrl(c.rootUrl, "counters", key)
+}
+
+func (c *HttpClient) flagKeyUrl(key string) string {
+	return keyUrl(c.rootUrl, "flags", key)
 }
 
 func (c *HttpClient) kvKeyUrl(key string) string {

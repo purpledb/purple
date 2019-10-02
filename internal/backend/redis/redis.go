@@ -2,6 +2,7 @@ package redis
 
 import (
 	"github.com/lucperkins/strato/internal/services/flag"
+	"strconv"
 	"time"
 
 	"github.com/lucperkins/strato/internal/services/cache"
@@ -149,25 +150,24 @@ func (r *Redis) CounterIncrement(key string, increment int64) error {
 
 // Flag operations
 func (r *Redis) FlagGet(key string) (bool, error) {
-	i, err := r.flags.Get(key).Int64()
+	s := r.flags.Get(key).String()
 
-	if err != nil {
-		if err == redis.Nil {
-			return false, nil
-		} else {
-			return false, err
-		}
+	if s == "" {
+		return false, nil
 	}
 
-	return i == 1, nil
+	val, err := strconv.ParseBool(s)
+	if err != nil {
+		return false, nil
+	}
+
+	return val, nil
 }
 
-func (r *Redis) FlagSet(key string) error {
-	return r.flags.Set(key, 1, 0).Err()
-}
+func (r *Redis) FlagSet(key string, value bool) error {
+	val := strconv.FormatBool(value)
 
-func (r *Redis) FlagUnset(key string) error {
-	return r.flags.Set(key, 0, 0).Err()
+	return r.flags.Set(key, val, 0).Err()
 }
 
 // KV operations

@@ -32,6 +32,12 @@ func (s *Server) routes() *gin.Engine {
 		}
 	}
 
+	flags := r.Group("/flags/:key")
+	{
+		flags.GET("", s.h.FlagGet)
+		flags.PUT("", s.h.FlagUpdate)
+	}
+
 	kv := r.Group("/kv/:key")
 	{
 		kv.GET("", s.h.KvGet)

@@ -18,12 +18,8 @@ func Int64ToBytes(i int64) []byte {
 	return bs
 }
 
-func OneAsBytes() []byte {
-	return []byte(strconv.Itoa(1))
-}
-
-func ZeroAsBytes() []byte {
-	return []byte(strconv.Itoa(0))
+func BoolAsBytes(b bool) []byte {
+	return []byte(strconv.FormatBool(b))
 }
 
 func BytesToSet(bs []byte) (*Set, error) {

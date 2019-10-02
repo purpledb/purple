@@ -247,18 +247,10 @@ func (d *Disk) FlagGet(key string) (bool, error) {
 	return int(val[0]) == 1, nil
 }
 
-func (d *Disk) FlagSet(key string) error {
+func (d *Disk) FlagSet(key string, value bool) error {
 	k := []byte(key)
 
-	val := data.OneAsBytes()
-
-	return dbWrite(d.flag, k, val)
-}
-
-func (d *Disk) FlagUnset(key string) error {
-	k := []byte(key)
-
-	val := data.ZeroAsBytes()
+	val := data.BoolAsBytes(value)
 
 	return dbWrite(d.flag, k, val)
 }

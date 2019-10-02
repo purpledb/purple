@@ -10,7 +10,7 @@ import (
 
 var (
 	ErrNoKey                = errors.New("no resource key provided")
-	ErrNoValue              = errors.New("no value provided")
+	ErrNoValue              = errors.New("no flagValue provided")
 	ErrHttpUnavailable      = errors.New("could not connect to Strato HTTP server")
 	ErrNoAddress            = errors.New("no server address provided")
 	ErrNoPort               = errors.New("no server port provided")
@@ -24,7 +24,7 @@ type NotFoundError struct {
 }
 
 func (e NotFoundError) Error() string {
-	return fmt.Sprintf(`no value found for %s`, e.string)
+	return fmt.Sprintf(`no flagValue found for %s`, e.string)
 }
 
 func (e NotFoundError) AsProtoStatus() error {
