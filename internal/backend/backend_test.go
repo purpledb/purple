@@ -91,6 +91,24 @@ func testSvc(svc Service, t *testing.T) {
 		is.NoError(svc.Flush())
 	})
 
+	t.Run(fmt.Sprintf("%s/%s", strings.Title(svc.Name()), "Flag"), func(t *testing.T) {
+		is.NoError(svc.Flush())
+
+		key := "some-flag"
+
+		val, err := svc.FlagGet(key)
+		is.NoError(err)
+		is.False(val)
+
+		is.NoError(svc.FlagSet(key))
+
+		val, err = svc.FlagGet(key)
+		is.NoError(err)
+		is.True(val)
+
+		is.NoError(svc.Flush())
+	})
+
 	t.Run(fmt.Sprintf("%s/%s", strings.Title(svc.Name()), "KV"), func(t *testing.T) {
 		is.NoError(svc.Flush())
 

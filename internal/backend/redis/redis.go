@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"github.com/lucperkins/strato/internal/services/flag"
 	"time"
 
 	"github.com/lucperkins/strato/internal/services/cache"
@@ -15,7 +16,7 @@ import (
 const defaultUrl = "localhost:6379"
 
 type Redis struct {
-	cache, counters, kv, sets *redis.Client
+	cache, counters, flags, kv, sets *redis.Client
 }
 
 func (r *Redis) Name() string {
@@ -25,6 +26,7 @@ func (r *Redis) Name() string {
 var (
 	_ cache.Cache     = (*Redis)(nil)
 	_ counter.Counter = (*Redis)(nil)
+	_ flag.Flag       = (*Redis)(nil)
 	_ kv.KV           = (*Redis)(nil)
 	_ set.Set         = (*Redis)(nil)
 )
@@ -44,12 +46,17 @@ func NewRedisBackend(addr string) (*Redis, error) {
 		return nil, err
 	}
 
-	kvCl, err := newRedisClient(addr, 2)
+	flagCl, err := newRedisClient(addr, 2)
 	if err != nil {
 		return nil, err
 	}
 
-	setCl, err := newRedisClient(addr, 3)
+	kvCl, err := newRedisClient(addr, 3)
+	if err != nil {
+		return nil, err
+	}
+
+	setCl, err := newRedisClient(addr, 4)
 	if err != nil {
 		return nil, err
 	}
@@ -57,6 +64,7 @@ func NewRedisBackend(addr string) (*Redis, error) {
 	return &Redis{
 		cache:    cacheCl,
 		counters: counterCl,
+		flags:    flagCl,
 		kv:       kvCl,
 		sets:     setCl,
 	}, nil
@@ -137,6 +145,29 @@ func (r *Redis) CounterGet(key string) (int64, error) {
 
 func (r *Redis) CounterIncrement(key string, increment int64) error {
 	return r.counters.IncrBy(key, increment).Err()
+}
+
+// Flag operations
+func (r *Redis) FlagGet(key string) (bool, error) {
+	i, err := r.flags.Get(key).Int64()
+
+	if err != nil {
+		if err == redis.Nil {
+			return false, nil
+		} else {
+			return false, err
+		}
+	}
+
+	return i == 1, nil
+}
+
+func (r *Redis) FlagSet(key string) error {
+	return r.flags.Set(key, 1, 0).Err()
+}
+
+func (r *Redis) FlagUnset(key string) error {
+	return r.flags.Set(key, 0, 0).Err()
 }
 
 // KV operations

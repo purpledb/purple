@@ -1,6 +1,7 @@
 package disk
 
 import (
+	"github.com/lucperkins/strato/internal/services/flag"
 	"github.com/lucperkins/strato/internal/util"
 	"os"
 	"path/filepath"
@@ -20,7 +21,7 @@ import (
 const rootDataDir = "tmp/strato"
 
 type Disk struct {
-	cache, counter, kv, set *badger.DB
+	cache, counter, flag, kv, set *badger.DB
 }
 
 func (d *Disk) Name() string {
@@ -30,6 +31,7 @@ func (d *Disk) Name() string {
 var (
 	_ cache.Cache     = (*Disk)(nil)
 	_ counter.Counter = (*Disk)(nil)
+	_ flag.Flag       = (*Disk)(nil)
 	_ kv.KV           = (*Disk)(nil)
 	_ set.Set         = (*Disk)(nil)
 )
@@ -41,6 +43,11 @@ func NewDiskBackend() (*Disk, error) {
 	}
 
 	counterDb, err := createDb("counter")
+	if err != nil {
+		return nil, err
+	}
+
+	flagDb, err := createDb("flag")
 	if err != nil {
 		return nil, err
 	}
@@ -58,6 +65,7 @@ func NewDiskBackend() (*Disk, error) {
 	return &Disk{
 		cache:   cacheDb,
 		counter: counterDb,
+		flag:    flagDb,
 		kv:      kvDb,
 		set:     setDb,
 	}, nil
@@ -221,6 +229,38 @@ func (d *Disk) CounterIncrement(key string, increment int64) error {
 	newVal := data.Int64ToBytes(count)
 
 	return dbWrite(d.counter, k, newVal)
+}
+
+// Flag
+func (d *Disk) FlagGet(key string) (bool, error) {
+	k := []byte(key)
+
+	val, err := dbRead(d.flag, k)
+	if err != nil {
+		if err == badger.ErrKeyNotFound {
+			return false, nil
+		} else {
+			return false, err
+		}
+	}
+
+	return int(val[0]) == 1, nil
+}
+
+func (d *Disk) FlagSet(key string) error {
+	k := []byte(key)
+
+	val := data.OneAsBytes()
+
+	return dbWrite(d.flag, k, val)
+}
+
+func (d *Disk) FlagUnset(key string) error {
+	k := []byte(key)
+
+	val := data.ZeroAsBytes()
+
+	return dbWrite(d.flag, k, val)
 }
 
 // KV

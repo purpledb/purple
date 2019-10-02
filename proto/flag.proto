@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package proto;
+
+import "common.proto";
+
+message FlagRequest {
+    string key = 1;
+}
+
+message FlagResponse {
+    bool value = 1;
+}
+
+service Flag {
+    rpc FlagGet (FlagRequest) returns (FlagResponse);
+    rpc FlagSet (FlagRequest) returns (Empty);
+}

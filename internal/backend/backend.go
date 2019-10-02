@@ -7,6 +7,7 @@ import (
 	"github.com/lucperkins/strato/internal/backend/redis"
 	"github.com/lucperkins/strato/internal/services/cache"
 	"github.com/lucperkins/strato/internal/services/counter"
+	"github.com/lucperkins/strato/internal/services/flag"
 	"github.com/lucperkins/strato/internal/services/kv"
 	"github.com/lucperkins/strato/internal/services/set"
 )
@@ -15,12 +16,13 @@ type (
 	Service interface {
 		cache.Cache
 		counter.Counter
+		flag.Flag
 		kv.KV
 		set.Set
 
 		Close() error
 		Flush() error
-		Name()  string
+		Name() string
 	}
 
 	// Backend wraps a Service and thereby provides specific instantiations access to the Close() and Flush() methods

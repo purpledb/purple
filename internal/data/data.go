@@ -3,6 +3,7 @@ package data
 import (
 	"encoding/binary"
 	"encoding/json"
+	"strconv"
 )
 
 func BytesToInt64(bs []byte) int64 {
@@ -15,6 +16,14 @@ func Int64ToBytes(i int64) []byte {
 	binary.LittleEndian.PutUint64(bs, uint64(i))
 
 	return bs
+}
+
+func OneAsBytes() []byte {
+	return []byte(strconv.Itoa(1))
+}
+
+func ZeroAsBytes() []byte {
+	return []byte(strconv.Itoa(0))
 }
 
 func BytesToSet(bs []byte) (*Set, error) {

@@ -2,6 +2,7 @@ package memory
 
 import (
 	"github.com/lucperkins/strato/internal/data"
+	"github.com/lucperkins/strato/internal/services/flag"
 	"time"
 
 	"github.com/lucperkins/strato/internal/services/cache"
@@ -15,6 +16,7 @@ import (
 type Memory struct {
 	cache    map[string]*cache.Item
 	counters map[string]int64
+	flags    map[string]bool
 	kv       map[string]*kv.Value
 	sets     map[string]*data.Set
 }
@@ -26,6 +28,7 @@ func (m *Memory) Name() string {
 var (
 	_ cache.Cache     = (*Memory)(nil)
 	_ counter.Counter = (*Memory)(nil)
+	_ flag.Flag       = (*Memory)(nil)
 	_ kv.KV           = (*Memory)(nil)
 	_ set.Set         = (*Memory)(nil)
 )
@@ -35,6 +38,8 @@ func NewMemoryBackend() *Memory {
 
 	counterMem := make(map[string]int64)
 
+	flagMem := make(map[string]bool)
+
 	setMem := make(map[string]*data.Set)
 
 	kvMem := make(map[string]*kv.Value)
@@ -42,6 +47,7 @@ func NewMemoryBackend() *Memory {
 	return &Memory{
 		cache:    cacheMem,
 		counters: counterMem,
+		flags:    flagMem,
 		kv:       kvMem,
 		sets:     setMem,
 	}
@@ -121,6 +127,29 @@ func (m *Memory) CounterGet(key string) (int64, error) {
 	return m.counters[key], nil
 }
 
+// Flag
+func (m *Memory) FlagGet(key string) (bool, error) {
+	val, ok := m.flags[key]
+	if !ok {
+		return false, nil
+	}
+
+	return val, nil
+}
+
+func (m *Memory) FlagSet(key string) error {
+	m.flags[key] = true
+
+	return nil
+}
+
+func (m *Memory) FlagUnset(key string) error {
+	m.flags[key] = false
+
+	return nil
+}
+
+// KV
 func (m *Memory) KVGet(key string) (*kv.Value, error) {
 	val, ok := m.kv[key]
 	if !ok {
@@ -140,6 +169,7 @@ func (m *Memory) KVDelete(key string) error {
 	return nil
 }
 
+// Set
 func (m *Memory) SetGet(set string) ([]string, error) {
 	s, ok := m.sets[set]
 
