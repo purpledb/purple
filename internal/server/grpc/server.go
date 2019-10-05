@@ -27,6 +27,7 @@ type Server struct {
 var (
 	_ proto.CacheServer   = (*Server)(nil)
 	_ proto.CounterServer = (*Server)(nil)
+	_ proto.FlagServer    = (*Server)(nil)
 	_ proto.KVServer      = (*Server)(nil)
 	_ proto.SetServer     = (*Server)(nil)
 )
@@ -99,6 +100,25 @@ func (s *Server) GetCounter(_ context.Context, req *proto.GetCounterRequest) (*p
 	return &proto.GetCounterResponse{
 		Value: val,
 	}, nil
+}
+
+func (s *Server) FlagGet(_ context.Context, req *proto.FlagGetRequest) (*proto.FlagResponse, error) {
+	val, err := s.backend.FlagGet(req.Key)
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.FlagResponse{
+		Value: val,
+	}, nil
+}
+
+func (s *Server) FlagSet(_ context.Context, req *proto.FlagSetRequest) (*proto.Empty, error) {
+	if err := s.backend.FlagSet(req.Key, req.Value); err != nil {
+		return nil, err
+	}
+
+	return &proto.Empty{}, nil
 }
 
 func (s *Server) KVGet(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {

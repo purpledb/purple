@@ -101,7 +101,7 @@ func (d *Disk) Close() error {
 
 func (d *Disk) Flush() error {
 	for _, bk := range []*badger.DB{
-		d.cache, d.counter, d.kv, d.set,
+		d.cache, d.counter, d.flag, d.kv, d.set,
 	} {
 		if err := bk.DropAll(); err != nil {
 			return err
@@ -237,14 +237,14 @@ func (d *Disk) FlagGet(key string) (bool, error) {
 
 	val, err := dbRead(d.flag, k)
 	if err != nil {
-		if err == badger.ErrKeyNotFound {
+		if strato.IsNotFound(err) {
 			return false, nil
 		} else {
 			return false, err
 		}
 	}
 
-	return int(val[0]) == 1, nil
+	return data.BoolFromBytes(val)
 }
 
 func (d *Disk) FlagSet(key string, value bool) error {

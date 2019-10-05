@@ -4,8 +4,13 @@ package proto;
 
 import "common.proto";
 
-message FlagRequest {
+message FlagGetRequest {
     string key = 1;
+}
+
+message FlagSetRequest {
+    string key = 1;
+    bool value = 2;
 }
 
 message FlagResponse {
@@ -13,6 +18,6 @@ message FlagResponse {
 }
 
 service Flag {
-    rpc FlagGet (FlagRequest) returns (FlagResponse);
-    rpc FlagSet (FlagRequest) returns (Empty);
+    rpc FlagGet (FlagGetRequest) returns (FlagResponse);
+    rpc FlagSet (FlagSetRequest) returns (Empty);
 }

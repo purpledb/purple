@@ -100,7 +100,7 @@ func testSvc(svc Service, t *testing.T) {
 		is.NoError(err)
 		is.False(val)
 
-		is.NoError(svc.FlagSet(key))
+		is.NoError(svc.FlagSet(key, true))
 
 		val, err = svc.FlagGet(key)
 		is.NoError(err)

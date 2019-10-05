@@ -9,6 +9,19 @@ import (
 func TestDataHelpers(t *testing.T) {
 	is := assert.New(t)
 
+	t.Run("Booleans", func(t *testing.T) {
+		for _, b := range []bool{true, false}{
+			bo, err := BoolFromBytes(BoolAsBytes(b))
+			is.NoError(err)
+
+			if b {
+				is.True(bo)
+			} else {
+				is.False(bo)
+			}
+		}
+	})
+
 	t.Run("Integers", func(t *testing.T) {
 		testCases := []int{
 			0, 1, 12345, 987654321,

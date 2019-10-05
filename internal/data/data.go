@@ -6,6 +6,14 @@ import (
 	"strconv"
 )
 
+func BoolAsBytes(b bool) []byte {
+	return []byte(strconv.FormatBool(b))
+}
+
+func BoolFromBytes(bs []byte) (bool, error) {
+	return strconv.ParseBool(string(bs))
+}
+
 func BytesToInt64(bs []byte) int64 {
 	return int64(binary.LittleEndian.Uint64(bs))
 }
@@ -20,10 +28,6 @@ func Int64ToBytes(i int64) []byte {
 
 func Int64ToString(i int64) string {
 	return strconv.FormatInt(i, 10)
-}
-
-func BoolAsBytes(b bool) []byte {
-	return []byte(strconv.FormatBool(b))
 }
 
 func BytesToSet(bs []byte) (*Set, error) {
