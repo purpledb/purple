@@ -1,5 +1,11 @@
 # Strato Changelog
 
+## v0.1.3
+
+Added:
+
+* A "flag" service for boolean values, akin to the flag CRDT for Riak
+
 ## v0.1.2
 
 Added:
