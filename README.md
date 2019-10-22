@@ -1,6 +1,6 @@
 # Strato
 
-[![GitHub Actions status](https://github.com/lucperkins/strato/actions)](https://github.com/lucperkins/strato/workflows/Build%20and%20test/badge.svg)
+[![GitHub Actions status](https://github.com/lucperkins/strato/workflows/Build%20and%20test/badge.svg)](https://github.com/lucperkins/strato/actions)
 
 An all-in-one data service with support for:
 
