@@ -6,7 +6,7 @@ GRPC_IMG  = lucperkins/strato-grpc
 HTTP_IMG  = lucperkins/strato-http
 
 build:
-	$(GO) build -v ./...
+	$(GO) build -v -mod vendor ./...
 
 fmt:
 	gofmt -w .
