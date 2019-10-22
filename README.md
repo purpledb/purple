@@ -1,6 +1,6 @@
 # Strato
 
-[![Actions Status](https://wdp9fww0r9.execute-api.us-west-2.amazonaws.com/production/badge/lucperkins/strato)](https://wdp9fww0r9.execute-api.us-west-2.amazonaws.com/production/results/lucperkins/strato) [![GoDoc](https://godoc.org/github.com/lucperkins/strato?status.svg)](https://godoc.org/github.com/lucperkins/strato)
+[![GitHub Actions status](https://github.com/lucperkins/strato/actions)](https://github.com/lucperkins/strato/workflows/Build%20and%20test/badge.svg)
 
 An all-in-one data service with support for:
 
