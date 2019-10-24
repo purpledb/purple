@@ -6,6 +6,7 @@ An all-in-one data service with support for:
 
 * Key/value operations
 * Counters and sets
+* Flags (basically key/value pairs where the value is a Boolean with a default value of `false`)
 * Caching with TTL
 
 Strato is meant to abstract away complex database interfaces (Redis, DynamoDB, Mongo, memory, disk, etc.) in favor of a unified set of dead-simple operations (see the full [list of operations](#operations) below).
@@ -61,6 +62,8 @@ Operation | Service | Semantics
 `CacheSet(key, value string, ttl int32)` | Cache | Sets the value associated with a key and assigns a TTL (the default is 5 seconds). Overwrites the value and TTL if the key already exists.
 `CounterIncrement(key string, amount int64)` | Counter | Increments a counter by the designated amount. Returns the new value of the counter or an error.
 `CounterGet(key string)` | Counter | Fetches the current value of a counter. Returns zero if the counter isn't found.
+`FlagGet(key string)` | Flag | Fetches the current Boolean value of a flag. If the flag hasn't yet been set, the default value is `false`.
+`FlagSet(key string, value bool)` | Flag | Sets the Boolean value of a flag.
 `SetGet(set string)` | Set | Fetch the items currently in the specified set. Returns an empty string set (`[]string`) if the set isn't found.
 `SetAdd(set, item string)` | Set | Adds an item to the specified set and returns the resulting set.
 `SetRemove(set, item string)` | Set | Removes an item from the specified set and returns the resulting set. Returns an empty set isn't found or is already empty.
