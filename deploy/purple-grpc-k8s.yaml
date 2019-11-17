@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: purple-grpc
-        image: lucperkins/purple-grpc:v0.1.2
+        image: lucperkins/purple-grpc:latest
         ports:
         - containerPort: 8080
         args: ["--port", "8080", "--backend", "redis", "--redis-url", "redis:6379"]
