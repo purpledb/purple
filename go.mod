@@ -1,4 +1,4 @@
-module github.com/lucperkins/strato
+module github.com/lucperkins/purple
 
 go 1.13
 
