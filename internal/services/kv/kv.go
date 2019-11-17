@@ -1,7 +1,7 @@
 package kv
 
 import (
-	"github.com/lucperkins/strato/proto"
+	"github.com/lucperkins/purple/proto"
 )
 
 type (

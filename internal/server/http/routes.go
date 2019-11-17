@@ -2,7 +2,7 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/lucperkins/strato/internal/server/http/handler"
+	"github.com/lucperkins/purple/internal/server/http/handler"
 )
 
 func (s *Server) routes() *gin.Engine {

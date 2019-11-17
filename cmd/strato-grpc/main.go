@@ -1,20 +1,20 @@
 package main
 
 import (
-	"github.com/lucperkins/strato"
-	"github.com/lucperkins/strato/cmd"
-	"github.com/lucperkins/strato/internal/server/grpc"
+	"github.com/lucperkins/purple"
+	"github.com/lucperkins/purple/cmd"
+	"github.com/lucperkins/purple/internal/server/grpc"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
 
 func command() *cobra.Command {
-	var cfg strato.ServerConfig
+	var cfg purple.ServerConfig
 
-	v := cmd.NewConfig("strato_grpc")
+	v := cmd.NewConfig("purple_grpc")
 
 	command := &cobra.Command{
-		Use: "strato-grpc",
+		Use: "purple-grpc",
 		PreRun: func(_ *cobra.Command, _ []string) {
 			cmd.ExitOnError(v.Unmarshal(&cfg))
 		},
@@ -25,8 +25,8 @@ func command() *cobra.Command {
 		},
 	}
 
-	flags := pflag.NewFlagSet("strato-grpc", pflag.ExitOnError)
-	flags.IntP("port", "p", 8080, "Strato server port")
+	flags := pflag.NewFlagSet("purple-grpc", pflag.ExitOnError)
+	flags.IntP("port", "p", 8080, "purple server port")
 	flags.Bool("debug", false, "Debug mode")
 	flags.String("backend", "disk", `Data backend (options are "disk" and "memory")`)
 	flags.String("redis-url", "localhost:6379", "Redis connection URL (if redis backend is used)")

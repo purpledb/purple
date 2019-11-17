@@ -1,15 +1,15 @@
 package backend
 
 import (
-	"github.com/lucperkins/strato"
-	"github.com/lucperkins/strato/internal/backend/disk"
-	"github.com/lucperkins/strato/internal/backend/memory"
-	"github.com/lucperkins/strato/internal/backend/redis"
-	"github.com/lucperkins/strato/internal/services/cache"
-	"github.com/lucperkins/strato/internal/services/counter"
-	"github.com/lucperkins/strato/internal/services/flag"
-	"github.com/lucperkins/strato/internal/services/kv"
-	"github.com/lucperkins/strato/internal/services/set"
+	"github.com/lucperkins/purple"
+	"github.com/lucperkins/purple/internal/backend/disk"
+	"github.com/lucperkins/purple/internal/backend/memory"
+	"github.com/lucperkins/purple/internal/backend/redis"
+	"github.com/lucperkins/purple/internal/services/cache"
+	"github.com/lucperkins/purple/internal/services/counter"
+	"github.com/lucperkins/purple/internal/services/flag"
+	"github.com/lucperkins/purple/internal/services/kv"
+	"github.com/lucperkins/purple/internal/services/set"
 )
 
 type (
@@ -37,7 +37,7 @@ var (
 	_ Service = (*redis.Redis)(nil)
 )
 
-func NewBackend(cfg *strato.ServerConfig) (*Backend, error) {
+func NewBackend(cfg *purple.ServerConfig) (*Backend, error) {
 	switch cfg.Backend {
 	case "disk":
 		backend, err := disk.NewDiskBackend()
@@ -62,7 +62,7 @@ func NewBackend(cfg *strato.ServerConfig) (*Backend, error) {
 			backend,
 		}, nil
 	default:
-		return nil, strato.ErrBackendNotRecognized
+		return nil, purple.ErrBackendNotRecognized
 	}
 }
 

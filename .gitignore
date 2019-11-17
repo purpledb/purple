@@ -2,6 +2,6 @@
 coverage.out
 
 # bbolt DB output
-strato-kv.db
+purple-kv.db
 
 tmp/

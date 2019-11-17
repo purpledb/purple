@@ -3,13 +3,13 @@ package main
 import (
 	"log"
 
-	"github.com/lucperkins/strato"
+	"github.com/lucperkins/purple"
 
-	"github.com/lucperkins/strato/internal/server/http"
+	"github.com/lucperkins/purple/internal/server/http"
 )
 
 func main() {
-	serverCfg := &strato.ServerConfig{
+	serverCfg := &purple.ServerConfig{
 		Port:    8081,
 		Backend: "disk",
 		Debug:   true,

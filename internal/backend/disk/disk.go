@@ -1,24 +1,24 @@
 package disk
 
 import (
-	"github.com/lucperkins/strato/internal/services/flag"
-	"github.com/lucperkins/strato/internal/util"
+	"github.com/lucperkins/purple/internal/services/flag"
+	"github.com/lucperkins/purple/internal/util"
 	"os"
 	"path/filepath"
 	"time"
 
-	"github.com/lucperkins/strato"
-	"github.com/lucperkins/strato/internal/services/cache"
-	"github.com/lucperkins/strato/internal/services/counter"
-	"github.com/lucperkins/strato/internal/services/kv"
-	"github.com/lucperkins/strato/internal/services/set"
+	"github.com/lucperkins/purple"
+	"github.com/lucperkins/purple/internal/services/cache"
+	"github.com/lucperkins/purple/internal/services/counter"
+	"github.com/lucperkins/purple/internal/services/kv"
+	"github.com/lucperkins/purple/internal/services/set"
 
-	"github.com/lucperkins/strato/internal/data"
+	"github.com/lucperkins/purple/internal/data"
 
 	"github.com/dgraph-io/badger"
 )
 
-const rootDataDir = "tmp/strato"
+const rootDataDir = "tmp/purple"
 
 type Disk struct {
 	cache, counter, flag, kv, set *badger.DB
@@ -119,7 +119,7 @@ func dbRead(db *badger.DB, key []byte) ([]byte, error) {
 		it, err := tx.Get(key)
 		if err != nil {
 			if err == badger.ErrKeyNotFound {
-				return strato.NotFound(string(key))
+				return purple.NotFound(string(key))
 			} else {
 				return err
 			}
@@ -166,8 +166,8 @@ func (d *Disk) CacheGet(key string) (string, error) {
 
 	val, err := dbRead(d.cache, k)
 	if err != nil {
-		if strato.IsNotFound(err) {
-			return "", strato.NotFound(key)
+		if purple.IsNotFound(err) {
+			return "", purple.NotFound(key)
 		} else {
 			return "", err
 		}
@@ -178,11 +178,11 @@ func (d *Disk) CacheGet(key string) (string, error) {
 
 func (d *Disk) CacheSet(key string, value string, ttl int32) error {
 	if key == "" {
-		return strato.ErrNoKey
+		return purple.ErrNoKey
 	}
 
 	if value == "" {
-		return strato.ErrNoValue
+		return purple.ErrNoValue
 	}
 
 	k, v := []byte(key), []byte(value)
@@ -198,7 +198,7 @@ func (d *Disk) CounterGet(key string) (int64, error) {
 
 	val, err := dbRead(d.counter, k)
 	if err != nil {
-		if strato.IsNotFound(err) {
+		if purple.IsNotFound(err) {
 			return 0, nil
 		} else {
 			return 0, err
@@ -213,7 +213,7 @@ func (d *Disk) CounterIncrement(key string, increment int64) error {
 
 	val, err := dbRead(d.counter, k)
 	if err != nil {
-		if strato.IsNotFound(err) {
+		if purple.IsNotFound(err) {
 			v := data.Int64ToBytes(increment)
 
 			return dbWrite(d.counter, k, v)
@@ -237,7 +237,7 @@ func (d *Disk) FlagGet(key string) (bool, error) {
 
 	val, err := dbRead(d.flag, k)
 	if err != nil {
-		if strato.IsNotFound(err) {
+		if purple.IsNotFound(err) {
 			return false, nil
 		} else {
 			return false, err
@@ -262,7 +262,7 @@ func (d *Disk) KVGet(key string) (*kv.Value, error) {
 	val, err := dbRead(d.kv, k)
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
-			return nil, strato.NotFound(key)
+			return nil, purple.NotFound(key)
 		} else {
 			return nil, err
 		}
@@ -306,7 +306,7 @@ func (d *Disk) SetAdd(key, item string) ([]string, error) {
 
 	val, err := dbRead(d.set, k)
 	if err != nil {
-		if strato.IsNotFound(err) {
+		if purple.IsNotFound(err) {
 			s := data.NewSet(item)
 			value, err := s.AsBytes()
 			if err != nil {

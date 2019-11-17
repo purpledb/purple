@@ -2,10 +2,10 @@ package backend
 
 import (
 	"fmt"
-	"github.com/lucperkins/strato"
-	"github.com/lucperkins/strato/internal/backend/disk"
-	"github.com/lucperkins/strato/internal/backend/memory"
-	"github.com/lucperkins/strato/internal/services/kv"
+	"github.com/lucperkins/purple"
+	"github.com/lucperkins/purple/internal/backend/disk"
+	"github.com/lucperkins/purple/internal/backend/memory"
+	"github.com/lucperkins/purple/internal/services/kv"
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
@@ -50,18 +50,18 @@ func testSvc(svc Service, t *testing.T) {
 		is.NoError(svc.CacheSet(key, value, int32(1)))
 		time.Sleep(2 * time.Second)
 		val, err = svc.CacheGet(key)
-		is.True(strato.IsNotFound(err))
+		is.True(purple.IsNotFound(err))
 		is.Empty(val)
 
 		val, err = svc.CacheGet("does-not-exist")
-		is.True(strato.IsNotFound(err))
+		is.True(purple.IsNotFound(err))
 		is.Empty(val)
 
 		err = svc.CacheSet("", "something", 5)
-		is.Equal(err, strato.ErrNoKey)
+		is.Equal(err, purple.ErrNoKey)
 
 		err = svc.CacheSet("some-key", "", 5)
-		is.Equal(err, strato.ErrNoValue)
+		is.Equal(err, purple.ErrNoValue)
 
 		is.NoError(svc.Flush())
 	})
@@ -121,7 +121,7 @@ func testSvc(svc Service, t *testing.T) {
 		is.NoError(svc.KVPut(key, val))
 
 		fetched, err := svc.KVGet("does-not-exist")
-		is.True(strato.IsNotFound(err))
+		is.True(purple.IsNotFound(err))
 		is.Nil(fetched)
 
 		fetched, err = svc.KVGet(key)
@@ -131,7 +131,7 @@ func testSvc(svc Service, t *testing.T) {
 
 		is.NoError(svc.KVDelete(key))
 		fetched, err = svc.KVGet(key)
-		is.True(strato.IsNotFound(err))
+		is.True(purple.IsNotFound(err))
 		is.Nil(fetched)
 
 		is.NoError(svc.Flush())

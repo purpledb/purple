@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lucperkins/strato"
-	"github.com/lucperkins/strato/internal/services/kv"
+	"github.com/lucperkins/purple"
+	"github.com/lucperkins/purple/internal/services/kv"
 )
 
 func (h *Handler) KvGet(c *gin.Context) {
@@ -15,7 +15,7 @@ func (h *Handler) KvGet(c *gin.Context) {
 
 	val, err := h.b.KVGet(key)
 	if err != nil {
-		if strato.IsNotFound(err) {
+		if purple.IsNotFound(err) {
 			c.Status(http.StatusNotFound)
 			return
 		} else {

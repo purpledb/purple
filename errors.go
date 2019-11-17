@@ -1,4 +1,4 @@
-package strato
+package purple
 
 import (
 	"errors"
@@ -11,7 +11,7 @@ import (
 var (
 	ErrNoKey                = errors.New("no resource key provided")
 	ErrNoValue              = errors.New("no value provided")
-	ErrHttpUnavailable      = errors.New("could not connect to Strato HTTP server")
+	ErrHttpUnavailable      = errors.New("could not connect to purple HTTP server")
 	ErrNoAddress            = errors.New("no server address provided")
 	ErrNoPort               = errors.New("no server port provided")
 	ErrPortOutOfRange       = errors.New("port must be between 1024 and 49151")

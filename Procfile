@@ -1,1 +1,1 @@
-web: bin/strato-http --backend memory --port $PORT
+web: bin/purple-http --backend memory --port $PORT

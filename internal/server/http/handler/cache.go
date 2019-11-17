@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lucperkins/strato"
+	"github.com/lucperkins/purple"
 )
 
 func (h *Handler) CacheGet(c *gin.Context) {
@@ -14,7 +14,7 @@ func (h *Handler) CacheGet(c *gin.Context) {
 
 	val, err := h.b.CacheGet(key)
 	if err != nil {
-		if strato.IsNotFound(err) {
+		if purple.IsNotFound(err) {
 			c.Status(http.StatusNotFound)
 			return
 		} else {
@@ -46,7 +46,7 @@ func (h *Handler) CachePut(c *gin.Context) {
 	}
 
 	if err := h.b.CacheSet(key, value, ttl); err != nil {
-		if strato.IsNotFound(err) {
+		if purple.IsNotFound(err) {
 			c.Status(http.StatusNotFound)
 			return
 		} else {

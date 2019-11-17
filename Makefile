@@ -2,8 +2,8 @@ GO        = go
 PROTOC    = protoc
 PROTO_DIR = proto
 COVER_OUT = coverage.out
-GRPC_IMG  = lucperkins/strato-grpc
-HTTP_IMG  = lucperkins/strato-http
+GRPC_IMG  = lucperkins/purple-grpc
+HTTP_IMG  = lucperkins/purple-http
 
 build:
 	$(GO) build -v -mod vendor ./...
@@ -58,10 +58,10 @@ docker-run-http:
 docker-push-all: docker-push-grpc docker-push-http
 
 run-local-grpc:
-	go run cmd/strato-grpc/main.go
+	go run cmd/purple-grpc/main.go
 
 run-local-http:
-	go run cmd/strato-http/main.go
+	go run cmd/purple-http/main.go
 
 run-example-app:
 	go run examples/app/main.go

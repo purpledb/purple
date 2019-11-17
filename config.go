@@ -1,4 +1,4 @@
-package strato
+package purple
 
 type (
 	ClientConfig struct {

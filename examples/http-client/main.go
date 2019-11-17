@@ -2,18 +2,18 @@ package main
 
 import (
 	"fmt"
-	"github.com/lucperkins/strato/internal/services/kv"
+	"github.com/lucperkins/purple/internal/services/kv"
 	"log"
 
-	"github.com/lucperkins/strato"
+	"github.com/lucperkins/purple"
 )
 
 func main() {
-	clientCfg := &strato.ClientConfig{
+	clientCfg := &purple.ClientConfig{
 		Address: "http://localhost:8081",
 	}
 
-	client, err := strato.NewHttpClient(clientCfg)
+	client, err := purple.NewHttpClient(clientCfg)
 	if err != nil {
 		log.Fatal(err)
 	}

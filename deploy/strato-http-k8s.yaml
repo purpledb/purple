@@ -2,22 +2,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: strato-http
+  name: purple-http
   labels:
-    app: strato
+    app: purple
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: strato
+      app: purple
   template:
     metadata:
       labels:
-        app: strato
+        app: purple
     spec:
       containers:
-        - name: strato-grpc
-          image: lucperkins/strato-http:v0.1.2
+        - name: purple-grpc
+          image: lucperkins/purple-http:v0.1.2
           ports:
             - containerPort: 8081
           args: ["--port", "8081", "--backend", "redis", "--redis-url", "redis:6379"]
@@ -25,15 +25,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: strato-http
+  name: purple-http
   labels:
-    run: strato
+    run: purple
 spec:
   ports:
   - port: 8081
     protocol: TCP
   selector:
-    run: strato
+    run: purple
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -73,10 +73,10 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: strato-http-ingress
+  name: purple-http-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   backend:
-    serviceName: strato-http
+    serviceName: purple-http
     servicePort: 8080

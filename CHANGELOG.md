@@ -1,4 +1,4 @@
-# Strato Changelog
+# purple Changelog
 
 ## v0.1.3
 
@@ -13,14 +13,14 @@ Added:
 * An HTTP client supporting all operations
 * A `Set` type used internally to manage sets (rather than using raw `[]string`s)
 * Support for metadata for KV value structs
-* An example "todo" HTTP service that uses the Strato gRPC client to interact with a server (this example service has also been added to the Docker Compose config)
+* An example "todo" HTTP service that uses the purple gRPC client to interact with a server (this example service has also been added to the Docker Compose config)
 
 ## v0.1.1
 
 Added:
 
 * Support for a disk backend using the Badger embedded DB for Go. This allows for persisting all data to files on disk.
-* Support for a Redis backend. This is Strato's first "external" backend.
+* Support for a Redis backend. This is purple's first "external" backend.
 
 Removed:
 
@@ -36,9 +36,9 @@ Other changes:
 
 ## v0.1.0
 
-The initial version of Strato, which includes the following:
+The initial version of purple, which includes the following:
 
-* A memory backend for Strato operations
+* A memory backend for purple operations
 * A gRPC server and client and an HTTP server
 * Four data services:
   * Cache (get/put with TTL)

@@ -4,7 +4,7 @@ ADD . /build
 
 WORKDIR /build
 
-RUN CGO_ENABLED=0 GOOS=linux go build -mod vendor -o strato ./cmd/strato-http
+RUN CGO_ENABLED=0 GOOS=linux go build -mod vendor -o purple ./cmd/purple-http
 
 FROM alpine:3.9.4
 
@@ -12,6 +12,6 @@ RUN apk --no-cache add ca-certificates
 
 WORKDIR /root
 
-COPY --from=go-builder /build/strato .
+COPY --from=go-builder /build/purple .
 
-ENTRYPOINT [ "./strato" ]
+ENTRYPOINT [ "./purple" ]

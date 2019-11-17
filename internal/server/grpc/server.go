@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/lucperkins/strato/internal/services/kv"
+	"github.com/lucperkins/purple/internal/services/kv"
 
-	"github.com/lucperkins/strato"
-	"github.com/lucperkins/strato/internal/backend"
+	"github.com/lucperkins/purple"
+	"github.com/lucperkins/purple/internal/backend"
 
-	"github.com/lucperkins/strato/proto"
+	"github.com/lucperkins/purple/proto"
 
 	"github.com/sirupsen/logrus"
 
@@ -32,7 +32,7 @@ var (
 	_ proto.SetServer     = (*Server)(nil)
 )
 
-func NewGrpcServer(cfg *strato.ServerConfig) (*Server, error) {
+func NewGrpcServer(cfg *purple.ServerConfig) (*Server, error) {
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
 	srv := grpc.NewServer()
@@ -61,8 +61,8 @@ func NewGrpcServer(cfg *strato.ServerConfig) (*Server, error) {
 func (s *Server) CacheGet(_ context.Context, req *proto.CacheGetRequest) (*proto.CacheGetResponse, error) {
 	val, err := s.backend.CacheGet(req.Key)
 	if err != nil {
-		if strato.IsNotFound(err) {
-			err = strato.NotFound(req.Key).AsProtoStatus()
+		if purple.IsNotFound(err) {
+			err = purple.NotFound(req.Key).AsProtoStatus()
 		}
 	}
 
@@ -126,8 +126,8 @@ func (s *Server) KVGet(_ context.Context, location *proto.Location) (*proto.GetR
 
 	val, err := s.backend.KVGet(key)
 	if err != nil {
-		if strato.IsNotFound(err) {
-			err = strato.NotFound(key).AsProtoStatus()
+		if purple.IsNotFound(err) {
+			err = purple.NotFound(key).AsProtoStatus()
 		}
 
 		return nil, err
@@ -170,7 +170,7 @@ func (s *Server) KVDelete(_ context.Context, location *proto.Location) (*proto.E
 func (s *Server) SetGet(_ context.Context, req *proto.GetSetRequest) (*proto.SetResponse, error) {
 	items, err := s.backend.SetGet(req.Set)
 	if err != nil {
-		if strato.IsNotFound(err) {
+		if purple.IsNotFound(err) {
 			return emptySetRes, nil
 		} else {
 			return nil, err
@@ -185,7 +185,7 @@ func (s *Server) SetGet(_ context.Context, req *proto.GetSetRequest) (*proto.Set
 func (s *Server) SetAdd(_ context.Context, req *proto.ModifySetRequest) (*proto.SetResponse, error) {
 	items, err := s.backend.SetAdd(req.Set, req.Item)
 	if err != nil {
-		if strato.IsNotFound(err) {
+		if purple.IsNotFound(err) {
 			return emptySetRes, nil
 		} else {
 			return nil, err
@@ -200,7 +200,7 @@ func (s *Server) SetAdd(_ context.Context, req *proto.ModifySetRequest) (*proto.
 func (s *Server) SetRemove(_ context.Context, req *proto.ModifySetRequest) (*proto.SetResponse, error) {
 	items, err := s.backend.SetRemove(req.Set, req.Item)
 	if err != nil {
-		if strato.IsNotFound(err) {
+		if purple.IsNotFound(err) {
 			return emptySetRes, nil
 		} else {
 			return nil, err
@@ -239,7 +239,7 @@ func (s *Server) Start() error {
 		return err
 	}
 
-	s.log.Infof("starting the Strato gRPC server on %s", s.address)
+	s.log.Infof("starting the purple gRPC server on %s", s.address)
 
 	return s.srv.Serve(lis)
 }

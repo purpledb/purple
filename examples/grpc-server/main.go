@@ -3,15 +3,15 @@ package main
 import (
 	"log"
 
-	"github.com/lucperkins/strato"
+	"github.com/lucperkins/purple"
 
-	"github.com/lucperkins/strato/internal/server/grpc"
+	"github.com/lucperkins/purple/internal/server/grpc"
 )
 
 func main() {
 	port := 8080
 
-	srvCfg := &strato.ServerConfig{
+	srvCfg := &purple.ServerConfig{
 		Port:    port,
 		Backend: "disk",
 		Debug:   true,

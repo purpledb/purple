@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/lucperkins/strato"
+	"github.com/lucperkins/purple"
 	"net/http"
 )
 
@@ -17,7 +17,7 @@ func (h *Handler) FlagGet(c *gin.Context) {
 
 	val, err := h.b.FlagGet(key)
 	if err != nil {
-		if strato.IsNotFound(err) {
+		if purple.IsNotFound(err) {
 			c.JSON(http.StatusOK, falseValueJson)
 			return
 		}

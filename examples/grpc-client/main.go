@@ -4,17 +4,17 @@ import (
 	"log"
 	"time"
 
-	"github.com/lucperkins/strato"
+	"github.com/lucperkins/purple"
 
-	"github.com/lucperkins/strato/internal/services/kv"
+	"github.com/lucperkins/purple/internal/services/kv"
 )
 
 func main() {
-	clientCfg := &strato.ClientConfig{
+	clientCfg := &purple.ClientConfig{
 		Address: "localhost:8080",
 	}
 
-	client, err := strato.NewGrpcClient(clientCfg)
+	client, err := purple.NewGrpcClient(clientCfg)
 	if err != nil {
 		log.Fatal(err)
 	}

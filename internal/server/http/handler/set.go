@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lucperkins/strato"
+	"github.com/lucperkins/purple"
 )
 
 func emptySetRes(set string) gin.H {
@@ -21,7 +21,7 @@ func (h *Handler) SetGet(c *gin.Context) {
 
 	items, err := h.b.SetGet(key)
 	if err != nil {
-		if strato.IsNotFound(err) {
+		if purple.IsNotFound(err) {
 			c.JSON(http.StatusOK, emptySetRes(key))
 			return
 		} else {
@@ -46,7 +46,7 @@ func (h *Handler) SetPut(c *gin.Context) {
 
 	items, err := h.b.SetAdd(key, item)
 	if err != nil {
-		if strato.IsNotFound(err) {
+		if purple.IsNotFound(err) {
 			c.JSON(http.StatusOK, emptySetRes(key))
 			return
 		} else {
@@ -71,7 +71,7 @@ func (h *Handler) SetDelete(c *gin.Context) {
 
 	items, err := h.b.SetRemove(key, item)
 	if err != nil {
-		if strato.IsNotFound(err) {
+		if purple.IsNotFound(err) {
 			c.JSON(http.StatusOK, emptySetRes(key))
 			return
 		} else {

@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/lucperkins/strato/internal/backend"
+	"github.com/lucperkins/purple/internal/backend"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )

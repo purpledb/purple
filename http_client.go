@@ -1,18 +1,18 @@
-package strato
+package purple
 
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/lucperkins/strato/internal/data"
-	"github.com/lucperkins/strato/internal/services/counter"
-	"github.com/lucperkins/strato/internal/services/flag"
-	"github.com/lucperkins/strato/internal/services/kv"
-	"github.com/lucperkins/strato/internal/services/set"
+	"github.com/lucperkins/purple/internal/data"
+	"github.com/lucperkins/purple/internal/services/counter"
+	"github.com/lucperkins/purple/internal/services/flag"
+	"github.com/lucperkins/purple/internal/services/kv"
+	"github.com/lucperkins/purple/internal/services/set"
 	"net/http"
 	"strconv"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/lucperkins/strato/internal/services/cache"
+	"github.com/lucperkins/purple/internal/services/cache"
 )
 
 type HttpClient struct {

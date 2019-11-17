@@ -4,15 +4,15 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lucperkins/strato"
+	"github.com/lucperkins/purple"
 
-	"github.com/lucperkins/strato/proto"
+	"github.com/lucperkins/purple/proto"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-var goodServerCfg = &strato.ServerConfig{
+var goodServerCfg = &purple.ServerConfig{
 	Port:    2222,
 	Backend: "memory",
 }

@@ -1,20 +1,20 @@
 package main
 
 import (
-	"github.com/lucperkins/strato"
-	"github.com/lucperkins/strato/cmd"
-	"github.com/lucperkins/strato/internal/server/http"
+	"github.com/lucperkins/purple"
+	"github.com/lucperkins/purple/cmd"
+	"github.com/lucperkins/purple/internal/server/http"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
 
 func command() *cobra.Command {
-	var cfg strato.ServerConfig
+	var cfg purple.ServerConfig
 
-	v := cmd.NewConfig("strato_http")
+	v := cmd.NewConfig("purple_http")
 
 	command := &cobra.Command{
-		Use: "strato-http",
+		Use: "purple-http",
 		PreRun: func(_ *cobra.Command, _ []string) {
 			cmd.ExitOnError(v.Unmarshal(&cfg))
 		},
@@ -25,8 +25,8 @@ func command() *cobra.Command {
 		},
 	}
 
-	flags := pflag.NewFlagSet("strato-http", pflag.ExitOnError)
-	flags.IntP("port", "p", 8081, "Strato HTTP server port")
+	flags := pflag.NewFlagSet("purple-http", pflag.ExitOnError)
+	flags.IntP("port", "p", 8081, "purple HTTP server port")
 	flags.Bool("debug", false, "Debug mode")
 	flags.String("backend", "disk", `Data backend (options are disk, memory, and redis)`)
 	flags.String("redis-url", "localhost:6379", "Redis connection URL (if redis backend is used)")

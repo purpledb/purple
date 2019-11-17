@@ -1,14 +1,14 @@
-package strato
+package purple
 
 import (
 	"context"
-	"github.com/lucperkins/strato/internal/services/cache"
-	"github.com/lucperkins/strato/internal/services/counter"
-	"github.com/lucperkins/strato/internal/services/set"
+	"github.com/lucperkins/purple/internal/services/cache"
+	"github.com/lucperkins/purple/internal/services/counter"
+	"github.com/lucperkins/purple/internal/services/set"
 
-	"github.com/lucperkins/strato/internal/services/kv"
+	"github.com/lucperkins/purple/internal/services/kv"
 
-	"github.com/lucperkins/strato/proto"
+	"github.com/lucperkins/purple/proto"
 
 	"google.golang.org/grpc"
 )

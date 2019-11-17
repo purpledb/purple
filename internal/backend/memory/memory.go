@@ -1,16 +1,16 @@
 package memory
 
 import (
-	"github.com/lucperkins/strato/internal/data"
-	"github.com/lucperkins/strato/internal/services/flag"
+	"github.com/lucperkins/purple/internal/data"
+	"github.com/lucperkins/purple/internal/services/flag"
 	"time"
 
-	"github.com/lucperkins/strato/internal/services/cache"
-	"github.com/lucperkins/strato/internal/services/counter"
-	"github.com/lucperkins/strato/internal/services/kv"
-	"github.com/lucperkins/strato/internal/services/set"
+	"github.com/lucperkins/purple/internal/services/cache"
+	"github.com/lucperkins/purple/internal/services/counter"
+	"github.com/lucperkins/purple/internal/services/kv"
+	"github.com/lucperkins/purple/internal/services/set"
 
-	"github.com/lucperkins/strato"
+	"github.com/lucperkins/purple"
 )
 
 type Memory struct {
@@ -67,7 +67,7 @@ func (m *Memory) CacheGet(key string) (string, error) {
 	val, ok := m.cache[key]
 
 	if !ok {
-		return "", strato.NotFound(key)
+		return "", purple.NotFound(key)
 	}
 
 	now := time.Now().Unix()
@@ -77,7 +77,7 @@ func (m *Memory) CacheGet(key string) (string, error) {
 	if expired {
 		delete(m.cache, key)
 
-		return "", strato.NotFound(key)
+		return "", purple.NotFound(key)
 	}
 
 	return val.Value, nil
@@ -85,11 +85,11 @@ func (m *Memory) CacheGet(key string) (string, error) {
 
 func (m *Memory) CacheSet(key, value string, ttl int32) error {
 	if key == "" {
-		return strato.ErrNoKey
+		return purple.ErrNoKey
 	}
 
 	if value == "" {
-		return strato.ErrNoValue
+		return purple.ErrNoValue
 	}
 
 	item := &cache.Item{
@@ -147,7 +147,7 @@ func (m *Memory) FlagSet(key string, value bool) error {
 func (m *Memory) KVGet(key string) (*kv.Value, error) {
 	val, ok := m.kv[key]
 	if !ok {
-		return nil, strato.NotFound(key)
+		return nil, purple.NotFound(key)
 	}
 
 	return val, nil
@@ -168,7 +168,7 @@ func (m *Memory) SetGet(set string) ([]string, error) {
 	s, ok := m.sets[set]
 
 	if !ok {
-		return nil, strato.NotFound(set)
+		return nil, purple.NotFound(set)
 	}
 
 	return s.Get(), nil
@@ -199,6 +199,6 @@ func (m *Memory) SetRemove(set, item string) ([]string, error) {
 		s.Remove(item)
 		return s.Get(), nil
 	} else {
-		return nil, strato.NotFound(set)
+		return nil, purple.NotFound(set)
 	}
 }

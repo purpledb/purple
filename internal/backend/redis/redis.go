@@ -1,17 +1,17 @@
 package redis
 
 import (
-	"github.com/lucperkins/strato/internal/services/flag"
+	"github.com/lucperkins/purple/internal/services/flag"
 	"strconv"
 	"time"
 
-	"github.com/lucperkins/strato/internal/services/cache"
-	"github.com/lucperkins/strato/internal/services/counter"
-	"github.com/lucperkins/strato/internal/services/kv"
-	"github.com/lucperkins/strato/internal/services/set"
+	"github.com/lucperkins/purple/internal/services/cache"
+	"github.com/lucperkins/purple/internal/services/counter"
+	"github.com/lucperkins/purple/internal/services/kv"
+	"github.com/lucperkins/purple/internal/services/set"
 
 	"github.com/go-redis/redis"
-	"github.com/lucperkins/strato"
+	"github.com/lucperkins/purple"
 )
 
 const defaultUrl = "localhost:6379"
@@ -118,7 +118,7 @@ func (r *Redis) CacheGet(key string) (string, error) {
 
 	if err != nil {
 		if err == redis.Nil {
-			return "", strato.NotFound(key)
+			return "", purple.NotFound(key)
 		} else {
 			return "", err
 		}
@@ -175,7 +175,7 @@ func (r *Redis) KVGet(key string) (*kv.Value, error) {
 	s, err := r.kv.Get(key).Result()
 	if err != nil {
 		if err == redis.Nil {
-			return nil, strato.NotFound(key)
+			return nil, purple.NotFound(key)
 		} else {
 			return nil, err
 		}

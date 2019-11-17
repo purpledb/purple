@@ -4,25 +4,25 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/lucperkins/strato"
+	"github.com/lucperkins/purple"
 
-	"github.com/lucperkins/strato/internal/server/http/handler"
+	"github.com/lucperkins/purple/internal/server/http/handler"
 
-	"github.com/lucperkins/strato/internal/backend"
+	"github.com/lucperkins/purple/internal/backend"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
-// The core struct undergirding the Strato HTTP interface.
+// The core struct undergirding the purple HTTP interface.
 type Server struct {
 	addr string
 	h    *handler.Handler
 	log  *logrus.Entry
 }
 
-// Instantiates a new Strato HTTP server using the supplied ServerConfig object.
-func NewServer(cfg *strato.ServerConfig) (*Server, error) {
+// Instantiates a new purple HTTP server using the supplied ServerConfig object.
+func NewServer(cfg *purple.ServerConfig) (*Server, error) {
 	addr := fmt.Sprintf(":%d", cfg.Port)
 
 	bk, err := backend.NewBackend(cfg)
@@ -41,7 +41,7 @@ func NewServer(cfg *strato.ServerConfig) (*Server, error) {
 	}, nil
 }
 
-func getLogger(cfg *strato.ServerConfig) *logrus.Entry {
+func getLogger(cfg *purple.ServerConfig) *logrus.Entry {
 	log := logrus.New()
 
 	if cfg.Debug {
@@ -54,14 +54,14 @@ func getLogger(cfg *strato.ServerConfig) *logrus.Entry {
 	return log.WithField("server", "http")
 }
 
-// Starts the Strato HTTP server on the specified port.
+// Starts the purple HTTP server on the specified port.
 func (s *Server) Start() error {
 	srv := &http.Server{
 		Addr:    s.addr,
 		Handler: s.routes(),
 	}
 
-	s.log.Infof("starting the Strato HTTP server on %s", s.addr)
+	s.log.Infof("starting the purple HTTP server on %s", s.addr)
 
 	return srv.ListenAndServe()
 }

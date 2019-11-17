@@ -2,18 +2,18 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/lucperkins/strato"
+	"github.com/lucperkins/purple"
 	"log"
 	"net/http"
 )
 
 const todosSet = "todos"
 
-func getTodos(client *strato.GrpcClient) gin.HandlerFunc {
+func getTodos(client *purple.GrpcClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		todos, err := client.SetGet(todosSet)
 		if err != nil {
-			if strato.IsNotFound(err) {
+			if purple.IsNotFound(err) {
 				c.JSON(http.StatusOK, gin.H{"todos": []string{}})
 				return
 			} else {
@@ -29,7 +29,7 @@ func getTodos(client *strato.GrpcClient) gin.HandlerFunc {
 	}
 }
 
-func createTodo(client *strato.GrpcClient) gin.HandlerFunc {
+func createTodo(client *purple.GrpcClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		todo := getTodo(c)
 
@@ -46,7 +46,7 @@ func createTodo(client *strato.GrpcClient) gin.HandlerFunc {
 	}
 }
 
-func deleteTodo(client *strato.GrpcClient) gin.HandlerFunc {
+func deleteTodo(client *purple.GrpcClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		todo := getTodo(c)
 
@@ -82,8 +82,8 @@ func getTodo(c *gin.Context) string {
 func main() {
 	r := gin.Default()
 
-	client, err := strato.NewGrpcClient(&strato.ClientConfig{
-		Address: "strato:8080",
+	client, err := purple.NewGrpcClient(&purple.ClientConfig{
+		Address: "purple:8080",
 	})
 
 	if err != nil {

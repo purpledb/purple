@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lucperkins/strato"
+	"github.com/lucperkins/purple"
 )
 
 func (h *Handler) CounterGet(c *gin.Context) {
@@ -33,7 +33,7 @@ func (h *Handler) CounterPut(c *gin.Context) {
 	key, incr := c.Param("key"), getIncr(c)
 
 	if err := h.b.CounterIncrement(key, incr); err != nil {
-		if strato.IsNotFound(err) {
+		if purple.IsNotFound(err) {
 			c.Status(http.StatusNotFound)
 			return
 		} else {
