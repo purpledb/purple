@@ -11,7 +11,7 @@ import (
 
 func main() {
 	clientCfg := &purple.ClientConfig{
-		Address: "localhost:8080",
+		Address: "localhost:8081",
 	}
 
 	client, err := purple.NewGrpcClient(clientCfg)

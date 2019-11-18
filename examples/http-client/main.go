@@ -10,7 +10,7 @@ import (
 
 func main() {
 	clientCfg := &purple.ClientConfig{
-		Address: "http://localhost:8081",
+		Address: "http://localhost:8080",
 	}
 
 	client, err := purple.NewHttpClient(clientCfg)

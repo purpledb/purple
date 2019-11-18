@@ -49,11 +49,11 @@ docker-push-http: docker-build-http
 
 docker-run-grpc:
 	docker build -f Dockerfile.grpc -t $(GRPC_IMG):latest .
-	docker run --rm --interactive --tty -p 8080:8080 $(GRPC_IMG):latest
+	docker run --rm --interactive --tty -p 8081:8081 $(GRPC_IMG):latest
 
 docker-run-http:
 	docker build -f Dockerfile.http -t $(HTTP_IMG):latest .
-	docker run --rm --interactive --tty -p 8081:8081 $(HTTP_IMG):latest
+	docker run --rm --interactive --tty -p 8080:8080 $(HTTP_IMG):latest
 
 docker-push-all: docker-push-grpc docker-push-http
 

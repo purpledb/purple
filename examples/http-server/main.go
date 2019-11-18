@@ -10,7 +10,7 @@ import (
 
 func main() {
 	serverCfg := &purple.ServerConfig{
-		Port:    8081,
+		Port:    8080,
 		Backend: "disk",
 		Debug:   true,
 	}

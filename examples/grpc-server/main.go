@@ -9,11 +9,11 @@ import (
 )
 
 func main() {
-	port := 8080
+	port := 8081
 
 	srvCfg := &purple.ServerConfig{
 		Port:    port,
-		Backend: "disk",
+		Backend: "memory",
 		Debug:   true,
 	}
 

@@ -26,7 +26,7 @@ func command() *cobra.Command {
 	}
 
 	flags := pflag.NewFlagSet("purple-http", pflag.ExitOnError)
-	flags.IntP("port", "p", 8081, "purple HTTP server port")
+	flags.IntP("port", "p", 8080, "purple HTTP server port")
 	flags.Bool("debug", false, "Debug mode")
 	flags.String("backend", "disk", `Data backend (options are disk, memory, and redis)`)
 	flags.String("redis-url", "localhost:6379", "Redis connection URL (if redis backend is used)")
