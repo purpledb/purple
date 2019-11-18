@@ -3,7 +3,7 @@ package kv
 import (
 	"testing"
 
-	"github.com/lucperkins/purple/proto"
+	"github.com/purpledb/purple/proto"
 
 	"github.com/stretchr/testify/assert"
 )

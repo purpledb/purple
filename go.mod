@@ -1,4 +1,4 @@
-module github.com/lucperkins/purple
+module github.com/purpledb/purple
 
 go 1.13
 

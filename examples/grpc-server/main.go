@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/lucperkins/purple"
+	"github.com/purpledb/purple"
 
-	"github.com/lucperkins/purple/internal/server/grpc"
+	"github.com/purpledb/purple/internal/server/grpc"
 )
 
 func main() {

@@ -1,7 +1,7 @@
 package kv
 
 import (
-	"github.com/lucperkins/purple/proto"
+	"github.com/purpledb/purple/proto"
 )
 
 type (

@@ -3,16 +3,16 @@ package purple
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/lucperkins/purple/internal/data"
-	"github.com/lucperkins/purple/internal/services/counter"
-	"github.com/lucperkins/purple/internal/services/flag"
-	"github.com/lucperkins/purple/internal/services/kv"
-	"github.com/lucperkins/purple/internal/services/set"
+	"github.com/purpledb/purple/internal/data"
+	"github.com/purpledb/purple/internal/services/counter"
+	"github.com/purpledb/purple/internal/services/flag"
+	"github.com/purpledb/purple/internal/services/kv"
+	"github.com/purpledb/purple/internal/services/set"
 	"net/http"
 	"strconv"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/lucperkins/purple/internal/services/cache"
+	"github.com/purpledb/purple/internal/services/cache"
 )
 
 type HttpClient struct {

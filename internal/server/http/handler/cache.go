@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lucperkins/purple"
+	"github.com/purpledb/purple"
 )
 
 func (h *Handler) CacheGet(c *gin.Context) {

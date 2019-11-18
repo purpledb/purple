@@ -1,6 +1,6 @@
 # Purple
 
-[![GitHub Actions status](https://github.com/lucperkins/purple/workflows/Build%20and%20test/badge.svg)](https://github.com/lucperkins/purple/actions)
+[![GitHub Actions status](https://github.com/purpledb/purple/workflows/Build%20and%20test/badge.svg)](https://github.com/purpledb/purple/actions)
 
 An all-in-one data service with support for:
 
@@ -86,7 +86,7 @@ Memory | Data is stored in native Go data structures (maps, slices, etc.). This 
 To try out Purple locally, you can run the Purple gRPC server in one shell session and some example client operations in another session:
 
 ```bash
-git clone https://github.com/lucperkins/purple && cd purple
+git clone https://github.com/purpledb/purple && cd purple
 
 # Start the gRPC server...
 go run examples/grpc-server/main.go
@@ -103,10 +103,10 @@ To install the Purple gRPC server:
 
 ```bash
 # Executable
-go install github.com/lucperkins/purple/cmd/purple-grpc
+go install github.com/purpledb/purple/cmd/purple-grpc
 
 # Docker image
-docker pull lucperkins/purple-grpc:latest
+docker pull purpledb/purple-grpc:latest
 ```
 
 Then you can run it:
@@ -116,7 +116,7 @@ Then you can run it:
 purple-grpc
 
 # Docker image
-docker run --rm -it -p 8081:8081 lucperkins/purple-grpc:latest
+docker run --rm -it -p 8081:8081 purpledb/purple-grpc:latest
 ```
 
 You should see log output like this:
@@ -131,10 +131,10 @@ To install the purple HTTP server:
 
 ```bash
 # Executable
-go install github.com/lucperkins/purple/cmd/purple-http
+go install github.com/purpledb/purple/cmd/purple-http
 
 # Docker image
-docker pull lucperkins/purple-http:latest
+docker pull purpledb/purple-http:latest
 ```
 
 Then you can run it:
@@ -144,7 +144,7 @@ Then you can run it:
 purple-http
 
 # Docker image
-docker run --rm -it -p 8080:8080 lucperkins/purple-http:latest
+docker run --rm -it -p 8080:8080 purpledb/purple-http:latest
 ```
 
 ### gRPC Go client
@@ -152,13 +152,13 @@ docker run --rm -it -p 8080:8080 lucperkins/purple-http:latest
 To use the Go client in your service or FaaS function:
 
 ```bash
-go get github.com/lucperkins/purple
+go get github.com/purpledb/purple
 ```
 
 To instantiate a client:
 
 ```go
-import "github.com/lucperkins/purple"
+import "github.com/purpledb/purple"
 
 // Supply the address of the purple gRPC server
 client, err := purple.NewGrpcClient("localhost:8081")
@@ -175,7 +175,7 @@ if err := client.CacheSet("player1-session", "a1b2c3d4e5f6", 120); err != nil {
 ### HTTP Go client
 
 ```go
-import "github.com/lucperkins/purple"
+import "github.com/purpledb/purple"
 
 client, err := purple.NewHttpClient("http://localhost:8080")
 if err != nil {

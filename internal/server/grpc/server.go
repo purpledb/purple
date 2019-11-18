@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/lucperkins/purple/internal/services/kv"
+	"github.com/purpledb/purple/internal/services/kv"
 
-	"github.com/lucperkins/purple"
-	"github.com/lucperkins/purple/internal/backend"
+	"github.com/purpledb/purple"
+	"github.com/purpledb/purple/internal/backend"
 
-	"github.com/lucperkins/purple/proto"
+	"github.com/purpledb/purple/proto"
 
 	"github.com/sirupsen/logrus"
 

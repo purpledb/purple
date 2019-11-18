@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lucperkins/purple"
+	"github.com/purpledb/purple"
 
-	"github.com/lucperkins/purple/proto"
+	"github.com/purpledb/purple/proto"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/lucperkins/purple"
+	"github.com/purpledb/purple"
 
-	"github.com/lucperkins/purple/internal/server/http/handler"
+	"github.com/purpledb/purple/internal/server/http/handler"
 
-	"github.com/lucperkins/purple/internal/backend"
+	"github.com/purpledb/purple/internal/backend"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"

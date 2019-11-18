@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lucperkins/purple"
-	"github.com/lucperkins/purple/internal/services/kv"
+	"github.com/purpledb/purple"
+	"github.com/purpledb/purple/internal/services/kv"
 )
 
 func (h *Handler) KvGet(c *gin.Context) {

@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/lucperkins/purple"
+	"github.com/purpledb/purple"
 	"log"
 	"net/http"
 )

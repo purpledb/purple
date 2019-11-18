@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/lucperkins/purple"
-	"github.com/lucperkins/purple/cmd"
-	"github.com/lucperkins/purple/internal/server/grpc"
+	"github.com/purpledb/purple"
+	"github.com/purpledb/purple/cmd"
+	"github.com/purpledb/purple/internal/server/grpc"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )

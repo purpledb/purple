@@ -2,8 +2,8 @@ GO        = go
 PROTOC    = protoc
 PROTO_DIR = proto
 COVER_OUT = coverage.out
-GRPC_IMG  = lucperkins/purple-grpc
-HTTP_IMG  = lucperkins/purple-http
+GRPC_IMG  = purpledb/purple-grpc
+HTTP_IMG  = purpledb/purple-http
 
 build:
 	$(GO) build -v -mod vendor ./...

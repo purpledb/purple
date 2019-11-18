@@ -1,17 +1,17 @@
 package redis
 
 import (
-	"github.com/lucperkins/purple/internal/services/flag"
+	"github.com/purpledb/purple/internal/services/flag"
 	"strconv"
 	"time"
 
-	"github.com/lucperkins/purple/internal/services/cache"
-	"github.com/lucperkins/purple/internal/services/counter"
-	"github.com/lucperkins/purple/internal/services/kv"
-	"github.com/lucperkins/purple/internal/services/set"
+	"github.com/purpledb/purple/internal/services/cache"
+	"github.com/purpledb/purple/internal/services/counter"
+	"github.com/purpledb/purple/internal/services/kv"
+	"github.com/purpledb/purple/internal/services/set"
 
 	"github.com/go-redis/redis"
-	"github.com/lucperkins/purple"
+	"github.com/purpledb/purple"
 )
 
 const defaultUrl = "localhost:6379"

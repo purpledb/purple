@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/lucperkins/purple/internal/services/kv"
+	"github.com/purpledb/purple/internal/services/kv"
 	"log"
 
-	"github.com/lucperkins/purple"
+	"github.com/purpledb/purple"
 )
 
 func main() {

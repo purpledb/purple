@@ -2,13 +2,13 @@ package purple
 
 import (
 	"context"
-	"github.com/lucperkins/purple/internal/services/cache"
-	"github.com/lucperkins/purple/internal/services/counter"
-	"github.com/lucperkins/purple/internal/services/set"
+	"github.com/purpledb/purple/internal/services/cache"
+	"github.com/purpledb/purple/internal/services/counter"
+	"github.com/purpledb/purple/internal/services/set"
 
-	"github.com/lucperkins/purple/internal/services/kv"
+	"github.com/purpledb/purple/internal/services/kv"
 
-	"github.com/lucperkins/purple/proto"
+	"github.com/purpledb/purple/proto"
 
 	"google.golang.org/grpc"
 )

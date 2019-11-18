@@ -4,9 +4,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/lucperkins/purple"
+	"github.com/purpledb/purple"
 
-	"github.com/lucperkins/purple/internal/services/kv"
+	"github.com/purpledb/purple/internal/services/kv"
 )
 
 func main() {
