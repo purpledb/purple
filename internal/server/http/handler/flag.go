@@ -1,9 +1,10 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/purpledb/purple"
-	"net/http"
 )
 
 var falseValueJson = gin.H{

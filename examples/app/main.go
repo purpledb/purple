@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/purpledb/purple"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/purpledb/purple"
 )
 
 const todosSet = "todos"

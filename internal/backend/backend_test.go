@@ -2,14 +2,15 @@ package backend
 
 import (
 	"fmt"
+	"strings"
+	"testing"
+	"time"
+
 	"github.com/purpledb/purple"
 	"github.com/purpledb/purple/internal/backend/disk"
 	"github.com/purpledb/purple/internal/backend/memory"
 	"github.com/purpledb/purple/internal/services/kv"
 	"github.com/stretchr/testify/assert"
-	"strings"
-	"testing"
-	"time"
 )
 
 func TestServices(t *testing.T) {

@@ -10,7 +10,7 @@ func TestDataHelpers(t *testing.T) {
 	is := assert.New(t)
 
 	t.Run("Booleans", func(t *testing.T) {
-		for _, b := range []bool{true, false}{
+		for _, b := range []bool{true, false} {
 			bo, err := BoolFromBytes(BoolAsBytes(b))
 			is.NoError(err)
 

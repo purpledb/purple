@@ -1,9 +1,10 @@
 package redis
 
 import (
-	"github.com/purpledb/purple/internal/services/flag"
 	"strconv"
 	"time"
+
+	"github.com/purpledb/purple/internal/services/flag"
 
 	"github.com/purpledb/purple/internal/services/cache"
 	"github.com/purpledb/purple/internal/services/counter"

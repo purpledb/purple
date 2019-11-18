@@ -1,10 +1,11 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/purpledb/purple/internal/backend"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 type Handler struct {

@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/purpledb/purple/internal/services/kv"
 	"log"
+
+	"github.com/purpledb/purple/internal/services/kv"
 
 	"github.com/purpledb/purple"
 )

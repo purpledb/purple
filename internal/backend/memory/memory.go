@@ -1,9 +1,10 @@
 package memory
 
 import (
+	"time"
+
 	"github.com/purpledb/purple/internal/data"
 	"github.com/purpledb/purple/internal/services/flag"
-	"time"
 
 	"github.com/purpledb/purple/internal/services/cache"
 	"github.com/purpledb/purple/internal/services/counter"

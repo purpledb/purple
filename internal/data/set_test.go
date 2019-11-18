@@ -1,8 +1,9 @@
 package data
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSetType(t *testing.T) {

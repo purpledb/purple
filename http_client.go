@@ -3,13 +3,14 @@ package purple
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/purpledb/purple/internal/data"
 	"github.com/purpledb/purple/internal/services/counter"
 	"github.com/purpledb/purple/internal/services/flag"
 	"github.com/purpledb/purple/internal/services/kv"
 	"github.com/purpledb/purple/internal/services/set"
-	"net/http"
-	"strconv"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/purpledb/purple/internal/services/cache"

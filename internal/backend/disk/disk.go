@@ -1,11 +1,12 @@
 package disk
 
 import (
-	"github.com/purpledb/purple/internal/services/flag"
-	"github.com/purpledb/purple/internal/util"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/purpledb/purple/internal/services/flag"
+	"github.com/purpledb/purple/internal/util"
 
 	"github.com/purpledb/purple"
 	"github.com/purpledb/purple/internal/services/cache"

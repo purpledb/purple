@@ -1259,7 +1259,7 @@ var errorList = [...]struct {
 	{49, "ENOLCK", "no locks available"},
 	{50, "ENOCONNECT", "cannot Establish Connection"},
 	{52, "ESTALE", "missing file or filesystem"},
-	{53, "EDIST", "requests blocked by Adminipurpler"},
+	{53, "EDIST", "requests blocked by Administrator"},
 	{55, "EINPROGRESS", "operation now in progress"},
 	{56, "EALREADY", "operation already in progress"},
 	{57, "ENOTSOCK", "socket operation on non-socket"},
