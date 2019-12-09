@@ -73,11 +73,12 @@ func NewRedisBackend(addr string) (*Redis, error) {
 }
 
 func newRedisClient(addr string, i int) (*redis.Client, error) {
-	opts := &redis.Options{
-		Addr:     addr,
-		Password: "",
-		DB:       i,
+	opts, err := redis.ParseURL(addr)
+	if err != nil {
+		return nil, err
 	}
+
+	opts.DB = i
 
 	cl := redis.NewClient(opts)
 
