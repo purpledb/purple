@@ -2,6 +2,12 @@
 
 ## v0.1.3
 
+Changes:
+
+* Began re-organizing the directory structure to enable a separate repository for the Go client libraries.
+
+## v0.1.3
+
 Added:
 
 * A "flag" service for boolean values, akin to the flag CRDT for Riak
