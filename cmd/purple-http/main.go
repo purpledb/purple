@@ -29,7 +29,7 @@ func command() *cobra.Command {
 	flags.IntP("port", "p", 8080, "purple HTTP server port")
 	flags.Bool("debug", false, "Debug mode")
 	flags.String("backend", "disk", `Data backend (options are disk, memory, and redis)`)
-	flags.String("redis-url", "localhost:6379", "Redis connection URL (if redis backend is used)")
+	flags.String("redis-url", "redis://127.0.0.1:6379", "Redis connection URL (if redis backend is used)")
 
 	v.RegisterAlias("redisurl", "redis-url")
 
