@@ -9,13 +9,13 @@ build:
 	$(GO) build -v -mod vendor ./...
 
 fmt:
-	gofmt -w .
+	gofmt -w $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
 tidy:
 	go mod tidy
 
 imports:
-	goimports -w .
+	goimports -d $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
 spruce: tidy fmt imports
 
@@ -62,12 +62,3 @@ run-local-grpc:
 
 run-local-http:
 	go run cmd/purple-http/main.go
-
-run-example-app:
-	go run examples/app/main.go
-
-run-example-grpc-server:
-	go run examples/grpc-server/main.go
-
-run-example-http-server:
-	go run examples/http-server/main.go

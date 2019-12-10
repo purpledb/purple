@@ -6,17 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	goodClientCfg = &ClientConfig{
-		Address: "localhost:2222",
-	}
-
-	goodServerCfg = &ServerConfig{
-		Port:    2222,
-		Backend: "disk",
-	}
-)
-
 func TestConfigInstantiation(t *testing.T) {
 	is := assert.New(t)
 
