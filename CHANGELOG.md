@@ -1,5 +1,11 @@
 # purple Changelog
 
+## v0.1.4 and v0.1.5
+
+Changes:
+
+* All client logic and examples have been moved elsewhere
+
 ## v0.1.3
 
 Changes:
