@@ -9,13 +9,13 @@ build:
 	$(GO) build -v -mod vendor ./...
 
 fmt:
-	gofmt -w .
+	gofmt -w $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
 tidy:
 	go mod tidy
 
 imports:
-	goimports -w .
+	goimports -d $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
 spruce: tidy fmt imports
 
