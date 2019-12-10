@@ -2,6 +2,14 @@ package data
 
 import "encoding/json"
 
+func NonNilSet(s []string) []string {
+	if s == nil {
+		return []string{}
+	} else {
+		return s
+	}
+}
+
 type Set struct {
 	items []string
 }

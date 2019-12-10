@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"github.com/purpledb/purple/internal/data"
 	"strconv"
 	"time"
 
@@ -203,7 +204,7 @@ func (r *Redis) SetGet(set string) ([]string, error) {
 		return nil, err
 	}
 
-	return s, nil
+	return data.NonNilSet(s), nil
 }
 
 func (r *Redis) SetAdd(set, item string) ([]string, error) {
