@@ -19,7 +19,7 @@ func (h *Handler) CounterGet(c *gin.Context) {
 	}
 
 	res := gin.H{
-		"key":   key,
+		"counter":   key,
 		"value": val,
 	}
 
