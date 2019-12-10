@@ -1,24 +1,10 @@
 package purple
 
-type (
-	ClientConfig struct {
-		Address string
-	}
-
-	ServerConfig struct {
-		Port     int
-		Debug    bool
-		Backend  string
-		RedisUrl string
-	}
-)
-
-func (c *ClientConfig) Validate() error {
-	if c.Address == "" {
-		return ErrNoAddress
-	}
-
-	return nil
+type ServerConfig struct {
+	Port     int
+	Debug    bool
+	Backend  string
+	RedisUrl string
 }
 
 func (c *ServerConfig) Validate() error {
