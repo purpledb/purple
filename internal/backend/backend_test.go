@@ -9,7 +9,7 @@ import (
 	"github.com/purpledb/purple"
 	"github.com/purpledb/purple/internal/backend/disk"
 	"github.com/purpledb/purple/internal/backend/memory"
-	"github.com/purpledb/purple/internal/services/kv"
+	"github.com/purpledb/purple/services/kv"
 	"github.com/stretchr/testify/assert"
 )
 
