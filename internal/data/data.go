@@ -26,10 +26,6 @@ func Int64ToBytes(i int64) []byte {
 	return bs
 }
 
-func Int64ToString(i int64) string {
-	return strconv.FormatInt(i, 10)
-}
-
 func BytesToSet(bs []byte) (*Set, error) {
 	var items []string
 
