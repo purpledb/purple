@@ -63,9 +63,6 @@ run-local-grpc:
 run-local-http:
 	go run cmd/purple-http/main.go
 
-run-example-app:
-	go run examples/app/main.go
-
 run-example-grpc-server:
 	go run examples/grpc-server/main.go
 
