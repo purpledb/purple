@@ -45,7 +45,11 @@ func (s *Set) Remove(item string) {
 }
 
 func (s *Set) Get() []string {
-	return s.items
+	if s.items == nil {
+		return []string{}
+	} else {
+		return s.items
+	}
 }
 
 func (s *Set) AsBytes() ([]byte, error) {
