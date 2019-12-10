@@ -27,7 +27,7 @@ func Int64ToBytes(i int64) []byte {
 }
 
 func BytesToSet(bs []byte) (*Set, error) {
-	var items []string
+	items := make([]string, 0)
 
 	if err := json.Unmarshal(bs, &items); err != nil {
 		return nil, err
