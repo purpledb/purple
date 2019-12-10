@@ -6,7 +6,7 @@ import (
 
 	"github.com/purpledb/purple"
 
-	"github.com/purpledb/purple/internal/services/kv"
+	"github.com/purpledb/purple/services/kv"
 )
 
 func main() {

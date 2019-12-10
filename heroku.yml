@@ -1,0 +1,10 @@
+setup:
+  addons:
+    - plan: 'heroku-redis:premium-0'
+      as: REDIS
+  config: {}
+build:
+  languages:
+    - go
+run:
+  web: bin/purple-http --backend redis --port $PORT --redis-url $REDIS_URL

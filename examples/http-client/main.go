@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/purpledb/purple/internal/services/kv"
+	"github.com/purpledb/purple/services/kv"
 
 	"github.com/purpledb/purple"
 )

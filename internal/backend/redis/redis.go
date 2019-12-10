@@ -4,12 +4,12 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/purpledb/purple/internal/services/flag"
+	"github.com/purpledb/purple/services/flag"
 
-	"github.com/purpledb/purple/internal/services/cache"
-	"github.com/purpledb/purple/internal/services/counter"
-	"github.com/purpledb/purple/internal/services/kv"
-	"github.com/purpledb/purple/internal/services/set"
+	"github.com/purpledb/purple/services/cache"
+	"github.com/purpledb/purple/services/counter"
+	"github.com/purpledb/purple/services/kv"
+	"github.com/purpledb/purple/services/set"
 
 	"github.com/go-redis/redis"
 	"github.com/purpledb/purple"
@@ -73,11 +73,12 @@ func NewRedisBackend(addr string) (*Redis, error) {
 }
 
 func newRedisClient(addr string, i int) (*redis.Client, error) {
-	opts := &redis.Options{
-		Addr:     addr,
-		Password: "",
-		DB:       i,
+	opts, err := redis.ParseURL(addr)
+	if err != nil {
+		return nil, err
 	}
+
+	opts.DB = i
 
 	cl := redis.NewClient(opts)
 

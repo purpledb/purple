@@ -7,13 +7,13 @@ import (
 	"strconv"
 
 	"github.com/purpledb/purple/internal/data"
-	"github.com/purpledb/purple/internal/services/counter"
-	"github.com/purpledb/purple/internal/services/flag"
-	"github.com/purpledb/purple/internal/services/kv"
-	"github.com/purpledb/purple/internal/services/set"
+	"github.com/purpledb/purple/services/counter"
+	"github.com/purpledb/purple/services/flag"
+	"github.com/purpledb/purple/services/kv"
+	"github.com/purpledb/purple/services/set"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/purpledb/purple/internal/services/cache"
+	"github.com/purpledb/purple/services/cache"
 )
 
 type HttpClient struct {
