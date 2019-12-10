@@ -1,5 +1,11 @@
 # purple Changelog
 
+## v0.1.6
+
+Changes:
+
+* Incrementing counters now returns the new counter value or an error
+
 ## v0.1.4 and v0.1.5
 
 Changes:
