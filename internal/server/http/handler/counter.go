@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/purpledb/purple"
 )
 
 func (h *Handler) CounterGet(c *gin.Context) {
@@ -32,16 +31,15 @@ func (h *Handler) CounterPut(c *gin.Context) {
 
 	key, incr := c.Param("key"), getIncr(c)
 
-	if err := h.b.CounterIncrement(key, incr); err != nil {
-		if purple.IsNotFound(err) {
-			c.Status(http.StatusNotFound)
-			return
-		} else {
-			log.Error(err)
-			c.Status(http.StatusInternalServerError)
-			return
-		}
+	count, err := h.b.CounterIncrement(key, incr)
+	if err != nil {
+		log.Error(err)
+		c.Status(http.StatusInternalServerError)
+		return
 	}
 
-	c.Status(http.StatusNoContent)
+	c.JSON(http.StatusOK, gin.H{
+		"counter": key,
+		"value": count,
+	})
 }

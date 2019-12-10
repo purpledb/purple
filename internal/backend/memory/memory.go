@@ -113,15 +113,16 @@ func parseTtl(ttl int32) int32 {
 }
 
 // Counter
-func (m *Memory) CounterIncrement(key string, increment int64) error {
+func (m *Memory) CounterIncrement(key string, increment int64) (int64, error) {
 	count, ok := m.counters[key]
 	if !ok {
 		m.counters[key] = increment
 	} else {
-		m.counters[key] = count + increment
+		total := count + increment
+		m.counters[key] = total
 	}
 
-	return nil
+	return m.counters[key], nil
 }
 
 func (m *Memory) CounterGet(key string) (int64, error) {

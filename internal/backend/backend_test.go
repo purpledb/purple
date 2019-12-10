@@ -74,13 +74,18 @@ func testSvc(svc Service, t *testing.T) {
 
 		is.Zero(svc.CounterGet(key))
 
-		is.NoError(svc.CounterIncrement(key, incr))
+		count, err := svc.CounterIncrement(key, incr)
+		is.NoError(err)
+		is.Equal(count, incr)
 
 		val, err := svc.CounterGet(key)
 		is.NoError(err)
 		is.Equal(val, incr)
 
-		is.NoError(svc.CounterIncrement(key, int64(-50)))
+		count, err = svc.CounterIncrement(key, int64(-50))
+		is.NoError(err)
+		is.Equal(count, int64(-40))
+
 		val, err = svc.CounterGet(key)
 		is.NoError(err)
 		is.Equal(val, int64(-40))

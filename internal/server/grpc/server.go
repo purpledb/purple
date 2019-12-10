@@ -58,6 +58,7 @@ func NewGrpcServer(cfg *purple.ServerConfig) (*Server, error) {
 	}, nil
 }
 
+// Cache
 func (s *Server) CacheGet(_ context.Context, req *proto.CacheGetRequest) (*proto.CacheGetResponse, error) {
 	val, err := s.backend.CacheGet(req.Key)
 	if err != nil {
@@ -83,15 +84,8 @@ func (s *Server) CacheSet(_ context.Context, req *proto.CacheSetRequest) (*proto
 	return &proto.Empty{}, nil
 }
 
-func (s *Server) IncrementCounter(_ context.Context, req *proto.IncrementCounterRequest) (*proto.Empty, error) {
-	if err := s.backend.CounterIncrement(req.Key, req.Amount); err != nil {
-		return nil, err
-	}
-
-	return &proto.Empty{}, nil
-}
-
-func (s *Server) GetCounter(_ context.Context, req *proto.GetCounterRequest) (*proto.GetCounterResponse, error) {
+// Counter
+func (s *Server) CounterGet(_ context.Context, req *proto.GetCounterRequest) (*proto.GetCounterResponse, error) {
 	val, err := s.backend.CounterGet(req.Key)
 	if err != nil {
 		return nil, err
@@ -102,6 +96,18 @@ func (s *Server) GetCounter(_ context.Context, req *proto.GetCounterRequest) (*p
 	}, nil
 }
 
+func (s *Server) CounterIncrement(_ context.Context, req *proto.IncrementCounterRequest) (*proto.GetCounterResponse, error) {
+	count, err := s.backend.CounterIncrement(req.Key, req.Amount)
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.GetCounterResponse{
+		Value: count,
+	}, nil
+}
+
+// Flag
 func (s *Server) FlagGet(_ context.Context, req *proto.FlagGetRequest) (*proto.FlagResponse, error) {
 	val, err := s.backend.FlagGet(req.Key)
 	if err != nil {
@@ -121,6 +127,7 @@ func (s *Server) FlagSet(_ context.Context, req *proto.FlagSetRequest) (*proto.E
 	return &proto.Empty{}, nil
 }
 
+// KV
 func (s *Server) KVGet(_ context.Context, location *proto.Location) (*proto.GetResponse, error) {
 	key := location.Key
 

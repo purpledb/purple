@@ -63,23 +63,26 @@ func TestGrpcServer(t *testing.T) {
 			Key: "player1",
 		}
 
-		res, err := srv.GetCounter(ctx, getReq)
+		res, err := srv.CounterGet(ctx, getReq)
 		is.NoError(err)
 		is.NotNil(res)
 		is.Zero(res.Value)
 
+		amount := int64(100)
+
 		incrReq := &proto.IncrementCounterRequest{
 			Key:    "player1",
-			Amount: 100,
+			Amount: amount,
 		}
 
-		empty, err := srv.IncrementCounter(ctx, incrReq)
+		res, err = srv.CounterIncrement(ctx, incrReq)
 		is.NoError(err)
-		is.NotNil(empty)
+		is.NotNil(res)
+		is.Equal(res.Value, amount)
 
-		res, err = srv.GetCounter(ctx, getReq)
+		res, err = srv.CounterGet(ctx, getReq)
 		is.NoError(err)
-		is.Equal(res.Value, int64(100))
+		is.Equal(res.Value, amount)
 	})
 
 	t.Run("KV", func(_ *testing.T) {

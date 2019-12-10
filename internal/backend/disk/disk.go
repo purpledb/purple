@@ -209,7 +209,7 @@ func (d *Disk) CounterGet(key string) (int64, error) {
 	return data.BytesToInt64(val), nil
 }
 
-func (d *Disk) CounterIncrement(key string, increment int64) error {
+func (d *Disk) CounterIncrement(key string, increment int64) (int64, error) {
 	k := []byte(key)
 
 	val, err := dbRead(d.counter, k)
@@ -217,9 +217,13 @@ func (d *Disk) CounterIncrement(key string, increment int64) error {
 		if purple.IsNotFound(err) {
 			v := data.Int64ToBytes(increment)
 
-			return dbWrite(d.counter, k, v)
+			if err := dbWrite(d.counter, k, v); err != nil {
+				return 0, err
+			}
+
+			return d.CounterGet(key)
 		} else {
-			return err
+			return 0, err
 		}
 	}
 
@@ -229,7 +233,11 @@ func (d *Disk) CounterIncrement(key string, increment int64) error {
 
 	newVal := data.Int64ToBytes(count)
 
-	return dbWrite(d.counter, k, newVal)
+	if err := dbWrite(d.counter, k, newVal); err != nil {
+		return 0, err
+	}
+
+	return d.CounterGet(key)
 }
 
 // Flag

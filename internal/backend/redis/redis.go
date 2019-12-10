@@ -146,8 +146,8 @@ func (r *Redis) CounterGet(key string) (int64, error) {
 	}
 }
 
-func (r *Redis) CounterIncrement(key string, increment int64) error {
-	return r.counters.IncrBy(key, increment).Err()
+func (r *Redis) CounterIncrement(key string, increment int64) (int64, error) {
+	return r.counters.IncrBy(key, increment).Result()
 }
 
 // Flag operations
