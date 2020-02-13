@@ -19,8 +19,8 @@ func (h *Handler) CounterGet(c *gin.Context) {
 	}
 
 	res := gin.H{
-		"counter":   key,
-		"value": val,
+		"counter": key,
+		"value":   val,
 	}
 
 	c.JSON(http.StatusOK, res)
@@ -40,6 +40,6 @@ func (h *Handler) CounterPut(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"counter": key,
-		"value": count,
+		"value":   count,
 	})
 }

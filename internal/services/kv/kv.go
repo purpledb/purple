@@ -12,7 +12,7 @@ type (
 	}
 
 	Value struct {
-		Content  []byte            `json:"content"`
+		Content []byte `json:"content"`
 	}
 )
 
