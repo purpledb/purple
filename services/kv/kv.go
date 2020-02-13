@@ -12,7 +12,6 @@ type (
 	}
 
 	Value struct {
-		Metadata map[string]string `json:"metadata"`
 		Content  []byte            `json:"content"`
 	}
 )
