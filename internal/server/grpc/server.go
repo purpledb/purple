@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/purpledb/purple/services/kv"
+	"github.com/purpledb/purple/internal/services/kv"
 
 	"github.com/purpledb/purple"
 	"github.com/purpledb/purple/internal/backend"
