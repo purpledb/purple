@@ -2,14 +2,6 @@ package data
 
 import "encoding/json"
 
-func NonNilSet(s []string) []string {
-	if s == nil {
-		return []string{}
-	} else {
-		return s
-	}
-}
-
 type Set struct {
 	items []string
 }
@@ -57,5 +49,13 @@ func (s *Set) Get() []string {
 }
 
 func (s *Set) AsBytes() ([]byte, error) {
-	return json.Marshal(s.items)
+	return json.Marshal(s.Get())
+}
+
+func NonNilSet(s []string) []string {
+	if s == nil {
+		return []string{}
+	} else {
+		return s
+	}
 }
