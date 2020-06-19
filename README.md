@@ -189,7 +189,7 @@ count, err := client.CounterIncrement("player1-points", 100)
 
 ### Kubernetes
 
-There are two configuration files in the [`deploy`](./deploy) directory that enable you to run the purple gRPC and HTTP servers, respectively, on Kubernetes. Both use the `default` namespace.
+There are two Kubernetes configuration files in the [`deploy`](./deploy) directory that enable you to run the purple gRPC and HTTP servers, respectively, on Kubernetes. Both use the `default` namespace.
 
 #### gRPC
 
