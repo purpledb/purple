@@ -4,6 +4,9 @@
   outputs = { self, nixpkgs, flake-utils }:
     let
       # Constants
+      org = "purpledb";
+      version = "0.1.6";
+
       target = {
         os = "linux";
         arch = "amd64";
@@ -35,10 +38,20 @@
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs;
             [
+              cmake
               go
+              gotools
               protobuf
               docker
             ];
+        };
+
+        apps = {
+          default = flake-utils.lib.mkApp {
+            drv = pkgs.writeScriptBin "version" ''
+              echo ${version}
+            '';
+          };
         };
 
         packages =
@@ -49,42 +62,50 @@
               subPackages = [ "cmd/${name}" ];
             };
 
-            buildDocker = { name, bin, port }:
+            buildDocker = { name, port, tag ? "latest" }:
               let
                 pkg = pkgs.buildGoModuleLinux {
                   inherit name vendorSha256;
                   src = ./.;
-                  subPackages = [ "cmd/${bin}" ];
+                  subPackages = [ "cmd/${name}" ];
                   maxLayers = 120;
                 };
               in
               pkgs.dockerTools.buildLayeredImage {
-                inherit name;
-                tag = "latest";
+                name = "${org}/${name}";
+                inherit tag;
 
                 config = {
-                  Entrypoint = [ "${pkg}/bin/${target.os}_${target.arch}/${bin}" ];
+                  Entrypoint = [ "${pkg}/bin/${target.os}_${target.arch}/${name}" ];
                   ExposedPorts."${builtins.toString port}/tcp" = { };
                 };
               };
           in
           rec
           {
-            http = purpleHttp;
-            grpc = purpleGrpc;
 
-            purpleHttp = buildGo "purple-http";
-            purpleGrpc = buildGo "purple-grpc";
+            http = buildGo "purple-http";
+            grpc = buildGo "purple-grpc";
 
-            purpleHttpDocker = buildDocker rec {
-              name = "purpledb/${bin}";
-              bin = "purple-http";
+            httpDocker = buildDocker rec {
+              name = "purple-http";
+              port = 8080;
+              tag = "v${version}";
+            };
+
+            httpDockerLatest = buildDocker rec {
+              name = "purple-http";
               port = 8080;
             };
 
-            purpleGrpcDocker = buildDocker rec {
-              name = "purpledb/${bin}";
-              bin = "purple-grpc";
+            grpcDocker = buildDocker rec {
+              name = "purple-grpc";
+              port = 8081;
+              tag = "v${version}";
+            };
+
+            grpcDockerLatest = buildDocker rec {
+              name = "purple-grpc";
               port = 8081;
             };
           };

@@ -1,33 +1,31 @@
-GO        = go
-PROTOC    = protoc
 PROTO_DIR = proto
 COVER_OUT = coverage.out
-GRPC_IMG  = purpledb/purple-grpc
-HTTP_IMG  = purpledb/purple-http
+
+RUN = nix develop --command
 
 build:
-	$(GO) build -v -mod vendor ./...
+	$(RUN) go build -v -mod vendor ./...
 
 fmt:
-	gofmt -w $(shell find . -type f -name '*.go' -not -path "./vendor/*")
+	$(RUN) gofmt -w $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
 tidy:
-	go mod tidy
+	$(RUN) go mod tidy
 
 imports:
-	goimports -d $(shell find . -type f -name '*.go' -not -path "./vendor/*")
+	$(RUN) goimports -d $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
 spruce: tidy fmt imports
 
 protobuf-gen:
-	$(PROTOC) --proto_path=$(PROTO_DIR) --go_out=plugins=grpc:$(PROTO_DIR) $(PROTO_DIR)/*.proto
+	$(RUN) protoc --proto_path=$(PROTO_DIR) --go_out=plugins=grpc:$(PROTO_DIR) $(PROTO_DIR)/*.proto
 
 test:
-	$(GO) test -p 1 -v ./...
+	$(RUN) go test -p 1 -v ./...
 
 coverage:
-	$(GO) test -v -coverprofile $(COVER_OUT) ./...
-	$(GO) tool cover -html=$(COVER_OUT)
+	$(RUN) go test -v -coverprofile $(COVER_OUT) ./...
+	$(RUN) go tool cover -html=$(COVER_OUT)
 
 docker-build-grpc:
 	docker build -f Dockerfile.grpc -t $(GRPC_IMG):$(VERSION) .
@@ -58,7 +56,7 @@ docker-run-http:
 docker-push-all: docker-push-grpc docker-push-http
 
 run-local-grpc:
-	go run cmd/purple-grpc/main.go
+	nix run .#grpc
 
 run-local-http:
-	go run cmd/purple-http/main.go
+	nix run .#http
