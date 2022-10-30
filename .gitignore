@@ -5,3 +5,6 @@ coverage.out
 purple-kv.db
 
 tmp/
+
+# Nix artifacts
+result
