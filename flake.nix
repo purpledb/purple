@@ -13,23 +13,23 @@
       vendorSha256 = "sha256-rRHPYuWOPIHE60vVxZMH+TwFNGlQf5fPmoqV+g0cUZg=";
 
       # Overlays
-      goOverlay = self: super: {
-        go = super.go_1_18;
-      };
+      overlays = [
+        (self: super: rec {
+          go = super.go_1_18;
 
-      goLinuxOverlay = self: super: {
-        buildGoModuleLinux = super.buildGoModule.override {
-          go = super.go // {
-            CGO_ENABLED = 0;
-            GOOS = target.os;
-            GOARCH = target.arch;
+          buildGoModuleLinux = super.buildGoModule.override {
+            go = super.go // {
+              CGO_ENABLED = 0;
+              GOOS = target.os;
+              GOARCH = target.arch;
+            };
           };
-        };
-      };
+        })
+      ];
     in
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = import nixpkgs { inherit system; overlays = [ goOverlay goLinuxOverlay ]; };
+        pkgs = import nixpkgs { inherit overlays system; };
       in
       {
         devShells.default = pkgs.mkShell {
