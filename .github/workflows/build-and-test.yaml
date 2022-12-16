@@ -7,7 +7,6 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       CACHIX_CACHE: ${{ secrets.CACHIX_CACHE }}
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
-      NIX_PROFILE: purpledb
     strategy:
       matrix:
         platform: [ubuntu-latest, macos-latest]
@@ -30,5 +29,5 @@ jobs:
         run: nix develop --command go test -v -p 1 ./...
       - name: Push dev shell to Cachix
         run: |
-          nix develop --profile ${{ env.NIX_PROFILE }}
-          cachix push ${{ env.CACHIX_CACHE }} ${{ env.NIX_PROFILE }}
+          nix develop --profile nix-purpledb
+          cachix push ${{ env.CACHIX_CACHE }} nix-purpledb
