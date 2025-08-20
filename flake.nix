@@ -90,7 +90,7 @@
         }
       );
 
-      overlays.default = final: prev: rec {
+      overlays.default = final: prev: {
         buildGoModuleLinux = prev.buildGoModule.override {
           go = prev.go // {
             CGO_ENABLED = 0;

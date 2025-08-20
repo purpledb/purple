@@ -9,8 +9,8 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       matrix:
-        platform: [ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.platform }}
+        platform: [linux, macos]
+    runs-on: ${{ matrix.platform }}-latest
     steps:
       - name: git checkout
         uses: actions/checkout@v5
@@ -23,8 +23,22 @@ jobs:
 
       - uses: DeterminateSystems/flakehub-cache-action@main
       
-      - name: Build
+      - name: Go build
         run: nix develop --command go build -v ./...
-
+    
       - name: Test
         run: nix develop --command go test -v -p 1 ./...
+
+      - name: Nix build packages
+        run: |
+          for pkg in grpc http; do
+            nix build ".#${pkg}"
+          done
+
+      - name: Nix build Docker images
+        if: ${{ matrix.platform == 'linux' }}
+        run: |
+          for image in grpc http; do
+            nix build ".#dockerImages.x86_64-linux.${image}Docker"
+            nix build ".#dockerImages.x86_64-linux.${image}DockerLatest"
+          done
