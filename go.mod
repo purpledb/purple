@@ -1,54 +1,65 @@
 module github.com/purpledb/purple
 
-go 1.18
+go 1.24.5
 
 require (
-	github.com/dgraph-io/badger v1.6.0
-	github.com/gin-gonic/gin v1.3.0
-	github.com/go-redis/redis v6.15.2+incompatible
-	github.com/golang/protobuf v1.5.2
-	github.com/sirupsen/logrus v1.4.2
-	github.com/spf13/cobra v0.0.5
-	github.com/spf13/pflag v1.0.3
-	github.com/spf13/viper v1.3.2
-	github.com/stretchr/testify v1.7.0
-	google.golang.org/grpc v1.42.0
+	github.com/dgraph-io/badger v1.6.2
+	github.com/gin-gonic/gin v1.10.1
+	github.com/go-redis/redis v6.15.9+incompatible
+	github.com/golang/protobuf v1.5.4
+	github.com/sirupsen/logrus v1.9.3
+	github.com/spf13/cobra v1.9.1
+	github.com/spf13/pflag v1.0.7
+	github.com/spf13/viper v1.20.1
+	github.com/stretchr/testify v1.10.0
+	google.golang.org/grpc v1.75.0
 )
 
 require (
-	github.com/AndreasBriese/bbloom v0.0.0-20190306092124-e2d15f34fcf9 // indirect
+	github.com/AndreasBriese/bbloom v0.0.0-20190825152654-46b345b51c96 // indirect
+	github.com/bytedance/sonic v1.11.6 // indirect
+	github.com/bytedance/sonic/loader v0.1.1 // indirect
+	github.com/cespare/xxhash v1.1.0 // indirect
+	github.com/cloudwego/base64x v0.1.4 // indirect
+	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/dgryski/go-farm v0.0.0-20190423205320-6a90982ecee2 // indirect
+	github.com/dgraph-io/ristretto v0.0.2 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
-	github.com/fsnotify/fsnotify v1.4.7 // indirect
-	github.com/gin-contrib/sse v0.0.0-20190301062529-5545eab6dad3 // indirect
-	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/inconshreveable/mousetrap v1.0.0 // indirect
-	github.com/json-iterator/go v1.1.6 // indirect
-	github.com/konsorten/go-windows-terminal-sequences v1.0.1 // indirect
-	github.com/kr/pretty v0.1.0 // indirect
-	github.com/magiconair/properties v1.8.0 // indirect
-	github.com/mattn/go-isatty v0.0.7 // indirect
-	github.com/mitchellh/mapstructure v1.1.2 // indirect
+	github.com/fsnotify/fsnotify v1.8.0 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
+	github.com/gin-contrib/sse v0.1.0 // indirect
+	github.com/go-playground/locales v0.14.1 // indirect
+	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/go-playground/validator/v10 v10.20.0 // indirect
+	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
+	github.com/goccy/go-json v0.10.2 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
+	github.com/leodido/go-urn v1.4.0 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/modern-go/reflect2 v1.0.1 // indirect
-	github.com/onsi/ginkgo v1.10.1 // indirect
-	github.com/onsi/gomega v1.7.0 // indirect
-	github.com/pelletier/go-toml v1.2.0 // indirect
+	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/onsi/ginkgo v1.16.5 // indirect
+	github.com/onsi/gomega v1.38.1 // indirect
+	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/spf13/afero v1.1.2 // indirect
-	github.com/spf13/cast v1.3.0 // indirect
-	github.com/spf13/jwalterweatherman v1.0.0 // indirect
-	github.com/ugorji/go/codec v0.0.0-20181204163529-d75b2dcb6bc8 // indirect
-	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
-	golang.org/x/sys v0.0.0-20210510120138-977fb7262007 // indirect
-	golang.org/x/text v0.3.5 // indirect
-	google.golang.org/genproto v0.0.0-20211102202547-e9cf271f7f2c // indirect
-	google.golang.org/protobuf v1.27.1 // indirect
-	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
-	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
-	gopkg.in/yaml.v2 v2.2.3 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
+	github.com/sagikazarmark/locafero v0.7.0 // indirect
+	github.com/sourcegraph/conc v0.3.0 // indirect
+	github.com/spf13/afero v1.12.0 // indirect
+	github.com/spf13/cast v1.7.1 // indirect
+	github.com/subosito/gotenv v1.6.0 // indirect
+	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
+	github.com/ugorji/go/codec v1.2.12 // indirect
+	go.uber.org/atomic v1.9.0 // indirect
+	go.uber.org/multierr v1.9.0 // indirect
+	golang.org/x/arch v0.8.0 // indirect
+	golang.org/x/crypto v0.41.0 // indirect
+	golang.org/x/net v0.43.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
+	golang.org/x/text v0.28.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
+	google.golang.org/protobuf v1.36.7 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
