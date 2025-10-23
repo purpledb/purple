@@ -11,6 +11,9 @@ jobs:
       matrix:
         platform: [linux, macos]
     runs-on: ${{ matrix.platform }}-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: git checkout
         uses: actions/checkout@v5
