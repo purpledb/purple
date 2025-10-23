@@ -12,7 +12,6 @@
       supportedSystems = [
         "x86_64-linux"
         "aarch64-darwin"
-        "x86_64-darwin"
         "aarch64-linux"
       ];
       forEachSupportedSystem =
@@ -49,11 +48,13 @@
               go
               gotools
               protobuf
-              docker
+              self.formatter.${system}
             ];
           };
         }
       );
+
+      formatter = forEachSupportedSystem ({ pkgs }: pkgs.nixfmt);
 
       packages = forEachSupportedSystem (
         { pkgs }:
