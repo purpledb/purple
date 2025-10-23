@@ -37,7 +37,7 @@
       };
 
       # The same across all packages
-      vendorHash = "sha256-AvzAz32FUsL7ErI7wLm+v5U8H47y+wNHu4JWRa7AwOI=";
+      vendorHash = "sha256-fSdq6j63GbTHAZE93gtHeMPYCLT3PdiVrG4aqWAD2QE=";
     in
     {
       devShells = forEachSupportedSystem (
